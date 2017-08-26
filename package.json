@@ -1,0 +1,31 @@
+{
+  "name": "sharedserver",
+  "version": "1.0.0",
+  "description": "Repositorio para el SharedServer.",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha ./test/*",
+    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
+    "start": "node ./src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^3.5.0"
+  },
+  "dependencies": {
+    "coveralls": "^2.13.1",
+    "istanbul": "^0.4.5"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TallerDeProg2/SharedServer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TallerDeProg2/SharedServer/issues"
+  },
+  "homepage": "https://github.com/TallerDeProg2/SharedServer#readme"
+}
