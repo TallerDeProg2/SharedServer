@@ -1,5 +1,5 @@
-function helloWorld(){
+function salutation(){
   return 'Hello world!'
 }
 
-module.exports.helloWorld = helloWorld
+module.exports.salutation = salutation

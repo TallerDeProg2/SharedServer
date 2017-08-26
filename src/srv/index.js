@@ -1,4 +1,4 @@
-const salutations = require('./helloWorld.js')
-const hello = salutations.helloWorld()
+const helloWorld = require('./helloWorld.js')
+const hello = helloWorld.salutation()
 
 console.log(hello)
