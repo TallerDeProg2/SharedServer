@@ -1,5 +1,5 @@
 var assert = require('assert');
-var helloWorld = require('../src/srv/helloWorld.js');
+var helloWorld = require('../src/controllers/controllerHelloWorld.js');
 
 describe('helloWorld', function() {
  it('returns the message "Hello world!"', function() {
