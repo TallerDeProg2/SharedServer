@@ -1,12 +1,10 @@
-var express = require('express');
+const helloWorld = require('../controllers/controllerHelloWorld.js');
+const hello = helloWorld.salutation();
 
-const helloWorld = require('../controllers/controllerHelloWorld.js')
-const hello = helloWorld.salutation()
-
-var router = express.Router();
+var router = require('./router.js');
 
 router.get('/hello', function(request, response) {
-  response.send(hello)
+  response.send(hello);
 });
 
 module.exports = router;

@@ -1,8 +1,6 @@
-var express = require('express');
-
 var controller = require('../controllers/controllerAppSrv.js');
 
-var router = express.Router();
+var router = require('./router.js');
 
 router.get('/users', function(request, response) {
     controller.getUsers(request, response);
@@ -79,5 +77,3 @@ router.get('/trips/{tripId}', function(request, response) {
 router.post('/servers/ping', function(request, response) {
     controller.postServerPing();
 });
-
-module.exports = router;

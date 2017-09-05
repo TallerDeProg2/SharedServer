@@ -2,6 +2,8 @@ var pg = require('pg');
 var express = require('express');
 var bodyParser = require('body-parser');
 
+var router = require('../routes/router.js');
+
 var routerExample = require('../routes/routerHello.js');
 
 var routerAppSrv = require('../routes/routerAppSrv.js');
@@ -16,13 +18,7 @@ app.use(bodyParser.json());
 
 app.set('port', (process.env.PORT || 5500));
 
-
-//app.use('/', routerExample);
-
-app.use('/', routerAppSrv);
-//app.use('/', routerAdmin);
-//app.use('/', routerManager);
-//app.use('/', routerUser);
+app.use('/', router);
 
 
 app.listen(app.get('port'), function() {
