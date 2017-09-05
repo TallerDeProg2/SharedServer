@@ -1,11 +1,11 @@
 var express = require('express');
 
-const controller = require('../controllers/controllerAppCli.js')
+var controller = require('../controllers/controllerAppSrv.js');
 
 var router = express.Router();
 
 router.get('/users', function(request, response) {
-    controller.getUsers();
+    controller.getUsers(request, response);
 });
 
 router.post('/users', function(request, response) {

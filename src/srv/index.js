@@ -1,17 +1,28 @@
-var router = require('../routes/routerAppCli.js')
-
 var pg = require('pg');
 var express = require('express');
-var app = express();
 var bodyParser = require('body-parser');
+
+var routerExample = require('../routes/routerHello.js');
+
+var routerAppSrv = require('../routes/routerAppSrv.js');
+var routerAdmin = require('../routes/routerAdmin.js');
+var routerManager = require('../routes/routerManager.js');
+var routerUser = require('../routes/routerUser.js');
+
+var app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.set('port', (process.env.PORT || 5400));
+app.set('port', (process.env.PORT || 5500));
 
 
-app.use('/', router);
+//app.use('/', routerExample);
+
+app.use('/', routerAppSrv);
+//app.use('/', routerAdmin);
+//app.use('/', routerManager);
+//app.use('/', routerUser);
 
 
 app.listen(app.get('port'), function() {
