@@ -6,6 +6,6 @@ function deleteBusinessUser(userId) {}
 
 function putBusinessUser(userId) {}
 
-function runRules() {}
+function getBusinessUsersMe() {}
 
-function runRule(ruleId) {}
+function putBusinessUsersMe() {}
