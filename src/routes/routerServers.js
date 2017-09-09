@@ -4,27 +4,27 @@ var router = require('./router.js');
 
 
 router.get('/servers', function(request, response) {
-    controller.getServers();
+    controller.getServers(request, response);
 });
 
-router.get('/servers/{serverId}', function(request, response) { 
-    controller.getServer(serverId);
+router.get('/servers/{serverId}', function(request, response) {
+    controller.getServer(serverId, request, response);
 });
 
 router.post('/servers', function(request, response) {
-    controller.postServer();
+    controller.postServer(request, response);
 });
 
 router.put('/servers/{serverId}', function(request, response) {
-    controller.putServer(serverId);
+    controller.putServer(serverId, request, response);
 });
 
 router.post('/servers/{serverId}', function(request, response) {
-    controller.postServer(serverId);
+    controller.postServer(serverId, request, response);
 });
 
 router.delete('/servers/{serverId}', function(request, response) {
-    controller.deleteServer(serverId);
+    controller.deleteServer(serverId, request, response);
 });
 
 router.post('/servers/ping', function(request, response) {
