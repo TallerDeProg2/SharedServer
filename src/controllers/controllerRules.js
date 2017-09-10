@@ -1,13 +1,13 @@
-function runRules() {}
+function runRules(request, response) {}
 
-function runRule(ruleId) {}
+function runRule(ruleId, request, response) {}
 
-function postRule() {}
+function postRule(request, response) {}
 
-function deleteRule(ruleId) {}
+function deleteRule(ruleId, request, response) {}
 
-function putRule(ruleId) {}
+function putRule(ruleId, request, response) {}
 
-function getRuleCommits(ruleId) {}
+function getRuleCommits(ruleId, request, response) {}
 
-function getRuleCommit(ruleId, commitId) {}
+function getRuleCommit(ruleId, commitId, request, response) {}

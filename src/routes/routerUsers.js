@@ -7,21 +7,24 @@ router.get('/users', function(request, response) {
 });
 
 router.post('/users', function(request, response) {
-    controller.postUsers();
+    controller.postUsers(request, response);
 });
 
 router.post('/users/validate', function(request, response) {
-    controller.postUsersValidate();
+    controller.postUsersValidate(request, response);
 });
 
-router.delete('/users/{userId}', function(request, response) {
-    controller.deleteUser(userId);
+router.delete('/users/:userId', function(request, response) {
+    var userId = request.params.userId;
+    controller.deleteUser(userId, request, response);
 });
 
-router.get('/users/{userId}', function(request, response) {
-    controller.getUser(userId);
+router.get('/users/:userId', function(request, response) {
+    var userId = request.params.userId;
+    controller.getUser(userId, request, response);
 });
 
-router.put('/users/{userId}', function(request, response) {
-    controller.putUser(userId);
+router.put('/users/:userId', function(request, response) {
+    var userId = request.params.userId;
+    controller.putUser(userId, request, response);
 });

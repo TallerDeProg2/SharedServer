@@ -9,14 +9,17 @@ function getUsers(request, response) {
   dataBase.query('SELECT * FROM drivers', response, parser.parserUsers);
 }
 
-function postUsers() {}
+function postUsers(request, response) {}
 
-function postUsersValidate() {}
+function postUsersValidate(request, response) {}
 
-function deleteUser(userId) {}
+function deleteUser(userId, request, response) {}
 
-function getUser(userId) {}
+function getUser(userId, request, response) {
+  dataBase.query(('SELECT * FROM servers WHERE lastname=($1)', [userId]), response, parser.parserUsers);
+}
 
-function putUser(userId) {}
+function putUser(userId, request, response) {}
 
 module.exports.getUsers = getUsers;
+module.exports.getUser = getUser;

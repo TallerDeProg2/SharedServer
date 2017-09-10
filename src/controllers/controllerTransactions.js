@@ -1,5 +1,5 @@
-function getUserTransactions(userId) {}
+function getUserTransactions(userId, request, response) {}
 
-function postUserTransactions(userId) {}
+function postUserTransactions(userId, request, response) {}
 
-function getPaymethods() {}
+function getPaymethods(request, response) {}

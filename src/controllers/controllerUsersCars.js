@@ -1,9 +1,9 @@
-function getUserCars(userId) {}
+function getUserCars(userId, request, response) {}
 
-function postUserCars(userId) {}
+function postUserCars(userId, request, response) {}
 
-function deleteCar(userId, carId) {}
+function deleteCar(userId, carId, request, response) {}
 
-function getCar(userId, carId) {}
+function getCar(userId, carId, request, response) {}
 
-function putCar(userId, carId) {}
+function putCar(userId, carId, request, response) {}

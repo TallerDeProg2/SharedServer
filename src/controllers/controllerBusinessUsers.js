@@ -1,11 +1,11 @@
-function getBusinessUsers() {}
+function getBusinessUsers(request, response) {}
 
-function postBusinessUsers() {}
+function postBusinessUsers(request, response) {}
 
-function deleteBusinessUser(userId) {}
+function deleteBusinessUser(userId, request, response) {}
 
-function putBusinessUser(userId) {}
+function putBusinessUser(userId, request, response) {}
 
-function getBusinessUsersMe() {}
+function getBusinessUsersMe(request, response) {}
 
-function putBusinessUsersMe() {}
+function putBusinessUsersMe(request, response) {}

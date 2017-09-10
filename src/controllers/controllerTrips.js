@@ -1,7 +1,7 @@
-function getUserTrips(userId) {}
+function getUserTrips(userId, request, response) {}
 
-function postTrips() {}
+function postTrips(request, response) {}
 
-function postTripEstimate() {}
+function postTripEstimate(request, response) {}
 
-function getTrip(tripId) {}
+function getTrip(tripId, request, response) {}

@@ -1,18 +1,12 @@
 var dataBase = require('./controllerDataBase.js');
-
-function basicParser(r, response){
-  return response.status(r.status).json({success: r.success, data: r.data});
-}
-
-
-
+var parser = require('./controllerParser');
 
 function getServers(request, response) {
   /*Check for autorization
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
-  dataBase.query('SELECT * FROM servers', response, basicParser);
+  dataBase.query('SELECT * FROM servers', response, parser.basicParser);
 
 }
 
@@ -21,7 +15,7 @@ function getServer(serverId, request, response) {
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
-  dataBase.query('SELECT * FROM servers WHERE id=($1)', [serverId], response, basicParser);
+  dataBase.query('SELECT * FROM servers WHERE id=($1)', [serverId], response, parser.basicParser);
 }
 
 function postServer(request, response) {}
