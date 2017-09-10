@@ -6,7 +6,7 @@ function getServers(request, response) {
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
-  dataBase.query('SELECT * FROM servers', response, parser.basicParser);
+  dataBase.query('SELECT * FROM servers', response, parser.parserServers);
 
 }
 
@@ -15,7 +15,8 @@ function getServer(serverId, request, response) {
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
-  dataBase.query('SELECT * FROM servers WHERE id=($1)', [serverId], response, parser.basicParser);
+  var q = 'SELECT * FROM servers WHERE id=\''+serverId+'\'';
+  dataBase.query(q, response, parser.parserServers);
 }
 
 function postServer(request, response) {}

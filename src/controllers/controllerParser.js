@@ -28,6 +28,10 @@ function parserUsers(r, response){
   basicParser(r, response, "users");
 }
 
+function parserServers(r, response){
+  basicParser(r, response, "servers");
+}
+
 module.exports.jsonParser = jsonParser;
 module.exports.parserUsers = parserUsers;
-//module.exports.parserServers = parserServers;
+module.exports.parserServers = parserServers;

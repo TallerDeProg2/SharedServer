@@ -16,7 +16,8 @@ function postUsersValidate(request, response) {}
 function deleteUser(userId, request, response) {}
 
 function getUser(userId, request, response) {
-  dataBase.query(('SELECT * FROM servers WHERE lastname=($1)', [userId]), response, parser.parserUsers);
+  var q = 'SELECT * FROM drivers WHERE lastname=\''+userId+'\'';
+  dataBase.query(q, response, parser.parserUsers);
 }
 
 function putUser(userId, request, response) {}
