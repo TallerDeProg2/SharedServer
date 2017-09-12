@@ -2,6 +2,12 @@ var controller = require('../controllers/controllerRules.js');
 
 var router = require('./router.js');
 
+/**#@+
+  * @lends router
+  * @borrows router as router
+  * @property routes for Rules.
+  */
+
 router.post('/rules/run', function(request, response) {
     controller.runRules(request, response);
 });
@@ -35,3 +41,5 @@ router.get('/rules/:ruleId/commits/:commitId', function(request, response) {
     var commitId = request.params.commitId;
     controller.getRuleCommit(ruleId, commitId, request, response);
 });
+
+/**#@-*/

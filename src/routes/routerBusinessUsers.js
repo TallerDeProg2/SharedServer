@@ -2,6 +2,12 @@ var controller = require('../controllers/controllerBusinessUsers.js');
 
 var router = require('./router.js');
 
+/**#@+
+  * @lends router
+  * @borrows router as router
+  * @property routes for Business Ussers.
+  */
+
 router.get('/business-users', function(request, response) {
     controller.getBusinessUsers(request, response);
 });
@@ -27,3 +33,5 @@ router.get('/business-users/me', function(request, response) {
 router.put('/business-users/me', function(request, response) {
     controller.putBusinessUsersMe(request, response);
 });
+
+/**#@-*/

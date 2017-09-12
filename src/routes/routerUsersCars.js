@@ -2,6 +2,12 @@ var controller = require('../controllers/controllerUsersCars.js');
 
 var router = require('./router.js');
 
+/**#@+
+  * @lends router
+  * @borrows router as router
+  * @property routes for Users' cars.
+  */
+
 router.get('/users/:userId/cars', function(request, response) {
     var userId = request.params.userId;
     controller.getUserCars(userId, request, response);
@@ -29,3 +35,5 @@ router.put('/users/:userId/cars/:carId', function(request, response) {
     var carId = request.params.carId;
     controller.putCar(userId, carId, request, response);
 });
+
+/**#@-*/

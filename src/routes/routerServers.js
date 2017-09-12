@@ -2,6 +2,11 @@ var controller = require('../controllers/controllerServers.js');
 
 var router = require('./router.js');
 
+/**#@+
+  * @lends router
+  * @borrows router as router
+  * @property routes for Servers.
+  */
 
 router.get('/servers', function(request, response) {
     controller.getServers(request, response);
@@ -38,3 +43,5 @@ router.post('/servers/ping', function(request, response) {
 router.post('/token', function(request, response) {
     controller.postToken(request, response);
 });
+
+/**#@-*/
