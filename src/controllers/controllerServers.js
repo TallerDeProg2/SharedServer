@@ -1,7 +1,11 @@
 var dataBase = require('./controllerDataBase.js');
 var parser = require('./controllerParser');
 
+var logger = require('../srv/log.js');
+
+var moment = require('moment');
 var format = require('string-format');
+format.extend(String.prototype);
 
 function getServers(request, response) {
   /*Check for autorization
@@ -16,7 +20,7 @@ function getServer(serverId, request, response) {
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
-  var q = 'SELECT * FROM servers WHERE id={}'.format(serverId);
+  var q = 'SELECT * FROM servers WHERE id=\'{}\''.format(serverId);
   dataBase.query(q, response, parser.parserServers);
 }
 
@@ -26,15 +30,22 @@ function postServer(request, response) {
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
+
+  var now = moment();
+  var formatted = now.format('YYYY-MM-DD HH:mm:ss Z');
+
   var id = "";
   var _ref = "";
   var createdBy = request.body.createdBy;
-  var createdTime = request.body.createdTime;
+  var createdTime = formatted; //request.body.createdTime;
   var name = request.body.name;
-  var lastConnection = "";
+  var lastConnection = formatted;
   var token = "";
-  var exp = "";
-  var q = 'INSERT INTO servers(id, _ref, createdBy, createdTime, name, lastConnection, token, tokenexp) values({},{},{},{},{},{},{},{})'.format(id, _ref, createdBy, createdTime, name, lastConnection);
+  var exp = formatted;
+  logger.info(createdBy);
+  logger.info(createdTime);
+  logger.info(name);
+  var q = 'INSERT INTO servers(id, _ref, createdBy, createdTime, name, lastConnection, token, tokenexp) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\')'.format(id, _ref, createdBy, createdTime, name, lastConnection, token, exp);
   dataBase.query(q, response, parser.parserServers);
 }
 
@@ -45,19 +56,19 @@ function putServer(serverId, request, response) {
   }*/
   var _ref = request.body._ref;
   var name = request.body.name;
-  var q = 'UPDATE servers SET _ref={}, name={} WHERE id={}'.format(_ref, name, serverId);
+  var q = 'UPDATE servers SET _ref=\'{}\', name=\'{}\' WHERE id=\'{}\''.format(_ref, name, serverId);
   dataBase.query(q, response, parser.parserServers);
 
 }
 
-function postServer(serverId, request, response) {
+function postServerToken(serverId, request, response) {
   /*Check for autorization
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
   var token = "";
   var exp = "";
-  var q = 'UPDATE servers SET token={}, tokenexp={} WHERE id={}'.format(token, exp, serverId);
+  var q = 'UPDATE servers SET token=\'{}\', tokenexp=\'{}\' WHERE id=\'{}\''.format(token, exp, serverId);
   dataBase.query(q, response, parser.parserServers);
 }
 
@@ -73,3 +84,14 @@ function deleteServer(serverId, request, response) {
 function postServerPing(request, response) {}
 
 function postToken(request, response) {}
+
+module.exports = {
+    postServer : postServer,
+    getServers : getServers,
+    getServer : getServer,
+    putServer : putServer,
+    postServerToken : postServerToken,
+    postToken : postToken,
+    postServerPing : postServerPing,
+    deleteServer : deleteServer
+};

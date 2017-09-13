@@ -28,7 +28,7 @@ router.put('/servers/:serverId', function(request, response) {
 
 router.post('/servers/:serverId', function(request, response) {
     var serverId = request.params.serverId;
-    controller.postServer(serverId, request, response);
+    controller.postServerToken(serverId, request, response);
 });
 
 router.delete('/servers/:serverId', function(request, response) {

@@ -1,9 +1,10 @@
 var winston = require('winston');
 
 /**
-  * Initializes a log for the app with three differents streams (info, warn
+  * Log for the app with three differents streams (info, warn
       and error).
-  * @class Represents a Logger.
+  * @class
+  * @constructor Initializes a log.
   */
 var logger = new (winston.Logger)({
   transports: [
