@@ -145,11 +145,11 @@ function parserServerGet(r, response){
 
 function parserServersGet(r,response){
   var jObj = {};
-  jObj["metadata"] = metadata();
-  jObj["servers"] = [];
+  jObj.metadata = metadata();
+  jObj.servers = [];
   for (var i = 0; i < r.data.length; i++) {
     var data = r.data[i];
-    jObj["servers"][i] = {
+    jObj.servers[i] = {
       "id": data.id,
       "_ref": data.id._ref,
       "createdBy": data.createdBy,
