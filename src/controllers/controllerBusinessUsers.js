@@ -8,7 +8,7 @@ function getBusinessUsers(request, response) {
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
-  dataBase.query('SELECT * FROM businessusers', response, parser.parserBusinessUsers);
+  dataBase.query('SELECT * FROM businessusers', response, parser.parserBusinessUsers, 200);
 }
 
 function postBusinessUsers(request, response) {}

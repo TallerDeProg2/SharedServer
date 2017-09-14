@@ -12,7 +12,8 @@ function getServers(request, response) {
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
-  dataBase.query('SELECT * FROM servers', response, parser.parserServers);
+  var q = 'SELECT * FROM servers';
+  dataBase.query(q, response, parser.parserServers, 200);
 }
 
 function getServer(serverId, request, response) {
@@ -21,7 +22,7 @@ function getServer(serverId, request, response) {
     return res.status(500).json({success: false, data: err});
   }*/
   var q = 'SELECT * FROM servers WHERE id=\'{}\''.format(serverId);
-  dataBase.query(q, response, parser.parserServers);
+  dataBase.query(q, response, parser.parserServers, 200);
 }
 
 
@@ -46,7 +47,7 @@ function postServer(request, response) {
   logger.info(createdTime);
   logger.info(name);
   var q = 'INSERT INTO servers(id, _ref, createdBy, createdTime, name, lastConnection, token, tokenexp) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\')'.format(id, _ref, createdBy, createdTime, name, lastConnection, token, exp);
-  dataBase.query(q, response, parser.parserServers);
+  dataBase.query(q, response, parser.parserServers, 201);
 }
 
 function putServer(serverId, request, response) {
@@ -57,7 +58,7 @@ function putServer(serverId, request, response) {
   var _ref = request.body._ref;
   var name = request.body.name;
   var q = 'UPDATE servers SET _ref=\'{}\', name=\'{}\' WHERE id=\'{}\''.format(_ref, name, serverId);
-  dataBase.query(q, response, parser.parserServers);
+  dataBase.query(q, response, parser.parserServers, 200);
 
 }
 
@@ -69,7 +70,7 @@ function postServerToken(serverId, request, response) {
   var token = "";
   var exp = "";
   var q = 'UPDATE servers SET token=\'{}\', tokenexp=\'{}\' WHERE id=\'{}\''.format(token, exp, serverId);
-  dataBase.query(q, response, parser.parserServers);
+  dataBase.query(q, response, parser.parserServers, 201);
 }
 
 function deleteServer(serverId, request, response) {
@@ -78,7 +79,7 @@ function deleteServer(serverId, request, response) {
     return res.status(500).json({success: false, data: err});
   }*/
   var q = 'DELETE * FROM servers WHERE id=\''+serverId+'\'';
-  dataBase.query(q, response, parser.parserServers);
+  dataBase.query(q, response, parser.parserServers, 204);
 }
 
 function postServerPing(request, response) {}

@@ -6,7 +6,7 @@ function getUsers(request, response) {
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
-  dataBase.query('SELECT * FROM drivers', response, parser.parserUsers);
+  dataBase.query('SELECT * FROM users', response, parser.parserUsers, 200);
 }
 
 function postUsers(request, response) {}
@@ -16,8 +16,8 @@ function postUsersValidate(request, response) {}
 function deleteUser(userId, request, response) {}
 
 function getUser(userId, request, response) {
-  var q = 'SELECT * FROM drivers WHERE lastname=\''+userId+'\'';
-  dataBase.query(q, response, parser.parserUsers);
+  var q = 'SELECT * FROM users WHERE id=\''+userId+'\'';
+  dataBase.query(q, response, parser.parserUsers, 200);
 }
 
 function putUser(userId, request, response) {}
