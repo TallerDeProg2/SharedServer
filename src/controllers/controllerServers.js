@@ -1,5 +1,5 @@
 var dataBase = require('./controllerDataBase.js');
-var parser = require('./controllerParser');
+var parser = require('./controllerParser.js');
 
 var logger = require('../srv/log.js');
 
@@ -13,7 +13,7 @@ function getServers(request, response) {
     return res.status(500).json({success: false, data: err});
   }*/
   var q = 'SELECT * FROM servers';
-  dataBase.query(q, response, parser.parserServers, 200);
+  dataBase.query(q, response, parser.parserServersGet);
 }
 
 function getServer(serverId, request, response) {
@@ -22,7 +22,7 @@ function getServer(serverId, request, response) {
     return res.status(500).json({success: false, data: err});
   }*/
   var q = 'SELECT * FROM servers WHERE id=\'{}\''.format(serverId);
-  dataBase.query(q, response, parser.parserServers, 200);
+  dataBase.query(q, response, parser.parserServerGet);
 }
 
 
@@ -33,21 +33,21 @@ function postServer(request, response) {
   }*/
 
   var now = moment();
-  var formatted = now.format('YYYY-MM-DD HH:mm:ss Z');
+  var exp_date = moment(now).add(1, 'day'); //token duration is one day.
+  var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+  var exp_date_fr = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
 
   var id = "";
   var _ref = "";
   var createdBy = request.body.createdBy;
-  var createdTime = formatted; //request.body.createdTime;
+  var createdTime = request.body.createdTime;
   var name = request.body.name;
-  var lastConnection = formatted;
+  var lastConnection = now_fr;
   var token = "";
-  var exp = formatted;
-  logger.info(createdBy);
-  logger.info(createdTime);
-  logger.info(name);
+  var exp = exp_date_fr;
+
   var q = 'INSERT INTO servers(id, _ref, createdBy, createdTime, name, lastConnection, token, tokenexp) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\')'.format(id, _ref, createdBy, createdTime, name, lastConnection, token, exp);
-  dataBase.query(q, response, parser.parserServers, 201);
+  dataBase.query(q, response, parser.parserServersPost);
 }
 
 function putServer(serverId, request, response) {
@@ -58,7 +58,7 @@ function putServer(serverId, request, response) {
   var _ref = request.body._ref;
   var name = request.body.name;
   var q = 'UPDATE servers SET _ref=\'{}\', name=\'{}\' WHERE id=\'{}\''.format(_ref, name, serverId);
-  dataBase.query(q, response, parser.parserServers, 200);
+  dataBase.query(q, response, parser.parserServersPut);
 
 }
 
@@ -70,7 +70,7 @@ function postServerToken(serverId, request, response) {
   var token = "";
   var exp = "";
   var q = 'UPDATE servers SET token=\'{}\', tokenexp=\'{}\' WHERE id=\'{}\''.format(token, exp, serverId);
-  dataBase.query(q, response, parser.parserServers, 201);
+  dataBase.query(q, response, parser.parserServersPost);
 }
 
 function deleteServer(serverId, request, response) {
@@ -78,8 +78,8 @@ function deleteServer(serverId, request, response) {
   if (!aut){
     return res.status(500).json({success: false, data: err});
   }*/
-  var q = 'DELETE * FROM servers WHERE id=\''+serverId+'\'';
-  dataBase.query(q, response, parser.parserServers, 204);
+  var q = 'DELETE * FROM servers WHERE id=\'{}\''.format(serverId);
+  dataBase.query(q, response, parser.parserServersDelete);
 }
 
 function postServerPing(request, response) {}
