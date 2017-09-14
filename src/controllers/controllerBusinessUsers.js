@@ -1,11 +1,22 @@
-function getBusinessUsers() {}
+var dataBase = require('./controllerDataBase.js');
+var parser = require('./controllerParser');
 
-function postBusinessUsers() {}
+var format = require('string-format');
 
-function deleteBusinessUser(userId) {}
+function getBusinessUsers(request, response) {
+  /*Check for autorization
+  if (!aut){
+    return res.status(500).json({success: false, data: err});
+  }*/
+  dataBase.query('SELECT * FROM businessusers', response, parser.parserBusinessUsers, 200);
+}
 
-function putBusinessUser(userId) {}
+function postBusinessUsers(request, response) {}
 
-function getBusinessUsersMe() {}
+function deleteBusinessUser(userId, request, response) {}
 
-function putBusinessUsersMe() {}
+function putBusinessUser(userId, request, response) {}
+
+function getBusinessUsersMe(request, response) {}
+
+function putBusinessUsersMe(request, response) {}

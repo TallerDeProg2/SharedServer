@@ -2,35 +2,46 @@ var controller = require('../controllers/controllerServers.js');
 
 var router = require('./router.js');
 
+/**#@+
+  * @lends router
+  * @borrows router as router
+  * @property routes for Servers.
+  */
 
 router.get('/servers', function(request, response) {
-    controller.getServers();
+    controller.getServers(request, response);
 });
 
-router.get('/servers/{serverId}', function(request, response) { 
-    controller.getServer(serverId);
+router.get('/servers/:serverId', function(request, response) {
+    var serverId = request.params.serverId;
+    controller.getServer(serverId, request, response);
 });
 
 router.post('/servers', function(request, response) {
-    controller.postServer();
+    controller.postServer(request, response);
 });
 
-router.put('/servers/{serverId}', function(request, response) {
-    controller.putServer(serverId);
+router.put('/servers/:serverId', function(request, response) {
+    var serverId = request.params.serverId;
+    controller.putServer(serverId, request, response);
 });
 
-router.post('/servers/{serverId}', function(request, response) {
-    controller.postServer(serverId);
+router.post('/servers/:serverId', function(request, response) {
+    var serverId = request.params.serverId;
+    controller.postServerToken(serverId, request, response);
 });
 
-router.delete('/servers/{serverId}', function(request, response) {
-    controller.deleteServer(serverId);
+router.delete('/servers/:serverId', function(request, response) {
+    var serverId = request.params.serverId;
+    controller.deleteServer(serverId, request, response);
 });
 
 router.post('/servers/ping', function(request, response) {
-    controller.postServerPing();
+    controller.postServerPing(request, response);
 });
 
 router.post('/token', function(request, response) {
-    controller.postToken();
+    controller.postToken(request, response);
 });
+
+/**#@-*/

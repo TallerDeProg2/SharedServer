@@ -2,26 +2,36 @@ var controller = require('../controllers/controllerBusinessUsers.js');
 
 var router = require('./router.js');
 
+/**#@+
+  * @lends router
+  * @borrows router as router
+  * @property routes for Business Ussers.
+  */
+
 router.get('/business-users', function(request, response) {
-    controller.getBusinessUsers();
+    controller.getBusinessUsers(request, response);
 });
 
 router.post('/business-users', function(request, response) {
-    controller.postBusinessUsers();
+    controller.postBusinessUsers(request, response);
 });
 
-router.delete('/business-users/{userId}', function(request, response) {
-    controller.deleteBusinessUser(userId);
+router.delete('/business-users/:userId', function(request, response) {
+    var userId = request.params.userId;
+    controller.deleteBusinessUser(userId, request, response);
 });
 
-router.put('/business-users/{userId}', function(request, response) {
-    controller.putBusinessUser(userId);
+router.put('/business-users/:userId', function(request, response) {
+    var userId = request.params.userId;
+    controller.putBusinessUser(userId, request, response);
 });
 
 router.get('/business-users/me', function(request, response) {
-    controller.getBusinessUsersMe();
+    controller.getBusinessUsersMe(request, response);
 });
 
 router.put('/business-users/me', function(request, response) {
-    controller.putBusinessUsersMe();
+    controller.putBusinessUsersMe(request, response);
 });
+
+/**#@-*/

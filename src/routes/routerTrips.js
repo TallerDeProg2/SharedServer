@@ -2,18 +2,28 @@ var controller = require('../controllers/controllerTrips.js');
 
 var router = require('./router.js');
 
-router.get('/users/{userId}/trips', function(request, response) {
-    controller.getUserTrips(userId);
+/**#@+
+  * @lends router
+  * @borrows router as router
+  * @property routes for Trips.
+  */
+
+router.get('/users/:userId/trips', function(request, response) {
+    var userId = request.params.userId;
+    controller.getUserTrips(userId, request, response);
 });
 
 router.post('/trips', function(request, response) {
-    controller.postTrips();
+    controller.postTrips(request, response);
 });
 
 router.post('/trips/estimate', function(request, response) {
-    controller.postTripEstimate();
+    controller.postTripEstimate(request, response);
 });
 
-router.get('/trips/{tripId}', function(request, response) {
-    controller.getTrip(tripId);
+router.get('/trips/:tripId', function(request, response) {
+    var tripId = request.params.tripId;
+    controller.getTrip(tripId, request, response);
 });
+
+/**#@-*/
