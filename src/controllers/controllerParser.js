@@ -9,11 +9,8 @@ function reducedParser(r, response){
   return response.status(r.status).json({code: r.status, message: r.data});
 }
 
-function extendedParser(r, response, tag, ok_status){
-  if (!r.success){
-    return reducedParser(r, response);
-  }
-  var jObj = {metadada: { //TODO: complete
+function metadata(){
+  var jObj = { //TODO: complete
     "count": 0,
     "total": 0,
     "next": "string",
@@ -21,7 +18,15 @@ function extendedParser(r, response, tag, ok_status){
     "first": "string",
     "last": "string",
     "version": "string"
-  }};
+  };
+  return jObj;
+}
+
+function extendedParser(r, response, tag, ok_status){
+  if (!r.success){
+    return reducedParser(r, response);
+  }
+  var jObj = metadata();
   jObj[tag] = r.data;
   return response.status(ok_status).json(jObj);
 }
@@ -80,26 +85,87 @@ function parserServers(r, response, ok_status){
   extendedParser(r, response, "servers", ok_status);
 }
 
+
 function parserServersPost(r, response){
-  parserServers(r, response, 201);
+  if (!r.success){
+    return reducedParser(r, response);
+  }
+  var jObj = {
+    "metadata": {
+      "version": "string"
+    },
+    "server": {
+      "server": {
+        "id": r.data[0].id,
+        "_ref": r.data[0].id._ref,
+        "createdBy": r.data[0].createdBy,
+        "createdTime": r.data[0].createdTime,
+        "name": r.data[0].name,
+        "lastConnection": r.data[0].lastConnection
+      },
+      "token": {
+        "expiresAt": r.data[0].tokenexp,
+        "token": r.data[0].token
+      }
+    }
+  };
+  return response.status(201).json(jObj);
 }
 
 function parserServersPut(r, response){
-  parserServers(r, response, 200);
+  if (!r.success){
+    return reducedParser(r, response);
+  }
+  var jObj = {
+    "metadata": {
+      "version": "string"
+    },
+    "server": {
+      "id": r.data[0].id,
+      "_ref": r.data[0].id._ref,
+      "createdBy": r.data[0].createdBy,
+      "createdTime": r.data[0].createdTime,
+      "name": r.data[0].name,
+      "lastConnection": r.data[0].lastConnection
+    }
+  };
+  return response.status(200).json(jObj);
 }
 
 function parserServersDelete(r, response){
-  parserServers(r, response, 204);
+  if (!r.success){
+    return reducedParser(r, response);
+  }
+  return response.status(204);
 }
 
-function parserServersGet(r, response){
-  parserServers(r, response, 200);
+function parserServerGet(r, response){
+  return parserServersPut(r,response);
+}
+
+function parserServersGet(r,response){
+  var jObj = {};
+  jObj["metadata"] = metadata();
+  jObj["servers"] = [];
+  for (var i = 0; i < r.data.length; i++) {
+    var data = r.data[i];
+    jObj["servers"][i] = {
+      "id": data.id,
+      "_ref": data.id._ref,
+      "createdBy": data.createdBy,
+      "createdTime": data.createdTime,
+      "name": data.name,
+      "lastConnection": data.lastConnection
+    };
+  }
+  return response.status(200).json(jObj);
 }
 
 //----------------------------------------------//
 
 module.exports = {
     parserServersGet : parserServersGet,
+    parserServerGet : parserServerGet,
     parserServersDelete : parserServersDelete,
     parserServersPut : parserServersPut,
     parserServersPost : parserServersPost,

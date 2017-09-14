@@ -22,7 +22,7 @@ function getServer(serverId, request, response) {
     return res.status(500).json({success: false, data: err});
   }*/
   var q = 'SELECT * FROM servers WHERE id=\'{}\''.format(serverId);
-  dataBase.query(q, response, parser.parserServersGet);
+  dataBase.query(q, response, parser.parserServerGet);
 }
 
 
