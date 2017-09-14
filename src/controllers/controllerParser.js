@@ -144,6 +144,10 @@ function parserServersPut(r, response){
 }
 
 function parserServersDelete(r, response){
+  if (!r.data.length){
+    r.status = 404;
+    r.success = false;
+  }
   if (!r.success){
     return reducedParser(r, response);
   }
@@ -151,6 +155,10 @@ function parserServersDelete(r, response){
 }
 
 function parserServerGet(r, response){
+  if (!r.data.length){
+    r.status = 404;
+    r.success = false;
+  }
   return parserServersPut(r,response);
 }
 

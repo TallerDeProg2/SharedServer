@@ -49,6 +49,10 @@ function postServer(request, response) {
   var token = token.createToken();
   var exp = exp_date_fr;
 
+  if (!createdBy || !createdTime || !name){
+    return parser.parserServersPost({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+  }
+
   var q = 'INSERT INTO servers(id, _ref, createdBy, createdTime, name, lastConnection, token, tokenexp) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\')'.format(id, _ref, createdBy, createdTime, name, lastConnection, token, exp);
   dataBase.query(q, response, parser.parserServersPost);
 }
