@@ -26,8 +26,19 @@ function extendedParser(r, response, tag, ok_status){
   if (!r.success){
     return reducedParser(r, response);
   }
-  var jObj = metadata();
+  var jObj = {};
+  jObj.metadata = metadata();
   jObj[tag] = r.data;
+  return response.status(ok_status).json(jObj);
+}
+
+function extendedParserSingle(r, response, tag, ok_status){
+  if (!r.success){
+    return reducedParser(r, response);
+  }
+  var jObj = {};
+  jObj.metadata = metadata();
+  jObj[tag] = r.data[0];
   return response.status(ok_status).json(jObj);
 }
 
@@ -133,6 +144,10 @@ function parserServersPut(r, response){
 }
 
 function parserServersDelete(r, response){
+  if (!r.data.length){
+    r.status = 404;
+    r.success = false;
+  }
   if (!r.success){
     return reducedParser(r, response);
   }
@@ -140,6 +155,10 @@ function parserServersDelete(r, response){
 }
 
 function parserServerGet(r, response){
+  if (!r.data.length){
+    r.status = 404;
+    r.success = false;
+  }
   return parserServersPut(r,response);
 }
 
