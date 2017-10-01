@@ -1,4 +1,4 @@
-var controller = require('../controllers/controllerServers.js');
+var controller = require('../controllers/controllerRoutes/controllerServers.js');
 
 var router = require('./router.js');
 

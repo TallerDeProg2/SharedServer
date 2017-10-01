@@ -1,9 +1,11 @@
-var dataBase = require('./controllerDataBase.js');
-var parser = require('./controllerParser.js');
-var controllerAuth = require('./controllerAuth.js');
+var dataBase = require('../controllerData/controllerDataBase.js');
+var parser = require('../controllerData/controllerParser.js');
 
-var id = require('./controllerId.js');
-var token = require('./controllerToken.js');
+var token = require('../controllerLogic/controllerToken.js');
+var id = require('../controllerLogic/controllerId.js');
+
+var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
+
 //var ref = require('./controllerRef.js');
 
 var logger = require('../srv/log.js');

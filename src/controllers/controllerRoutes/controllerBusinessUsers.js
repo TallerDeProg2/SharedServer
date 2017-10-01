@@ -1,7 +1,8 @@
-var dataBase = require('./controllerDataBase.js');
-var parser = require('./controllerParser.js');
-var token = require('./controllerToken.js');
-var id = require('./controllerId.js');
+var dataBase = require('../controllerData/controllerDataBase.js');
+var parser = require('../controllerData/controllerParser.js');
+var token = require('../controllerLogic/controllerToken.js');
+var id = require('../controllerLogic/controllerId.js');
+var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
 var format = require('string-format');
 format.extend(String.prototype);

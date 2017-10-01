@@ -1,5 +1,5 @@
 var assert = require('assert');
-var controller = require('../src/controllers/controllerAuthorization.js');
+var controller = require('../src/controllers/controllerLogic/controllerAuthorization.js');
 
 var moment = require('moment');
 var format = require('string-format');
@@ -7,10 +7,10 @@ format.extend(String.prototype);
 
 describe('controllerAuthorization - AuthServer', function() {
 
-  it('returns "SELECT * FROM servers WHERE token=token" when asked for query', function() {
+  it('returns "SELECT * FROM auth WHERE token=token" when asked for query', function() {
     var auth = new controller.AuthServer("token");
     var q = auth.query();
-    assert.equal(q, 'SELECT * FROM servers WHERE token=\'token\'');
+    assert.equal(q, 'SELECT * FROM auth WHERE token=\'token\'');
   });
 
   it('returns status 404 if there is no data (server)', function() {
@@ -25,7 +25,7 @@ describe('controllerAuthorization - AuthServer', function() {
     var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
     var auth = new controller.AuthServer("token");
-    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'tokenexp': expired_fr}]});
+    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'authLvl': 'server', 'tokenexp': expired_fr}]});
     assert.equal(js.status, 401);
   });
 
@@ -35,7 +35,7 @@ describe('controllerAuthorization - AuthServer', function() {
     var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
     var auth = new controller.AuthServer("token");
-    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'tokenexp': expired_fr}]});
+    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'authLvl': 'server', 'tokenexp': expired_fr}]});
     assert.equal(js.status, 200);
   });
 
@@ -43,10 +43,10 @@ describe('controllerAuthorization - AuthServer', function() {
 
 describe('controllerAuthorization - AuthUser', function() {
 
-    it('returns "SELECT * FROM users WHERE token=token" when asked for query', function() {
+    it('returns "SELECT * FROM auth WHERE token=token" when asked for query', function() {
       var auth = new controller.AuthUser("token");
       var q = auth.query();
-      assert.equal(q, 'SELECT * FROM users WHERE token=\'token\'');
+      assert.equal(q, 'SELECT * FROM auth WHERE token=\'token\'');
     });
 
     it('returns status 404 if there is no data (user)', function() {
@@ -61,7 +61,7 @@ describe('controllerAuthorization - AuthUser', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthUser("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'tokenexp': expired_fr}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'authLvl': 'user', 'tokenexp': expired_fr}]});
       assert.equal(js.status, 401);
     });
 
@@ -71,7 +71,7 @@ describe('controllerAuthorization - AuthUser', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthUser("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'tokenexp': expired_fr}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'authLvl': 'user', 'tokenexp': expired_fr}]});
       assert.equal(js.status, 200);
     });
 
@@ -79,10 +79,10 @@ describe('controllerAuthorization - AuthUser', function() {
 
 describe('controllerAuthorization - AuthManager', function() {
 
-    it('returns "SELECT * FROM users WHERE token=token" when asked for query', function() {
+    it('returns "SELECT * FROM auth WHERE token=token" when asked for query', function() {
       var auth = new controller.AuthManager("token");
       var q = auth.query();
-      assert.equal(q, 'SELECT * FROM users WHERE token=\'token\'');
+      assert.equal(q, 'SELECT * FROM auth WHERE token=\'token\'');
     });
 
     it('returns status 404 if there is no data (manager)', function() {
@@ -135,10 +135,10 @@ describe('controllerAuthorization - AuthManager', function() {
 
 describe('controllerAuthorization - AuthAdmin', function() {
 
-    it('returns "SELECT * FROM users WHERE token=token" when asked for query', function() {
+    it('returns "SELECT * FROM auth WHERE token=token" when asked for query', function() {
       var auth = new controller.AuthAdmin("token");
       var q = auth.query();
-      assert.equal(q, 'SELECT * FROM users WHERE token=\'token\'');
+      assert.equal(q, 'SELECT * FROM auth WHERE token=\'token\'');
     });
 
     it('returns status 404 if there is no data (admin)', function() {

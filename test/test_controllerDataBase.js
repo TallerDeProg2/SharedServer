@@ -1,5 +1,5 @@
 var assert = require('assert');
-var controller = require('../src/controllers/controllerDataBase.js');
+var controller = require('../src/controllers/controllerData/controllerDataBase.js');
 var logger = require('../src/srv/log.js');
 
 //var uri = 'postgres://postgres:postgres@localhost:5432/postgres';
