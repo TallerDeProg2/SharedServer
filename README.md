@@ -1,4 +1,4 @@
-# SharedServer
+# SharedServer [![Bless](https://cdn.rawgit.com/LunaGao/BlessYourCodeTag/master/tags/alpaca.svg)](http://lunagao.github.io/BlessYourCodeTag/)
 Repositorio para el SharedServer.
 
 
