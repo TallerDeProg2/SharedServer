@@ -1,7 +1,10 @@
+const version = '1.0';
+
 function jsonParser(j) {
   var str = JSON.stringify(j);
   return JSON.parse(str);
 }
+
 
 //----------------------->Basic Parsers<-----------------------//
 
@@ -9,18 +12,15 @@ function reducedParser(r, response){
   return response.status(r.status).json({code: r.status, message: r.data});
 }
 
-function metadata(){
-  var jObj = { //TODO: complete
-    "count": 0,
+function metadata(data){
+  var jObj = {
+    "count": data.length,
     "total": 0,
-    "next": "string",
-    "prev": "string",
-    "first": "string",
-    "last": "string",
-    "version": "string"
+    "version": version
   };
   return jObj;
 }
+
 
 function extendedParser(r, response, tag, ok_status){
   if (!r.success){
@@ -103,7 +103,7 @@ function parserServersPost(r, response){
   }
   var jObj = {
     "metadata": {
-      "version": "string"
+      "version": version
     },
     "server": {
       "server": {
@@ -129,7 +129,7 @@ function parserServersPut(r, response){
   }
   var jObj = {
     "metadata": {
-      "version": "string"
+      "version": version
     },
     "server": {
       "id": r.data[0].id,

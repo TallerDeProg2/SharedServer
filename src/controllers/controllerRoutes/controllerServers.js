@@ -1,8 +1,12 @@
-var dataBase = require('./controllerDataBase.js');
-var parser = require('./controllerParser.js');
+var dataBase = require('../controllerData/controllerDataBase.js');
+var parser = require('../controllerData/controllerParser.js');
 
-var id = require('./controllerId.js');
-var token = require('./controllerToken.js');
+var token = require('../controllerLogic/controllerToken.js');
+var id = require('../controllerLogic/controllerId.js');
+
+var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
+
+//var ref = require('./controllerRef.js');
 
 var logger = require('../srv/log.js');
 
@@ -11,29 +15,23 @@ var format = require('string-format');
 format.extend(String.prototype);
 
 function getServers(request, response) {
-  /*Check for autorization
-  if (!aut){
-    return res.status(500).json({success: false, data: err});
-  }*/
+  var tk = request.header.token;
+  var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM servers';
-  dataBase.query(q, response, parser.parserServersGet);
+  dataBase.query(q, response, parser.parserServersGet, auth);
 }
 
 function getServer(serverId, request, response) {
-  /*Check for autorization
-  if (!aut){
-    return res.status(500).json({success: false, data: err});
-  }*/
+  var tk = request.header.token;
+  var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM servers WHERE id=\'{}\''.format(serverId);
-  dataBase.query(q, response, parser.parserServerGet);
+  dataBase.query(q, response, parser.parserServerGet, auth);
 }
 
 
 function postServer(request, response) {
-  /*Check for autorization
-  if (!aut){
-    return res.status(500).json({success: false, data: err});
-  }*/
+  var tk = request.header.token;
+  var auth = new controllerAuth.AuthManager(tk);
 
   var now = moment();
   var exp_date = moment(now).add(1, 'day'); //token duration is one day.
@@ -54,47 +52,52 @@ function postServer(request, response) {
   }
 
   var q = 'INSERT INTO servers(id, _ref, createdBy, createdTime, name, lastConnection, token, tokenexp) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\')'.format(id, _ref, createdBy, createdTime, name, lastConnection, token, exp);
-  dataBase.query(q, response, parser.parserServersPost);
+  dataBase.query(q, response, parser.parserServersPost, auth);
 }
 
 function putServer(serverId, request, response) {
-  /*Check for autorization
-  if (!aut){
-    return res.status(500).json({success: false, data: err});
-  }*/
-  var _ref = request.body._ref;
+  var tk = request.header.token;
+  var auth = new controllerAuth.AuthManager(tk);
+
+  var _ref = "";
   var name = request.body.name;
   var q = 'UPDATE servers SET _ref=\'{}\', name=\'{}\' WHERE id=\'{}\''.format(_ref, name, serverId);
-  dataBase.query(q, response, parser.parserServersPut);
-
+  dataBase.query(q, response, parser.parserServersPut, auth);
 }
 
 function postServerToken(serverId, request, response) {
-  /*Check for autorization
-  if (!aut){
-    return res.status(500).json({success: false, data: err});
-  }*/
+  var tk = request.header.token;
+  var auth = new controllerAuth.AuthManager(tk);
+
   var now = moment();
   var exp_date = moment(now).add(1, 'day'); //token duration is one day.
 
   var token = token.createToken();
   var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
   var q = 'UPDATE servers SET token=\'{}\', tokenexp=\'{}\' WHERE id=\'{}\''.format(token, exp, serverId);
-  dataBase.query(q, response, parser.parserServersPost);
+  dataBase.query(q, response, parser.parserServersPost, auth);
 }
 
 function deleteServer(serverId, request, response) {
-  /*Check for autorization
-  if (!aut){
-    return res.status(500).json({success: false, data: err});
-  }*/
+  var tk = request.header.token;
+  var auth = new controllerAuth.AuthManager(tk);
+
   var q = 'DELETE * FROM servers WHERE id=\'{}\''.format(serverId);
-  dataBase.query(q, response, parser.parserServersDelete);
+  dataBase.query(q, response, parser.parserServersDelete, auth);
 }
 
-function postServerPing(request, response) {}
+function postServerPing(request, response) {
+  var tk = request.header.token;
+  var auth = new controllerAuth.AuthServer(tk);
 
-function postToken(request, response) {}
+  var now = moment();
+  var exp_date = moment(now).add(1, 'day'); //token duration is one day.
+
+  var token = token.createToken();
+  var lastConnection = now.format('YYYY-MM-DD HH:mm:ss Z');
+  var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
+  var q = 'UPDATE servers SET token=\'{}\', tokenexp=\'{}\', lastConnection=\'{}\' WHERE token=\'{}\''.format(token, exp, lastConnection, tk);
+}
 
 module.exports = {
     postServer : postServer,
@@ -102,7 +105,6 @@ module.exports = {
     getServer : getServer,
     putServer : putServer,
     postServerToken : postServerToken,
-    postToken : postToken,
     postServerPing : postServerPing,
     deleteServer : deleteServer
 };
