@@ -18,10 +18,10 @@ class Auth{
     if (data.rol == "server"){
       return data.rol;
     }
-    if (data.json.roles.indexOf(obtainAuthLvl("admin") != -1)){
+    if (data.json.roles.indexOf("admin") != -1){
       return "admin";
     }
-    if (data.json.roles.indexOf(obtainAuthLvl("manager") != -1)){
+    if (data.json.roles.indexOf("manager") != -1){
       return "manager";
     }
     return "user";
