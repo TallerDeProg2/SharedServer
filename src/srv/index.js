@@ -50,3 +50,5 @@ app.listen(app.get('port'), function() {
   logger.info('Escuchando puerto ', app.get('port'));
   debug('Escuchando puerto %o', app.get('port'));
 });
+
+module.exports = app;

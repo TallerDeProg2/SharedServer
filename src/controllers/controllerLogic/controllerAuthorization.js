@@ -4,7 +4,6 @@ var moment = require('moment');
 var format = require('string-format');
 format.extend(String.prototype);
 
-
 class Auth{
   constructor(token, tags){
     this.token = token;
@@ -12,7 +11,20 @@ class Auth{
   }
 
   query(){
-    return 'SELECT * FROM auth WHERE token=\'{}\''.format(this.token);
+    return 'SELECT * FROM srvUsers WHERE token=\'{}\''.format(this.token);
+  }
+
+  obtainAuthLvl(data){
+    if (data.rol == "server"){
+      return data.rol;
+    }
+    if (data.json.roles.indexOf(obtainAuthLvl("admin") != -1)){
+      return "admin";
+    }
+    if (data.json.roles.indexOf(obtainAuthLvl("manager") != -1)){
+      return "manager";
+    }
+    return "user";
   }
 
   checkAuthorization(r, type){
@@ -23,7 +35,7 @@ class Auth{
     var now = moment();
     if (exp.isBefore(now) ){
       return {'success': false, 'status': 401, 'data': "Token expired."};
-    }if (this.tags.indexOf(r.data[0].authLvl) == -1){
+    }if (this.tags.indexOf(this.obtainAuthLvl(r.data[0])) == -1){
       return {'success': false, 'status': 401, 'data': "Unauthorized"};
     }
     return {'success': true, 'status': 200, 'data': "Ok"};
@@ -34,6 +46,10 @@ class AuthServer extends Auth{
 
   constructor(token){
     super(token, ["server"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
   }
 
   query(){
@@ -52,6 +68,10 @@ class AuthAdmin extends Auth{
     super(token, ["admin"]);
   }
 
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
   query(){
     return super.query();
   }
@@ -65,6 +85,10 @@ class AuthManager extends Auth{
 
   constructor(token){
     super(token, ["admin", "manager"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
   }
 
   query(){
@@ -82,6 +106,10 @@ class AuthUser extends Auth{
     super(token, ["manager", "admin", "user"]);
   }
 
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
   query(){
     return super.query();
   }
@@ -95,6 +123,10 @@ class AuthUserServer extends Auth{
 
   constructor(token){
     super(token, ["manager", "admin", "user", "server"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
   }
 
   query(){
@@ -112,6 +144,10 @@ class AuthManagerServer extends Auth{
     super(token, ["manager", "admin", "server"]);
   }
 
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
   query(){
     return super.query();
   }
@@ -125,6 +161,10 @@ class AuthAdminServer extends Auth{
 
   constructor(token){
     super(token, ["admin", "server"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
   }
 
   query(){
