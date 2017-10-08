@@ -2,10 +2,6 @@ var assert = require('assert');
 var controller = require('../src/controllers/controllerData/controllerDataBase.js');
 var logger = require('../src/srv/log.js');
 
-//var uri = 'postgres://postgres:postgres@localhost:5432/postgres';
-//var uri = 'postgres://qiesztuyzkkrdc:7f4388c1acf33c0f8a94630cc9dec43d619d3d4bcff6a2c301b80b9601ecc7ee@ec2-23-23-244-83.compute-1.amazonaws.com:5432/defee7cf3635gv?ssl=true';
-//TODO: run local/docker
-
 //------------->Parsers for testing<---------------//
 function parserStatus500(js, response, done){
   assert.equal(js.status, 500);
@@ -18,12 +14,12 @@ function parserStatus200(js, response, done){
 }
 
 function parserNoData(js, response, done){
-  assert.equal(js.data.length, 0);
+  assert.equal(js.data_retrieved.length, 0);
   done();
 }
 
 function parserDescTest(js, response, done){
-  assert.equal(js.data[0].description, 'test');
+  assert.equal(js.data_retrieved[0].description, 'test');
   done();
 }
 

@@ -12,29 +12,32 @@ function _actualQuery(client, q, parser, response, complete, done){
   client.query(q, function(err, result) {
     done();
       if (err){
-        logger.error("Unexpected error" + err);
-        return parser({'success': false, 'status': 500, 'data': err}, response, complete); //Unexpected error.
+        logger.error("Unexpected error in line 15" + err);
+        return parser({'success': false, 'status': 500, 'data_retrieved': err}, response, complete); //Unexpected error.
       }
       else{
         results = result.rows;
         logger.info("Query, retrieved: "+ results);
-        return parser({'success': true, 'status': 200, 'data': results}, response, complete);
+        return parser({'success': true, 'status': 200, 'data_retrieved': results}, response, complete);
       }
   });
 }
 
 function unexpectedError(err, response, complete, parser){
   logger.error("Unexpected error" + err);
-  return parser({'success': false, 'status': 500, 'data': err}, response, complete); //Unexpected error.
+  logger.error(parser);
+  return parser({'success': false, 'status': 500, 'data_retrieved': err}, response, complete); //Unexpected error.
 }
 
 //-----------------------------------------------------------------------//
 
 function query(q, response, parser, auth=null, complete=null){
   logger.info("Query, message: "+ q);
+  logger.info("urii: "+uri);
   pg.connect(uri, function(err, client, done) {
     if(err){
       done();
+      logger.error("Unexpected error in line 39");
       return unexpectedError(err, response, complete, parser);
     }
     if (!auth){
@@ -43,6 +46,8 @@ function query(q, response, parser, auth=null, complete=null){
     client.query(auth.query(), function(err, result){
       if (err){
         done();
+        logger.error(auth.query());
+        logger.error("Unexpected error in line 47");
         return unexpectedError(err, response, complete);
       }
       var result_auth = auth.checkAuthorization(result);

@@ -15,14 +15,14 @@ format.extend(String.prototype);
 function getServers(request, response) {
   var tk = request.header.token;
   var auth = new controllerAuth.AuthUser(tk);
-  var q = 'SELECT * FROM srvUsers WHERE rol=\'server\'';
-  dataBase.query(q, response, parser.parserGetServers, auth);
+  var q = 'SELECT * FROM srvusers WHERE rol=\'server\';';
+  dataBase.query(q, response, parser.parserGetServers);
 }
 
 function getServer(serverId, request, response) {
   var tk = request.header.token;
   var auth = new controllerAuth.AuthUser(tk);
-  var q = 'SELECT * FROM srvUsers WHERE id=\'{}\', rol=\'server\''.format(serverId);
+  var q = 'SELECT * FROM srvusers WHERE id=\'{}\' AND rol=\'server\';'.format(serverId);
   dataBase.query(q, response, parser.parserGetServer, auth);
 }
 
@@ -50,7 +50,7 @@ function postServer(request, response) {
     return parser.parserServersPost({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
   }
 
-  var q = 'INSERT INTO srvUsers(id, _ref, rol, token, tokenexp, json) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\')'.format(id, _ref, "server", token, exp, json);
+  var q = 'INSERT INTO srvusers(id, _ref, rol, token, tokenexp, json) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\');'.format(id, _ref, "server", token, exp, json);
   dataBase.query(q, response, parser.parserPostServer, auth);
 }
 
@@ -61,7 +61,7 @@ function putServer(serverId, request, response) {
   var _ref = "";
 
   var name = request.body.name;
-  var q = 'UPDATE srvUsers SET _ref=\'{}\', json = jsonb_set(json, \'{name}\', \'{}\') WHERE id=\'{}\', rol=\'server\', _ref=\'{}\''.format(_ref, name, serverId, request.body._ref);
+  var q = 'UPDATE srvusers SET _ref=\'{}\', json = jsonb_set(json, \'{name}\', \'{}\') WHERE id=\'{}\' AND rol=\'server\' AND _ref=\'{}\';'.format(_ref, name, serverId, request.body._ref);
   dataBase.query(q, response, parser.parserPutServer, auth);
 }
 
@@ -74,7 +74,7 @@ function postServerToken(serverId, request, response) {
 
   var token = token.createToken();
   var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
-  var q = 'UPDATE srvUsers SET token=\'{}\', tokenexp=\'{}\' WHERE id=\'{}\, rol=\'server\''.format(token, exp, serverId);
+  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\' WHERE id=\'{}\' AND rol=\'server\';'.format(token, exp, serverId);
   dataBase.query(q, response, parser.parserPostServer, auth);
 }
 
@@ -82,7 +82,7 @@ function deleteServer(serverId, request, response) {
   var tk = request.header.token;
   var auth = new controllerAuth.AuthManager(tk);
 
-  var q = 'DELETE * FROM srvUsers WHERE id=\'{}\', rol=\'server\''.format(serverId);
+  var q = 'DELETE * FROM srvusers WHERE id=\'{}\' AND rol=\'server\';'.format(serverId);
   dataBase.query(q, response, parser.parserDeleteServer, auth);
 }
 
@@ -96,7 +96,7 @@ function postServerPing(request, response) {
   var token = token.createToken();
   var lastConnection = now.format('YYYY-MM-DD HH:mm:ss Z');
   var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
-  var q = 'UPDATE srvUsers SET token=\'{}\', tokenexp=\'{}\', json = jsonb_set(json, \'{lastConnection}\', \'{}\') WHERE token=\'{}\''.format(token, exp, lastConnection, tk);
+  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\', json = jsonb_set(json, \'{lastConnection}\', \'{}\') WHERE token=\'{}\';'.format(token, exp, lastConnection, tk);
   dataBase.query(q, response, parser.parserDeleteServer, auth);
 }
 
