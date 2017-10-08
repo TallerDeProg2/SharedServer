@@ -6,7 +6,9 @@ services:
   - docker
 before_script:
  - bash docker-start.sh &
-script: "npm run-script test-travis"
+script:
+ - sleep 15
+ - npm run-script test-travis
 after_script:
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - bash docker-stop.sh
