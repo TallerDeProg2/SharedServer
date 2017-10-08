@@ -7,10 +7,10 @@ format.extend(String.prototype);
 
 describe('controllerAuthorization - AuthServer', function() {
 
-  it('returns "SELECT * FROM srvUsers WHERE token=token" when asked for query', function() {
+  it('returns "SELECT * FROM srvusers WHERE token=token" when asked for query', function() {
     var auth = new controller.AuthServer("token");
     var q = auth.query();
-    assert.equal(q, 'SELECT * FROM srvUsers WHERE token=\'token\'');
+    assert.equal(q, 'SELECT * FROM srvusers WHERE token=\'token\';');
   });
 
   it('returns status 404 if there is no data (server)', function() {
@@ -43,10 +43,10 @@ describe('controllerAuthorization - AuthServer', function() {
 
 describe('controllerAuthorization - AuthUser', function() {
 
-    it('returns "SELECT * FROM srvUsers WHERE token=token" when asked for query', function() {
+    it('returns "SELECT * FROM srvusers WHERE token=token" when asked for query', function() {
       var auth = new controller.AuthUser("token");
       var q = auth.query();
-      assert.equal(q, 'SELECT * FROM srvUsers WHERE token=\'token\'');
+      assert.equal(q, 'SELECT * FROM srvusers WHERE token=\'token\';');
     });
 
     it('returns status 404 if there is no data (user)', function() {
@@ -79,10 +79,10 @@ describe('controllerAuthorization - AuthUser', function() {
 
 describe('controllerAuthorization - AuthManager', function() {
 
-    it('returns "SELECT * FROM srvUsers WHERE token=token" when asked for query', function() {
+    it('returns "SELECT * FROM srvusers WHERE token=token" when asked for query', function() {
       var auth = new controller.AuthManager("token");
       var q = auth.query();
-      assert.equal(q, 'SELECT * FROM srvUsers WHERE token=\'token\'');
+      assert.equal(q, 'SELECT * FROM srvusers WHERE token=\'token\';');
     });
 
     it('returns status 404 if there is no data (manager)', function() {
@@ -135,10 +135,10 @@ describe('controllerAuthorization - AuthManager', function() {
 
 describe('controllerAuthorization - AuthAdmin', function() {
 
-    it('returns "SELECT * FROM srvUsers WHERE token=token" when asked for query', function() {
+    it('returns "SELECT * FROM srvusers WHERE token=token" when asked for query', function() {
       var auth = new controller.AuthAdmin("token");
       var q = auth.query();
-      assert.equal(q, 'SELECT * FROM srvUsers WHERE token=\'token\'');
+      assert.equal(q, 'SELECT * FROM srvusers WHERE token=\'token\';');
     });
 
     it('returns status 404 if there is no data (admin)', function() {

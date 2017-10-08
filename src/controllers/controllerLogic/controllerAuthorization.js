@@ -11,7 +11,7 @@ class Auth{
   }
 
   query(){
-    return 'SELECT * FROM srvUsers WHERE token=\'{}\''.format(this.token);
+    return 'SELECT * FROM srvusers WHERE token=\'{}\';'.format(this.token);
   }
 
   obtainAuthLvl(data){

@@ -1,6 +1,8 @@
 var basicParser = require('./controllerParser.js');
+var logger = require('../../srv/log.js');
 
 function rdata(data){
+  logger.info("DATAAAAA", data);
   var servers = [];
   for (var i = 0; i < data.length; i++) {
       servers[i] = {
@@ -35,19 +37,31 @@ function rdataPost(data){
 }
 
 function parserGetServers(r, response) {
-  return basicParser.extendedParser(r, response, "servers", rdata(data), 200);
+  var data = r.data;
+  if (r.success){
+    data = rdata(r.data);
+  }
+  return basicParser.extendedParser(r, response, "servers", data, 200);
 }
 
 function parserGetServer(r, response){
+  var data = r.data;
+  if (r.success){
+    data = rdata(r.data)[0];
+  }
   if (!r.data.length){
     r.status = 404;
     r.success = false;
   }
-  return basicParser.extendedParser(r, response, "server", rdata(data)[0], 200);
+  return basicParser.extendedParser(r, response, "server", data, 200);
 }
 
 function parserPutServer(r, response){
-  return basicParser.extendedParser(r, response, "server", rdata(data)[0], 200);
+  var data = r.data;
+  if (r.success){
+    data = rdata(r.data)[0];
+  }
+  return basicParser.extendedParser(r, response, "server", data, 200);
 }
 
 function parserDeleteServer(r, response){
@@ -62,7 +76,11 @@ function parserDeleteServer(r, response){
 }
 
 function parserPostServer(r, response){
-  return basicParser.extendedParser(r, response, "server", rdataPost(data)[0], 201);
+  var data = r.data;
+  if (r.success){
+    data = rdataPost(r.data)[0];
+  }
+  return basicParser.extendedParser(r, response, "server", data, 201);
 }
 
 
