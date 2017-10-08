@@ -27,13 +27,13 @@ describe('Servers endpoints', function() {
           });
     });
 
-    /*it('it should GET one server with id = "1"', function(done) {
+    it('it should GET one server with id = "1"', function(done) {
       chai.request(server)
           .get('/servers/1')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(200);
-              res.body.name.should.be.eql("servercito");
+              res.body.server.name.should.be.eql("servercito");
             done();
           });
     });
@@ -46,7 +46,7 @@ describe('Servers endpoints', function() {
               res.should.have.status(404);
               done();
           });
-    });*/
+    });
 
   });
 

@@ -37,7 +37,6 @@ function rdataPost(data){
 
 function parserGetServers(r, response) {
   var data = r.data_retrieved;
-  logger.info("DATAAAAA_retrieveedd", data);
   if (r.success){
     data = rdata(data);
   }
@@ -49,7 +48,7 @@ function parserGetServer(r, response){
   if (r.success){
     data = rdata(data)[0];
   }
-  if (!r.data.length){
+  if (!r.data_retrieved.length){
     r.status = 404;
     r.success = false;
   }

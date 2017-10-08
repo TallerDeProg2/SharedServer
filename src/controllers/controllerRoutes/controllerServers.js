@@ -23,7 +23,7 @@ function getServer(serverId, request, response) {
   var tk = request.header.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM srvusers WHERE id=\'{}\' AND rol=\'server\';'.format(serverId);
-  dataBase.query(q, response, parser.parserGetServer, auth);
+  dataBase.query(q, response, parser.parserGetServer);
 }
 
 
