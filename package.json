@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "scripts": {
     "test": "env URI='postgres://postgres:password@localhost:6000/docker' ./node_modules/mocha/bin/mocha ./test/*",
-    "test-travis": "env URI='postgres://docker:@localhost:6000/docker' ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
+    "test-travis": "env URI='postgres://postgres:password@localhost:6000/docker' ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
     "start": "node ./src/index.js"
   },
   "author": "",
