@@ -17,19 +17,31 @@ function rdata(data){
 }
 
 function parserGetBusinessUsers(r, response) {
-  return basicParser.extendedParser(r, response, "businessUsers", rdata(data), 200);
+  var data = r.data;
+  if (r.success){
+    data = rdata(r.data);
+  }
+  return basicParser.extendedParser(r, response, "businessUsers", data, 200);
 }
 
 function parserGetBusinessUser(r, response){
+  var data = r.data;
+  if (r.success){
+    data = rdata(r.data)[0];
+  }
   if (!r.data.length){
     r.status = 404;
     r.success = false;
   }
-  return basicParser.extendedParser(r, response, "businessUser", rdata(data)[0], 200);
+  return basicParser.extendedParser(r, response, "businessUser", data, 200);
 }
 
 function parserPutBusinessUser(r, response){
-  return basicParser.extendedParser(r, response, "businessUser", rdata(data)[0], 200);
+  var data = r.data;
+  if (r.success){
+    data = rdata(r.data)[0];
+  }
+  return basicParser.extendedParser(r, response, "businessUser", data, 200);
 }
 
 function parserDeleteBusinessUser(r, response){
@@ -44,7 +56,11 @@ function parserDeleteBusinessUser(r, response){
 }
 
 function parserPostBusinessUser(r, response){
-  return basicParser.extendedParser(r, response, "businessUser", rdata(data)[0], 201);
+  var data = r.data;
+  if (r.success){
+    data = rdata(r.data)[0];
+  }
+  return basicParser.extendedParser(r, response, "businessUser", data, 201);
 }
 
 
