@@ -60,6 +60,10 @@ function parserPutServer(r, response){
   if (r.success){
     data = rdata(data)[0];
   }
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+  }
   return basicParser.extendedParser(r, response, "server", data, 200);
 }
 
@@ -78,6 +82,13 @@ function parserPostServer(r, response){
   var data = r.data_retrieved;
   if (r.success){
     data = rdataPost(data)[0];
+  }
+  else{
+    return basicParser.reducedParser(r, response);
+  }
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
   }
   return basicParser.extendedParser(r, response, "server", data, 201);
 }

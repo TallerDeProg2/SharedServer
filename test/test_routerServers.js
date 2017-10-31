@@ -11,6 +11,8 @@ format.extend(String.prototype);
 var server = require('../src/srv/index.js');
 var dataBase = require('../src/controllers/controllerData/controllerDataBase.js');
 
+var logger = require('../src/srv/log.js')
+
 describe('Servers endpoints', function() {
 
   describe('GET servers', function() {
@@ -27,9 +29,9 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should GET one server with id = "1"', function(done) {
+    it('it should GET one server with id = "0"', function(done) {
       chai.request(server)
-          .get('/servers/1')
+          .get('/servers/0')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(200);
@@ -40,7 +42,7 @@ describe('Servers endpoints', function() {
 
     it('it should return status 404 when the id es invalid', function(done) {
       chai.request(server)
-          .get('/servers/0')
+          .get('/servers/1')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(404);
@@ -50,17 +52,20 @@ describe('Servers endpoints', function() {
 
   });
 
-  /*describe('POST servers', function() {
+  describe('POST servers', function() {
 
     it('it should get status 201 after creating a valid server', function(done){
+      var now = moment();
+      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
       chai.request(server)
           .post('/servers')
           .set('content-type', 'application/json')
           .send({"id": "string", "_ref": "string",
             "createdBy": "string",
-            "createdTime": 0,
+            "createdTime": now_fr,
             "name": "string",
-            "lastConnection": 0})
+            "lastConnection": now_fr})
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(201);
@@ -69,24 +74,27 @@ describe('Servers endpoints', function() {
     });
 
     it('it should POST a server', function(done){
+      var now = moment();
+      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
       chai.request(server)
           .post('/servers')
           .set('content-type', 'application/json')
           .send({"id": "string", "_ref": "string",
             "createdBy": "string",
-            "createdTime": 0,
+            "createdTime": now_fr,
             "name": "string2",
-            "lastConnection": 0})
+            "lastConnection": now_fr})
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(201);
-              var id = res.body.id;
+              var id = res.body.server.server.id;
               chai.request(server)
-              .get('/servers/{}', id)
+              .get('/servers/'+id)
               .set({'token':"token"})
               .end(function(err, res) {
                   res.should.have.status(200);
-                  res.body.name.should.be.eql("string2");
+                  res.body.server.name.should.be.eql("string2");
                   done();
               });
           });
@@ -107,18 +115,18 @@ describe('Servers endpoints', function() {
 
     it('it should update the server token', function(done){
       chai.request(server)
-          .post('/servers/1')
+          .post('/servers/0')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(201);
-              res.body.token.should.not.be.eql("servercito-token");
+              res.body.server.token.should.not.be.eql("servercito-token");
               done();
           });
     });
 
     it('it should return status 404 when the server does not exist (postToken)', function(done){
       chai.request(server)
-          .post('/servers/5')
+          .post('/servers/58798790')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(404);
@@ -129,7 +137,7 @@ describe('Servers endpoints', function() {
 
   });
 
-  describe('PUT servers', function() {
+  /*describe('PUT servers', function() {
 
     it('it should get status 200 after updating a valid server', function(done){
       chai.request(server)
