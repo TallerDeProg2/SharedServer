@@ -61,8 +61,8 @@ function putServer(serverId, request, response) {
   var _ref = "";
 
   var name = request.body.name;
-  var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(json, \'{name}\', \'{}\') WHERE id=\'{}\' AND rol=\'server\' AND _ref=\'{}\';'.format(_ref, name, serverId, request.body._ref);
-  dataBase.query(q, response, parser.parserPutServer, auth);
+  var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE id=\'{}\' AND rol=\'server\' RETURNING *;'.format(_ref, '{name}', name, serverId);
+  dataBase.query(q, response, parser.parserPutServer);
 }
 
 function postServerToken(serverId, request, response) {

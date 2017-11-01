@@ -137,11 +137,11 @@ describe('Servers endpoints', function() {
 
   });
 
-  /*describe('PUT servers', function() {
+  describe('PUT servers', function() {
 
     it('it should get status 200 after updating a valid server', function(done){
       chai.request(server)
-          .put('/servers/1')
+          .put('/servers/0')
           .set('content-type', 'application/json')
           .send({"id": "string", "_ref": "string",
             "createdBy": "string",
@@ -157,9 +157,9 @@ describe('Servers endpoints', function() {
 
     it('it should PUT a server', function(done){
       chai.request(server)
-          .put('/servers/1')
+          .put('/servers/0')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
+          .send({"id": "0", "_ref": "string",
             "createdBy": "string",
             "createdTime": 0,
             "name": "nuevoNombre",
@@ -168,11 +168,11 @@ describe('Servers endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               chai.request(server)
-              .get('/servers/{}', id)
+              .get('/servers/0')
               .set({'token':"token"})
               .end(function(err, res) {
                   res.should.have.status(200);
-                  res.body.name.should.be.eql("nuevoNombre");
+                  res.body.server.name.should.be.eql("nuevoNombre");
                   done();
               });
           });
@@ -194,13 +194,13 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should get status 400 when one of the parameters is not correct', function(){
+    /*it('it should get status 400 when one of the parameters is not correct', function(){
 
-    });
+    });*/
 
   });
 
-  describe('DELETE servers', function() {
+  /*describe('DELETE servers', function() {
 
     it('it should return status 404 when the id es invalid', function(done) {
       chai.request(server)
