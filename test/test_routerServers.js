@@ -178,7 +178,7 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should get status 404 when the server does not exist', function(){
+    it('it should get status 404 when the server does not exist', function(done){
       chai.request(server)
           .put('/servers/5')
           .set('content-type', 'application/json')
@@ -194,17 +194,17 @@ describe('Servers endpoints', function() {
           });
     });
 
-    /*it('it should get status 400 when one of the parameters is not correct', function(){
+    it('it should get status 400 when one of the parameters is not correct', function(){
 
     });*/
 
   });
 
-  /*describe('DELETE servers', function() {
+  describe('DELETE servers', function() {
 
     it('it should return status 404 when the id es invalid', function(done) {
       chai.request(server)
-          .delete('/servers/0')
+          .delete('/servers/58798790')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(404);
@@ -212,15 +212,15 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should return status 200 when the id es valid', function(done) {
+    /*it('it should return status 200 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/servers/1')
+          .delete('/servers/0')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(200);
               done();
           });
-    });
+    });*/
 
-  });*/
+  });
 });

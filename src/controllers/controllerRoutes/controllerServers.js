@@ -82,8 +82,8 @@ function deleteServer(serverId, request, response) {
   var tk = request.header.token;
   var auth = new controllerAuth.AuthManager(tk);
 
-  var q = 'DELETE * FROM srvusers WHERE id=\'{}\' AND rol=\'server\';'.format(serverId);
-  dataBase.query(q, response, parser.parserDeleteServer, auth);
+  var q = 'DELETE FROM srvusers WHERE id=\'{}\' AND rol=\'server\' RETURNING *;'.format(serverId);
+  dataBase.query(q, response, parser.parserDeleteServer);
 }
 
 function postServerPing(request, response) {

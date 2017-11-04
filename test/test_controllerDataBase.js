@@ -61,8 +61,12 @@ describe('controllerDataBase', function() {
    controller.query('SELECT * FROM testtable WHERE id=\'1\';', "", parserDescTest, null, done);
  });
 
- it('returns status 500 when trying to delete something that does not exist', function(done) {
-   controller.query('DELETE * FROM testtable WHERE id=\'2\';', "", parserStatus500, null, done);
+ it('returns nothing when trying to delete something that does not exist', function(done) {
+   controller.query('DELETE FROM testtable WHERE id=\'2\' RETURNING *;', "", parserNoData, null, done);
+ });
+
+ it('returns status 200 after deleting something', function(done) {
+   controller.query('DELETE FROM testtable WHERE id=\'1\' RETURNING *;', "", parserStatus200, null, done);
  });
 
  it('returns status 200 when removing the testtable', function(done) {
