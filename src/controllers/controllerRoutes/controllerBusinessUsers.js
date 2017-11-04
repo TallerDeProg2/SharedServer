@@ -10,8 +10,8 @@ format.extend(String.prototype);
 function getBusinessUsers(request, response) {
   var tk = request.header.token;
   var auth = new controllerAuth.AuthAdmin(tk);
-  var q = 'SELECT * FROM businessusers';
-  dataBase.query(q, response, parser.parserBusinessUsersGet, auth);
+  var q = 'SELECT * FROM srvusers WHERE rol=\'user\';';
+  dataBase.query(q, response, parser.parserGetBusinessUsers);
 }
 
 function postBusinessUsers(request, response) {
@@ -29,14 +29,14 @@ function postBusinessUsers(request, response) {
               'roles' : request.body.roles};
 
   var q = 'INSERT INTO srvUsers(id, _ref, token, tokenexp, rol, json) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\')'.format(id, ref, token, tokenexp, "user", json);
-  dataBase.query(q, response, parser.parserPostBusinessUser, auth);
+  dataBase.query(q, response, parser.parserPostBusinessUser);
 }
 
 function deleteBusinessUser(userId, request, response) {
   var tk = request.header.token;
   var auth = new controllerAuth.AuthAdmin(tk);
   var q = 'DELETE * FROM srvUsers WHERE id=\'{}\', rol=\'user\''.format(userId);
-  dataBase.query(q, response, parser.parserDeleteBusinessUser, auth);
+  dataBase.query(q, response, parser.parserDeleteBusinessUser);
 }
 
 function putBusinessUser(userId, request, response) {
@@ -51,7 +51,7 @@ function putBusinessUser(userId, request, response) {
   var roles = request.body.roles;
 
   var q = 'UPDATE srvUsers SET _ref=\'{}\', json = jsonb_set(json, \'{username}\', \'{}\', \'{password}\', \'{}\', \'{name}\', \'{}\', \'{surname}\', \'{}\', \'{roles}\', \'{}\') WHERE id=\'{}\''.format(userId, ref, username, password, name, surname, roles);
-  dataBase.query(q, response, parser.parserPutBusinessUser, auth);
+  dataBase.query(q, response, parser.parserPutBusinessUser);
 }
 
 function getBusinessUsersMe(request, response) {
@@ -59,7 +59,7 @@ function getBusinessUsersMe(request, response) {
   var tk = request.header.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM srvUsers WHERE id=\'{}\', rol=\'server\''.format(idd);
-  dataBase.query(q, response, parser.parserGetBusinessUser, auth);
+  dataBase.query(q, response, parser.parserGetBusinessUser);
 }
 
 function putBusinessUsersMe(request, response) {
@@ -75,7 +75,7 @@ function putBusinessUsersMe(request, response) {
   var roles = request.body.roles;
 
   var q = 'UPDATE srvUsers SET _ref=\'{}\', json = jsonb_set(json, \'{username}\', \'{}\', \'{password}\', \'{}\', \'{name}\', \'{}\', \'{surname}\', \'{}\', \'{roles}\', \'{}\') WHERE id=\'{}\', rol=\'server\''.format(id, ref, username, password, name, surname, roles);
-  dataBase.query(q, response, parser.parserPutBusinessUser, auth);
+  dataBase.query(q, response, parser.parserPutBusinessUser);
 }
 
 function postToken(request, response) {}

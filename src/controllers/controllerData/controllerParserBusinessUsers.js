@@ -4,22 +4,22 @@ function rdata(data){
   var businessUsers = [];
   for (var i = 0; i < data.length; i++) {
       businessUsers[i] = {
-        "id": data.json.id,
-        "_ref": data.json._ref,
-        "username": data.json.username,
-        "password": data.json.password,
-        "name": data.json.name,
-        "surname": data.json.surname,
-        "roles": data.json.roles
+        "id": data[i].id,
+        "_ref": data[i]._ref,
+        "username": data[i].data.username,
+        "password": data[i].data.password,
+        "name": data[i].data.name,
+        "surname": data[i].data.surname,
+        "roles": data[i].data.roles
     };
   }
   return businessUsers;
 }
 
 function parserGetBusinessUsers(r, response) {
-  var data = r.data;
+  var data = r.data_retrieved;
   if (r.success){
-    data = rdata(r.data);
+    data = rdata(data);
   }
   return basicParser.extendedParser(r, response, "businessUsers", data, 200);
 }

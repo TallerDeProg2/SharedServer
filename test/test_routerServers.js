@@ -11,7 +11,7 @@ format.extend(String.prototype);
 var server = require('../src/srv/index.js');
 var dataBase = require('../src/controllers/controllerData/controllerDataBase.js');
 
-var logger = require('../src/srv/log.js')
+var logger = require('../src/srv/log.js');
 
 describe('Servers endpoints', function() {
 
@@ -31,7 +31,7 @@ describe('Servers endpoints', function() {
 
     it('it should GET one server with id = "0"', function(done) {
       chai.request(server)
-          .get('/servers/0')
+          .get('/servers/00')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(200);
@@ -115,7 +115,7 @@ describe('Servers endpoints', function() {
 
     it('it should update the server token', function(done){
       chai.request(server)
-          .post('/servers/0')
+          .post('/servers/00')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(201);
@@ -141,7 +141,7 @@ describe('Servers endpoints', function() {
 
     it('it should get status 200 after updating a valid server', function(done){
       chai.request(server)
-          .put('/servers/0')
+          .put('/servers/00')
           .set('content-type', 'application/json')
           .send({"id": "string", "_ref": "string",
             "createdBy": "string",
@@ -157,7 +157,7 @@ describe('Servers endpoints', function() {
 
     it('it should PUT a server', function(done){
       chai.request(server)
-          .put('/servers/0')
+          .put('/servers/00')
           .set('content-type', 'application/json')
           .send({"id": "0", "_ref": "string",
             "createdBy": "string",
@@ -168,7 +168,7 @@ describe('Servers endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               chai.request(server)
-              .get('/servers/0')
+              .get('/servers/00')
               .set({'token':"token"})
               .end(function(err, res) {
                   res.should.have.status(200);
@@ -196,7 +196,7 @@ describe('Servers endpoints', function() {
 
     it('it should get status 400 when one of the parameters is not correct', function(){
 
-    });*/
+    });
 
   });
 
@@ -214,7 +214,7 @@ describe('Servers endpoints', function() {
 
     /*it('it should return status 200 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/servers/0')
+          .delete('/servers/00')
           .set({'token':"token"})
           .end(function(err, res) {
               res.should.have.status(200);
