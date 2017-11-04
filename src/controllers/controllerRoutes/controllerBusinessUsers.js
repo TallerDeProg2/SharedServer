@@ -1,9 +1,15 @@
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserBusinessUsers.js');
-var token = require('../controllerLogic/controllerToken.js');
-var id = require('../controllerLogic/controllerId.js');
+
+var controllerToken = require('../controllerLogic/controllerToken.js');
+var controllerId = require('../controllerLogic/controllerId.js');
+
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
+var format = require('string-format');
+format.extend(String.prototype);
+
+var moment = require('moment');
 var format = require('string-format');
 format.extend(String.prototype);
 
@@ -20,17 +26,27 @@ function postBusinessUsers(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
 
-  var id = id.createId();
-  var ref = "";
-  var token = "";
-  var tokenexp = "";
+  var now = moment();
+  var exp_date = moment(now).add(1, 'day'); //token duration is one day.
+  var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+  var exp_date_fr = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
+
+  var id = controllerId.createId();
+  var _ref = "";
+  var token = controllerToken.createToken();
+  var tokenexp = exp_date_fr;
+
   var json = {'username' : request.body.username,
               'password' : request.body.password,
               'name' : request.body.name,
               'surname' : request.body.surname,
               'roles' : request.body.roles};
 
-  var q = 'INSERT INTO srvUsers(id, _ref, token, tokenexp, rol, json) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\')'.format(id, ref, token, tokenexp, "user", json);
+  if (!json.username || !json.password || !json.name || !json.surname || !json.roles){
+    return parser.parserPostBusinessUser({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+  }
+
+  var q = 'INSERT INTO srvUsers(id, _ref, token, tokenexp, rol, data) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *'.format(request.body.username, _ref, token, tokenexp, "user", JSON.stringify(json));
   dataBase.query(q, response, parser.parserPostBusinessUser);
 }
 

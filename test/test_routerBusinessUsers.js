@@ -54,20 +54,18 @@ describe('Business Users endpoints', function() {
 
   });
 
-  /*describe('POST servers', function() {
+  describe('POST servers', function() {
 
     it('it should get status 201 after creating a valid server', function(done){
-      var now = moment();
-      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
-
       chai.request(server)
           .post('/business-users')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": now_fr,
+          .send({"username": "string",
+            "password": "string",
             "name": "string",
-            "lastConnection": now_fr})
+            "surname": "string",
+            "roles": ["user"]
+          })
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(201);
@@ -76,27 +74,25 @@ describe('Business Users endpoints', function() {
     });
 
     it('it should POST a server', function(done){
-      var now = moment();
-      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
-
       chai.request(server)
           .post('/business-users')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": now_fr,
-            "name": "string2",
-            "lastConnection": now_fr})
+          .send({"username": "string2",
+            "password": "string",
+            "name": "string",
+            "surname": "string",
+            "roles": ["user"]
+          })
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(201);
-              var id = res.body.server.server.id;
               chai.request(server)
-              .get('/business-users/'+id)
+              .get('/business-users')
               .set('token', 'token')
               .end(function(err, res) {
                   res.should.have.status(200);
-                  res.body.server.name.should.be.eql("string2");
+                  res.body.businessUsers.should.be.a('array');
+                  res.body.businessUsers.length.should.be.eql(3);
                   done();
               });
           });
@@ -106,8 +102,9 @@ describe('Business Users endpoints', function() {
       chai.request(server)
           .post('/business-users')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string"})
+          .send({"username": "string2",
+            "password": "string",
+          })
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(400);
@@ -115,31 +112,9 @@ describe('Business Users endpoints', function() {
           });
     });
 
-    it('it should update the server token', function(done){
-      chai.request(server)
-          .post('/business-users/0')
-          .set('token', 'token')
-          .end(function(err, res) {
-              res.should.have.status(201);
-              res.body.server.token.should.not.be.eql("servercito-token");
-              done();
-          });
-    });
-
-    it('it should return status 404 when the server does not exist (postToken)', function(done){
-      chai.request(server)
-          .post('/business-users/58798790')
-          .set('token', 'token')
-          .end(function(err, res) {
-              res.should.have.status(404);
-              done();
-          });
-    });
-
-
   });
 
-  describe('PUT servers', function() {
+  /*describe('PUT servers', function() {
 
     it('it should get status 200 after updating a valid server', function(done){
       chai.request(server)

@@ -4,7 +4,6 @@ function rdata(data){
   var businessUsers = [];
   for (var i = 0; i < data.length; i++) {
       businessUsers[i] = {
-        "id": data[i].id,
         "_ref": data[i]._ref,
         "username": data[i].data.username,
         "password": data[i].data.password,
@@ -56,9 +55,16 @@ function parserDeleteBusinessUser(r, response){
 }
 
 function parserPostBusinessUser(r, response){
-  var data = r.data;
+  var data = r.data_retrieved;
   if (r.success){
-    data = rdata(r.data)[0];
+    data = rdata(data)[0];
+  }
+  else{
+    return basicParser.reducedParser(r, response);
+  }
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
   }
   return basicParser.extendedParser(r, response, "businessUser", data, 201);
 }
