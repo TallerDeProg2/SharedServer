@@ -1,5 +1,14 @@
+sudo: required
 language: node_js
 node_js:
  - "6.11.2"
-script: "npm run-script test-travis"
-after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+services:
+  - docker
+before_script:
+ - bash docker-start.sh &
+script:
+ - sleep 15
+ - npm run-script test-travis
+after_script:
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  - bash docker-stop.sh

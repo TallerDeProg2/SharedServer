@@ -4,8 +4,8 @@
   "description": "Repositorio para el SharedServer.",
   "main": "./src/index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha ./test/*",
-    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
+    "test": "env URI='postgres://postgres:password@localhost:6000/postgres' ./node_modules/mocha/bin/mocha ./test/*",
+    "test-travis": "env URI='postgres://postgres:password@localhost:6000/postgres' ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
     "start": "node ./src/index.js"
   },
   "author": "",
@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "body-parser": "^1.17.2",
+    "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
     "coveralls": "^2.13.1",
     "debug": "^3.0.1",
     "express": "4.15.2",
