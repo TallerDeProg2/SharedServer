@@ -13,14 +13,14 @@ var format = require('string-format');
 format.extend(String.prototype);
 
 function getServers(request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM srvusers WHERE rol=\'server\';';
   dataBase.query(q, response, parser.parserGetServers);
 }
 
 function getServer(serverId, request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM srvusers WHERE id=\'{}\' AND rol=\'server\';'.format(serverId);
   dataBase.query(q, response, parser.parserGetServer);
@@ -28,7 +28,7 @@ function getServer(serverId, request, response) {
 
 
 function postServer(request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthManager(tk);
 
   var now = moment();
@@ -55,7 +55,7 @@ function postServer(request, response) {
 }
 
 function putServer(serverId, request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthManager(tk);
 
   var _ref = "";
@@ -66,7 +66,7 @@ function putServer(serverId, request, response) {
 }
 
 function postServerToken(serverId, request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthManager(tk);
 
   var now = moment();
@@ -79,7 +79,7 @@ function postServerToken(serverId, request, response) {
 }
 
 function deleteServer(serverId, request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthManager(tk);
 
   var q = 'DELETE FROM srvusers WHERE id=\'{}\' AND rol=\'server\' RETURNING *;'.format(serverId);
@@ -87,7 +87,7 @@ function deleteServer(serverId, request, response) {
 }
 
 function postServerPing(request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthServer(tk);
 
   var now = moment();

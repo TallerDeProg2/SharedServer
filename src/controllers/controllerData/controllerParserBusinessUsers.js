@@ -25,11 +25,11 @@ function parserGetBusinessUsers(r, response) {
 }
 
 function parserGetBusinessUser(r, response){
-  var data = r.data;
+  var data = r.data_retrieved;
   if (r.success){
-    data = rdata(r.data)[0];
+    data = rdata(data)[0];
   }
-  if (!r.data.length){
+  if (!r.data_retrieved.length){
     r.status = 404;
     r.success = false;
   }

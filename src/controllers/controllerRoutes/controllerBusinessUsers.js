@@ -7,15 +7,17 @@ var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 var format = require('string-format');
 format.extend(String.prototype);
 
+var logger = require('../../srv/log.js');
+
 function getBusinessUsers(request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
   var q = 'SELECT * FROM srvusers WHERE rol=\'user\';';
   dataBase.query(q, response, parser.parserGetBusinessUsers);
 }
 
 function postBusinessUsers(request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
 
   var id = id.createId();
@@ -33,14 +35,14 @@ function postBusinessUsers(request, response) {
 }
 
 function deleteBusinessUser(userId, request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
   var q = 'DELETE * FROM srvUsers WHERE id=\'{}\', rol=\'user\''.format(userId);
   dataBase.query(q, response, parser.parserDeleteBusinessUser);
 }
 
 function putBusinessUser(userId, request, response) {
-  var tk = request.header.token;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
 
   var ref = "";
@@ -55,16 +57,17 @@ function putBusinessUser(userId, request, response) {
 }
 
 function getBusinessUsersMe(request, response) {
-  var id = request.header.id;
-  var tk = request.header.token;
+  logger.info("Mi header es: "+request.headers.id);
+  var id = request.headers.id;
+  var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
-  var q = 'SELECT * FROM srvUsers WHERE id=\'{}\', rol=\'server\''.format(idd);
+  var q = 'SELECT * FROM srvUsers WHERE id=\'{}\' AND rol=\'user\''.format(id);
   dataBase.query(q, response, parser.parserGetBusinessUser);
 }
 
 function putBusinessUsersMe(request, response) {
-  var tk = request.header.token;
-  var id = request.header.id;
+  var tk = request.headers.token;
+  var id = request.headers.id;
   var auth = new controllerAuth.AuthAdmin(tk);
 
   var ref = "";
