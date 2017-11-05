@@ -19,7 +19,7 @@ function getBusinessUsers(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
   var q = 'SELECT * FROM srvusers WHERE rol=\'user\';';
-  dataBase.query(q, response, parser.parserGetBusinessUsers);
+  dataBase.query(q, response, parser.parserGetBusinessUsers, auth);
 }
 
 function postBusinessUsers(request, response) {
@@ -47,14 +47,14 @@ function postBusinessUsers(request, response) {
   }
 
   var q = 'INSERT INTO srvUsers(id, _ref, token, tokenexp, rol, data) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *'.format(request.body.username, _ref, token, tokenexp, "user", JSON.stringify(json));
-  dataBase.query(q, response, parser.parserPostBusinessUser);
+  dataBase.query(q, response, parser.parserPostBusinessUser, auth);
 }
 
 function deleteBusinessUser(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
   var q = 'DELETE FROM srvUsers WHERE id=\'{}\' AND rol=\'user\' RETURNING *;'.format(userId);
-  dataBase.query(q, response, parser.parserDeleteBusinessUser);
+  dataBase.query(q, response, parser.parserDeleteBusinessUser, auth);
 }
 
 function putBusinessUser(userId, request, response) {
@@ -80,7 +80,7 @@ function putBusinessUser(userId, request, response) {
   }
 
   var q = 'UPDATE srvUsers SET _ref=\'{}\', data = \'{}\' WHERE id=\'{}\' AND rol=\'user\' RETURNING *'.format(ref, JSON.stringify(json), userId);
-  dataBase.query(q, response, parser.parserPutBusinessUser);
+  dataBase.query(q, response, parser.parserPutBusinessUser, auth);
 }
 
 function getBusinessUsersMe(request, response) {
@@ -89,7 +89,7 @@ function getBusinessUsersMe(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM srvUsers WHERE id=\'{}\' AND rol=\'user\''.format(id);
-  dataBase.query(q, response, parser.parserGetBusinessUser);
+  dataBase.query(q, response, parser.parserGetBusinessUser, auth);
 }
 
 function postToken(request, response) {}

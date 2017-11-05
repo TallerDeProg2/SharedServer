@@ -83,6 +83,7 @@ describe('Business Users endpoints', function() {
             "surname": "string",
             "roles": ["user"]
           })
+          .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(201);
               chai.request(server)
@@ -140,7 +141,7 @@ describe('Business Users endpoints', function() {
             "password": "nuevaPass",
             "name": "string",
             "surname": "string",
-            "roles": ["user"]
+            "roles": ["admin"]
           })
           .set('id', 'usercito')
           .set('token', 'token')

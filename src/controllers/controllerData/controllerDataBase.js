@@ -50,7 +50,7 @@ function query(q, response, parser, auth=null, complete=null){
         logger.error("Unexpected error in line 47");
         return unexpectedError(err, response, complete);
       }
-      var result_auth = auth.checkAuthorization(result);
+      var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result.rows});
       if (!result_auth.success){
         done();
         return parser(result_auth, response, complete);
