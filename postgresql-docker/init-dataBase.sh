@@ -8,5 +8,5 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     INSERT INTO srvusers(id, _ref, rol, token, tokenexp, data) VALUES ('00', 'abcde', 'server', 'servercito-token', '$time_exp',
       '{"createdBy" : "docker", "createdTime" : "$time_exp", "name" : "servercito", "lastConnection" : "$time_exp" }');
     INSERT INTO srvusers(id, _ref, rol, token, tokenexp, data) VALUES ('usercito', 'bcdef', 'user', 'token', '$time_exp',
-      '{"username" : "usercito", "password" : "pass", "name" : "user", "surname" : "cito", "roles" : "admin"}');
+      '{"username" : "usercito", "password" : "pass", "name" : "user", "surname" : "cito", "roles" : ["admin"]}');
 EOSQL

@@ -15,7 +15,7 @@ describe('controllerAuthorization - AuthServer', function() {
 
   it('returns status 404 if there is no data (server)', function() {
     var auth = new controller.AuthServer("token");
-    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[]});
+    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[]});
     assert.equal(js.status, 404);
   });
 
@@ -25,7 +25,7 @@ describe('controllerAuthorization - AuthServer', function() {
     var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
     var auth = new controller.AuthServer("token");
-    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'server', 'tokenexp': expired_fr}]});
+    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'server', 'tokenexp': expired_fr}]});
     assert.equal(js.status, 401);
   });
 
@@ -35,7 +35,7 @@ describe('controllerAuthorization - AuthServer', function() {
     var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
     var auth = new controller.AuthServer("token");
-    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'server', 'tokenexp': expired_fr}]});
+    var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'server', 'tokenexp': expired_fr}]});
     assert.equal(js.status, 200);
   });
 
@@ -51,7 +51,7 @@ describe('controllerAuthorization - AuthUser', function() {
 
     it('returns status 404 if there is no data (user)', function() {
       var auth = new controller.AuthUser("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[]});
       assert.equal(js.status, 404);
     });
 
@@ -61,7 +61,7 @@ describe('controllerAuthorization - AuthUser', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthUser("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user']}}]});
       assert.equal(js.status, 401);
     });
 
@@ -71,7 +71,7 @@ describe('controllerAuthorization - AuthUser', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthUser("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user']}}]});
       assert.equal(js.status, 200);
     });
 
@@ -87,7 +87,7 @@ describe('controllerAuthorization - AuthManager', function() {
 
     it('returns status 404 if there is no data (manager)', function() {
       var auth = new controller.AuthManager("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[]});
       assert.equal(js.status, 404);
     });
 
@@ -97,7 +97,7 @@ describe('controllerAuthorization - AuthManager', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthManager("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user', 'manager']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user', 'manager']}}]});
       assert.equal(js.status, 401);
     });
 
@@ -107,7 +107,7 @@ describe('controllerAuthorization - AuthManager', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthManager("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user']}}]});
       assert.equal(js.status, 401);
     });
 
@@ -117,7 +117,7 @@ describe('controllerAuthorization - AuthManager', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthManager("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user', 'manager']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user', 'manager']}}]});
       assert.equal(js.status, 200);
     });
 
@@ -127,7 +127,7 @@ describe('controllerAuthorization - AuthManager', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthManager("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user', 'manager']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user', 'manager']}}]});
       assert.equal(js.status, 200);
     });
 
@@ -143,7 +143,7 @@ describe('controllerAuthorization - AuthAdmin', function() {
 
     it('returns status 404 if there is no data (admin)', function() {
       var auth = new controller.AuthAdmin("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[]});
       assert.equal(js.status, 404);
     });
 
@@ -153,7 +153,7 @@ describe('controllerAuthorization - AuthAdmin', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthAdmin("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user', 'manager', 'admin']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user', 'manager', 'admin']}}]});
       assert.equal(js.status, 401);
     });
 
@@ -163,7 +163,7 @@ describe('controllerAuthorization - AuthAdmin', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthAdmin("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user']}}]});
       assert.equal(js.status, 401);
     });
 
@@ -173,7 +173,7 @@ describe('controllerAuthorization - AuthAdmin', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthAdmin("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user', 'manager']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user', 'manager']}}]});
       assert.equal(js.status, 401);
     });
 
@@ -183,7 +183,7 @@ describe('controllerAuthorization - AuthAdmin', function() {
       var expired_fr = expired.format('YYYY-MM-DD HH:mm:ss Z');
 
       var auth = new controller.AuthAdmin("token");
-      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data':[{'rol': 'user', 'tokenexp': expired_fr, 'json' : {'roles': ['user', 'manager', 'admin']}}]});
+      var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[{'rol': 'user', 'tokenexp': expired_fr, 'data' : {'roles': ['user', 'manager', 'admin']}}]});
       assert.equal(js.status, 200);
     });
 

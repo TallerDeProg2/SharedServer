@@ -16,14 +16,14 @@ function getServers(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM srvusers WHERE rol=\'server\';';
-  dataBase.query(q, response, parser.parserGetServers);
+  dataBase.query(q, response, parser.parserGetServers, auth);
 }
 
 function getServer(serverId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM srvusers WHERE id=\'{}\' AND rol=\'server\';'.format(serverId);
-  dataBase.query(q, response, parser.parserGetServer);
+  dataBase.query(q, response, parser.parserGetServer, auth);
 }
 
 
@@ -51,7 +51,7 @@ function postServer(request, response) {
   }
 
   var q = 'INSERT INTO srvusers(id, _ref, rol, token, tokenexp, data) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\') RETURNING *;'.format(id, _ref, "server", token, exp, JSON.stringify(json));
-  dataBase.query(q, response, parser.parserPostServer);
+  dataBase.query(q, response, parser.parserPostServer, auth);
 }
 
 function putServer(serverId, request, response) {
@@ -62,7 +62,7 @@ function putServer(serverId, request, response) {
 
   var name = request.body.name;
   var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE id=\'{}\' AND rol=\'server\' RETURNING *;'.format(_ref, '{name}', name, serverId);
-  dataBase.query(q, response, parser.parserPutServer);
+  dataBase.query(q, response, parser.parserPutServer, auth);
 }
 
 function postServerToken(serverId, request, response) {
@@ -75,7 +75,7 @@ function postServerToken(serverId, request, response) {
   var token = controllerToken.createToken();
   var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
   var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\' WHERE id=\'{}\' AND rol=\'server\' RETURNING *;'.format(token, exp, serverId);
-  dataBase.query(q, response, parser.parserPostServer);
+  dataBase.query(q, response, parser.parserPostServer, auth);
 }
 
 function deleteServer(serverId, request, response) {
@@ -83,7 +83,7 @@ function deleteServer(serverId, request, response) {
   var auth = new controllerAuth.AuthManager(tk);
 
   var q = 'DELETE FROM srvusers WHERE id=\'{}\' AND rol=\'server\' RETURNING *;'.format(serverId);
-  dataBase.query(q, response, parser.parserDeleteServer);
+  dataBase.query(q, response, parser.parserDeleteServer, auth);
 }
 
 function postServerPing(request, response) {

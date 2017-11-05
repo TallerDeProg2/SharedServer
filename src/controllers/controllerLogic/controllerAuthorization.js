@@ -18,24 +18,24 @@ class Auth{
     if (data.rol == "server"){
       return data.rol;
     }
-    if (data.json.roles.indexOf("admin") != -1){
+    if (data.data.roles.indexOf("admin") != -1){
       return "admin";
     }
-    if (data.json.roles.indexOf("manager") != -1){
+    if (data.data.roles.indexOf("manager") != -1){
       return "manager";
     }
     return "user";
   }
 
   checkAuthorization(r, type){
-    if (!r.data.length){
+    if (!r.data_retrieved.length){
       return {'success': false, 'status': 404, 'data': type+" does not exist."};
     }
-    var exp = moment(r.data[0].tokenexp, 'YYYY-MM-DD HH:mm:ss Z');
+    var exp = moment(r.data_retrieved[0].tokenexp, 'YYYY-MM-DD HH:mm:ss Z');
     var now = moment();
     if (exp.isBefore(now) ){
       return {'success': false, 'status': 401, 'data': "Token expired."};
-    }if (this.tags.indexOf(this.obtainAuthLvl(r.data[0])) == -1){
+    }if (this.tags.indexOf(this.obtainAuthLvl(r.data_retrieved[0])) == -1){
       return {'success': false, 'status': 401, 'data': "Unauthorized"};
     }
     return {'success': true, 'status': 200, 'data': "Ok"};
