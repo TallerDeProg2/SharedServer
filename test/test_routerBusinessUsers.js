@@ -29,11 +29,11 @@ describe('Business Users endpoints', function() {
           });
     });
 
-    it('it should GET one server with id = "01" when asking for Get/me', function(done) {
+    it('it should GET one server with id = "usercito" when asking for Get/me', function(done) {
       chai.request(server)
           .get('/business-users/me')
           .set('token', 'token')
-          .set('id','01')
+          .set('id','usercito')
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.businessUser.username.should.be.eql("usercito");
@@ -54,9 +54,9 @@ describe('Business Users endpoints', function() {
 
   });
 
-  describe('POST servers', function() {
+  describe('POST business users', function() {
 
-    it('it should get status 201 after creating a valid server', function(done){
+    it('it should get status 201 after creating a valid user', function(done){
       chai.request(server)
           .post('/business-users')
           .set('content-type', 'application/json')
@@ -73,7 +73,7 @@ describe('Business Users endpoints', function() {
           });
     });
 
-    it('it should POST a server', function(done){
+    it('it should POST a user', function(done){
       chai.request(server)
           .post('/business-users')
           .set('content-type', 'application/json')
@@ -83,7 +83,6 @@ describe('Business Users endpoints', function() {
             "surname": "string",
             "roles": ["user"]
           })
-          .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(201);
               chai.request(server)
@@ -114,17 +113,18 @@ describe('Business Users endpoints', function() {
 
   });
 
-  /*describe('PUT servers', function() {
+  describe('PUT business users', function() {
 
-    it('it should get status 200 after updating a valid server', function(done){
+    it('it should get status 200 after updating a valid user', function(done){
       chai.request(server)
-          .put('/business-users/0')
+          .put('/business-users/string')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": 0,
+          .send({"username": "string",
+            "password": "nuevaPass",
             "name": "string",
-            "lastConnection": 0})
+            "surname": "string",
+            "roles": ["user"]
+          })
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(200);
@@ -132,41 +132,60 @@ describe('Business Users endpoints', function() {
           });
     });
 
-    it('it should PUT a server', function(done){
+    it('it should PUT a user', function(done){
       chai.request(server)
-          .put('/business-users/0')
+          .put('/business-users/me')
           .set('content-type', 'application/json')
-          .send({"id": "0", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": 0,
-            "name": "nuevoNombre",
-            "lastConnection": 0})
+          .send({"username": "usercito",
+            "password": "nuevaPass",
+            "name": "string",
+            "surname": "string",
+            "roles": ["user"]
+          })
+          .set('id', 'usercito')
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(200);
               chai.request(server)
-              .get('/business-users/0')
+              .get('/business-users/me')
+              .set('id','usercito')
               .set('token', 'token')
               .end(function(err, res) {
                   res.should.have.status(200);
-                  res.body.server.name.should.be.eql("nuevoNombre");
+                  res.body.businessUser.password.should.be.eql("nuevaPass");
                   done();
               });
           });
     });
 
-    it('it should get status 404 when the server does not exist', function(done){
+    it('it should get status 404 when the user does not exist', function(done){
       chai.request(server)
-          .put('/business-users/5')
+          .put('/business-users/768768')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": 0,
+          .send({"username": "768768",
+            "password": "nuevaPass",
             "name": "string",
-            "lastConnection": 0})
+            "surname": "string",
+            "roles": ["user"]
+          })
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(404);
+              done();
+          });
+    });
+
+    it('it should get status 400 when one of the parameters is missing', function(done){
+      chai.request(server)
+          .put('/business-users/me')
+          .set('content-type', 'application/json')
+          .send({"username": "usercito",
+            "password": "string",
+          })
+          .set('id','usercito')
+          .set('token', 'token')
+          .end(function(err, res) {
+              res.should.have.status(400);
               done();
           });
     });
@@ -193,6 +212,6 @@ describe('Business Users endpoints', function() {
               res.should.have.status(200);
               done();
           });
-    });
     });*/
+  });
 });

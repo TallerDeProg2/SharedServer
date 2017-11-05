@@ -30,8 +30,4 @@ router.get('/business-users/me', function(request, response) {
     controller.getBusinessUsersMe(request, response);
 });
 
-router.put('/business-users/me', function(request, response) {
-    controller.putBusinessUsersMe(request, response);
-});
-
 /**#@-*/

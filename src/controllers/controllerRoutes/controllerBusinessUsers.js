@@ -53,7 +53,7 @@ function postBusinessUsers(request, response) {
 function deleteBusinessUser(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
-  var q = 'DELETE * FROM srvUsers WHERE id=\'{}\', rol=\'user\''.format(userId);
+  var q = 'DELETE FROM srvUsers WHERE id=\'{}\' AND rol=\'user\' RETURNING *;'.format(userId);
   dataBase.query(q, response, parser.parserDeleteBusinessUser);
 }
 
@@ -61,14 +61,25 @@ function putBusinessUser(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
 
-  var ref = "";
-  var username = request.body.username;
-  var password = request.body.password;
-  var name = request.body.name;
-  var surname = request.body.surname;
-  var roles = request.body.roles;
+  if (userId == "me"){
+    userId = request.headers.id;
+  }
 
-  var q = 'UPDATE srvUsers SET _ref=\'{}\', json = jsonb_set(json, \'{username}\', \'{}\', \'{password}\', \'{}\', \'{name}\', \'{}\', \'{surname}\', \'{}\', \'{roles}\', \'{}\') WHERE id=\'{}\''.format(userId, ref, username, password, name, surname, roles);
+  logger.info("mi user id esss: "+userId);
+
+  var ref = "";
+
+  var json = {'username' : userId,
+              'password' : request.body.password,
+              'name' : request.body.name,
+              'surname' : request.body.surname,
+              'roles' : request.body.roles};
+
+  if (!json.password || !json.name || !json.surname || !json.roles){
+    return parser.parserPutBusinessUser({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+  }
+
+  var q = 'UPDATE srvUsers SET _ref=\'{}\', data = \'{}\' WHERE id=\'{}\' AND rol=\'user\' RETURNING *'.format(ref, JSON.stringify(json), userId);
   dataBase.query(q, response, parser.parserPutBusinessUser);
 }
 
@@ -81,22 +92,6 @@ function getBusinessUsersMe(request, response) {
   dataBase.query(q, response, parser.parserGetBusinessUser);
 }
 
-function putBusinessUsersMe(request, response) {
-  var tk = request.headers.token;
-  var id = request.headers.id;
-  var auth = new controllerAuth.AuthAdmin(tk);
-
-  var ref = "";
-  var username = request.body.username;
-  var password = request.body.password;
-  var name = request.body.name;
-  var surname = request.body.surname;
-  var roles = request.body.roles;
-
-  var q = 'UPDATE srvUsers SET _ref=\'{}\', json = jsonb_set(json, \'{username}\', \'{}\', \'{password}\', \'{}\', \'{name}\', \'{}\', \'{surname}\', \'{}\', \'{roles}\', \'{}\') WHERE id=\'{}\', rol=\'server\''.format(id, ref, username, password, name, surname, roles);
-  dataBase.query(q, response, parser.parserPutBusinessUser);
-}
-
 function postToken(request, response) {}
 
 
@@ -106,6 +101,5 @@ module.exports = {
   deleteBusinessUser : deleteBusinessUser,
   putBusinessUser : putBusinessUser,
   getBusinessUsersMe : getBusinessUsersMe,
-  putBusinessUsersMe : putBusinessUsersMe,
   postToken : postToken
 };

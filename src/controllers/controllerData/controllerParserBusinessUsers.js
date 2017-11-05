@@ -36,15 +36,20 @@ function parserGetBusinessUser(r, response){
 }
 
 function parserPutBusinessUser(r, response){
-  var data = r.data;
+  var data = r.data_retrieved;
   if (r.success){
-    data = rdata(r.data)[0];
+    data = rdata(data)[0];
+  }else{
+    return basicParser.reducedParser(r, response);
+  }if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
   }
   return basicParser.extendedParser(r, response, "businessUser", data, 200);
 }
 
 function parserDeleteBusinessUser(r, response){
-  if (!r.data.length){
+  if ((r.success) && (!r.data_retrieved.length)){
     r.status = 404;
     r.success = false;
   }
