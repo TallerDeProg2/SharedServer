@@ -56,7 +56,7 @@ function parserDeleteBusinessUser(r, response){
   if (!r.success){
     return basicParser.reducedParser(r, response);
   }
-  return response.status(204);
+  return response.sendStatus(204);
 }
 
 function parserPostBusinessUser(r, response){

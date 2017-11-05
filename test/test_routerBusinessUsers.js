@@ -193,7 +193,7 @@ describe('Business Users endpoints', function() {
 
   });
 
-  describe('DELETE servers', function() {
+  describe('DELETE business users', function() {
 
     it('it should return status 404 when the id es invalid', function(done) {
       chai.request(server)
@@ -205,14 +205,14 @@ describe('Business Users endpoints', function() {
           });
     });
 
-    /*it('it should return status 200 when the id es valid', function(done) {
+    it('it should return status 204 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/business-users/0')
+          .delete('/business-users/string2')
           .set('token', 'token')
           .end(function(err, res) {
-              res.should.have.status(200);
+              res.should.have.status(204);
               done();
           });
-    });*/
+    });
   });
 });

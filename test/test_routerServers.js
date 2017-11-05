@@ -212,15 +212,15 @@ describe('Servers endpoints', function() {
           });
     });
 
-    /*it('it should return status 200 when the id es valid', function(done) {
+    it('it should return status 204 when the id es valid', function(done) {
       chai.request(server)
           .delete('/servers/00')
           .set('token', 'token')
           .end(function(err, res) {
-              res.should.have.status(200);
+              res.should.have.status(204);
               done();
           });
-    });*/
+    });
 
   });
 });
