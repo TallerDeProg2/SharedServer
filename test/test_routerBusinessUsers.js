@@ -13,37 +13,39 @@ var dataBase = require('../src/controllers/controllerData/controllerDataBase.js'
 
 var logger = require('../src/srv/log.js');
 
-describe('Servers endpoints', function() {
+describe('Business Users endpoints', function() {
 
-  describe('GET servers', function() {
+  describe('GET Business Users', function() {
 
-    it('it should GET all the servers', function(done) {
+    it('it should GET all the business users', function(done) {
       chai.request(server)
-          .get('/servers')
+          .get('/business-users')
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(200);
-              res.body.servers.should.be.a('array');
-              res.body.servers.length.should.be.eql(1);
+              res.body.businessUsers.should.be.a('array');
+              res.body.businessUsers.length.should.be.eql(1);
             done();
           });
     });
 
-    it('it should GET one server with id = "0"', function(done) {
+    it('it should GET one server with id = "usercito" when asking for Get/me', function(done) {
       chai.request(server)
-          .get('/servers/00')
+          .get('/business-users/me')
           .set('token', 'token')
+          .set('id','usercito')
           .end(function(err, res) {
               res.should.have.status(200);
-              res.body.server.name.should.be.eql("servercito");
+              res.body.businessUser.username.should.be.eql("usercito");
             done();
           });
     });
 
     it('it should return status 404 when the id es invalid', function(done) {
       chai.request(server)
-          .get('/servers/1')
+          .get('/business-users/me')
           .set('token', 'token')
+          .set('id', '00')
           .end(function(err, res) {
               res.should.have.status(404);
               done();
@@ -52,20 +54,18 @@ describe('Servers endpoints', function() {
 
   });
 
-  describe('POST servers', function() {
+  describe('POST business users', function() {
 
-    it('it should get status 201 after creating a valid server', function(done){
-      var now = moment();
-      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
-
+    it('it should get status 201 after creating a valid user', function(done){
       chai.request(server)
-          .post('/servers')
+          .post('/business-users')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": now_fr,
+          .send({"username": "string",
+            "password": "string",
             "name": "string",
-            "lastConnection": now_fr})
+            "surname": "string",
+            "roles": ["user"]
+          })
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(201);
@@ -73,28 +73,25 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should POST a server', function(done){
-      var now = moment();
-      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
-
+    it('it should POST a user', function(done){
       chai.request(server)
-          .post('/servers')
+          .post('/business-users')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": now_fr,
-            "name": "string2",
-            "lastConnection": now_fr})
-          .set('token', 'token')
+          .send({"username": "string2",
+            "password": "string",
+            "name": "string",
+            "surname": "string",
+            "roles": ["user"]
+          })
           .end(function(err, res) {
               res.should.have.status(201);
-              var id = res.body.server.server.id;
               chai.request(server)
-              .get('/servers/'+id)
+              .get('/business-users')
               .set('token', 'token')
               .end(function(err, res) {
                   res.should.have.status(200);
-                  res.body.server.name.should.be.eql("string2");
+                  res.body.businessUsers.should.be.a('array');
+                  res.body.businessUsers.length.should.be.eql(3);
                   done();
               });
           });
@@ -102,10 +99,11 @@ describe('Servers endpoints', function() {
 
     it('it should get status 400 when one of the parameters is missing', function(done){
       chai.request(server)
-          .post('/servers')
+          .post('/business-users')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string"})
+          .send({"username": "string2",
+            "password": "string",
+          })
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(400);
@@ -113,41 +111,20 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should update the server token', function(done){
-      chai.request(server)
-          .post('/servers/00')
-          .set('token', 'token')
-          .end(function(err, res) {
-              res.should.have.status(201);
-              res.body.server.token.should.not.be.eql("servercito-token");
-              done();
-          });
-    });
-
-    it('it should return status 404 when the server does not exist (postToken)', function(done){
-      chai.request(server)
-          .post('/servers/58798790')
-          .set('token', 'token')
-          .end(function(err, res) {
-              res.should.have.status(404);
-              done();
-          });
-    });
-
-
   });
 
-  describe('PUT servers', function() {
+  describe('PUT business users', function() {
 
-    it('it should get status 200 after updating a valid server', function(done){
+    it('it should get status 200 after updating a valid user', function(done){
       chai.request(server)
-          .put('/servers/00')
+          .put('/business-users/string')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": 0,
+          .send({"username": "string",
+            "password": "nuevaPass",
             "name": "string",
-            "lastConnection": 0})
+            "surname": "string",
+            "roles": ["user"]
+          })
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(200);
@@ -155,38 +132,42 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should PUT a server', function(done){
+    it('it should PUT a user', function(done){
       chai.request(server)
-          .put('/servers/00')
+          .put('/business-users/me')
           .set('content-type', 'application/json')
-          .send({"id": "0", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": 0,
-            "name": "nuevoNombre",
-            "lastConnection": 0})
+          .send({"username": "usercito",
+            "password": "nuevaPass",
+            "name": "string",
+            "surname": "string",
+            "roles": ["user"]
+          })
+          .set('id', 'usercito')
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(200);
               chai.request(server)
-              .get('/servers/00')
+              .get('/business-users/me')
+              .set('id','usercito')
               .set('token', 'token')
               .end(function(err, res) {
                   res.should.have.status(200);
-                  res.body.server.name.should.be.eql("nuevoNombre");
+                  res.body.businessUser.password.should.be.eql("nuevaPass");
                   done();
               });
           });
     });
 
-    it('it should get status 404 when the server does not exist', function(done){
+    it('it should get status 404 when the user does not exist', function(done){
       chai.request(server)
-          .put('/servers/768768')
+          .put('/business-users/768768')
           .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": 0,
+          .send({"username": "768768",
+            "password": "nuevaPass",
             "name": "string",
-            "lastConnection": 0})
+            "surname": "string",
+            "roles": ["user"]
+          })
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(404);
@@ -194,8 +175,19 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should get status 400 when one of the parameters is not correct', function(){
-
+    it('it should get status 400 when one of the parameters is missing', function(done){
+      chai.request(server)
+          .put('/business-users/me')
+          .set('content-type', 'application/json')
+          .send({"username": "usercito",
+            "password": "string",
+          })
+          .set('id','usercito')
+          .set('token', 'token')
+          .end(function(err, res) {
+              res.should.have.status(400);
+              done();
+          });
     });
 
   });
@@ -204,7 +196,7 @@ describe('Servers endpoints', function() {
 
     it('it should return status 404 when the id es invalid', function(done) {
       chai.request(server)
-          .delete('/servers/58798790')
+          .delete('/business-users/58798790')
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(404);
@@ -214,13 +206,12 @@ describe('Servers endpoints', function() {
 
     /*it('it should return status 200 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/servers/00')
+          .delete('/business-users/0')
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(200);
               done();
           });
     });*/
-
   });
 });
