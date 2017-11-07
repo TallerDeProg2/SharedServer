@@ -1,14 +1,16 @@
 var basicParser = require('./controllerParser.js');
 
-function parserGetUsers(r, response) {}
+function parserGetUsers(r, response) {} //200
 
-function parserGetUser(r, response){}
+function parserGetUser(r, response){} //200
 
-function parserPutUser(r, response){}
+function parserPutUser(r, response){} //200
 
-function parserDeleteUser(r, response){}
+function parserDeleteUser(r, response){} //204
 
-function parserPostUser(r, response){}
+function parserPostUser(r, response){} //201
+
+//----------------------------------------------//
 
 
 module.exports = {

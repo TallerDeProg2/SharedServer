@@ -39,5 +39,4 @@ router.delete('/servers/:serverId', function(request, response) {
     var serverId = request.params.serverId;
     controller.deleteServer(serverId, request, response);
 });
-
 /**#@-*/
