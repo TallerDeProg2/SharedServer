@@ -30,4 +30,8 @@ router.get('/business-users/me', function(request, response) {
     controller.getBusinessUsersMe(request, response);
 });
 
+router.post('/token', function(request, response) {
+    controller.postToken(request, response);
+});
+
 /**#@-*/

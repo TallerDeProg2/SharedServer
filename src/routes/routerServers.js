@@ -40,8 +40,4 @@ router.post('/servers/ping', function(request, response) {
     controller.postServerPing(request, response);
 });
 
-router.post('/token', function(request, response) {
-    controller.postToken(request, response);
-});
-
 /**#@-*/

@@ -1,11 +1,5 @@
 const version = '1.0';
 
-function jsonParser(j) {
-  var str = JSON.stringify(j);
-  return JSON.parse(str);
-}
-
-
 //----------------------->Basic Parsers<-----------------------//
 
 function reducedParser(r, response){
@@ -32,32 +26,6 @@ function extendedParser(r, response, tag, rdata, ok_status){
 }
 
 //----------------------------------------------//
-
-//----------------------->Parser Users<-----------------------// //TODO: rethink code
-
-function parserUsers(r, response, ok_status){
-  extendedParser(r, response, "users", ok_status);
-}
-
-function parserUsersPost(r, response){
-  parserUsers(r, response, 201);
-}
-
-function parserUsersPut(r, response){
-  parserUsers(r, response, 200);
-}
-
-function parserUsersDelete(r, response){
-  parserUsers(r, response, 204);
-}
-
-function parserUsersGet(r, response){
-  parserUsers(r, response, 200);
-}
-
-//----------------------------------------------//
-
-
 
 module.exports = {
   extendedParser : extendedParser,
