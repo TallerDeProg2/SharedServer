@@ -57,10 +57,11 @@ function putServer(serverId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthManager(tk);
 
+  var old_ref = request.body._ref;
   var _ref = controllerRef.createRef(serverId);
 
   var name = request.body.name;
-  var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE id=\'{}\' AND rol=\'server\' RETURNING *;'.format(_ref, '{name}', name, serverId);
+  var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE id=\'{}\' AND rol=\'server\' AND _ref =\'{}\' RETURNING *;'.format(_ref, '{name}', name, serverId, old_ref);
   dataBase.query(q, response, parser.parserPutServer, auth);
 }
 
