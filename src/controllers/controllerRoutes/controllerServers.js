@@ -61,6 +61,11 @@ function putServer(serverId, request, response) {
   var _ref = controllerRef.createRef(serverId);
 
   var name = request.body.name;
+
+  if (!name){
+    return parser.parserPostServer({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+  }
+
   var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE id=\'{}\' AND rol=\'server\' AND _ref =\'{}\' RETURNING *;'.format(_ref, '{name}', name, serverId, old_ref);
   dataBase.query(q, response, parser.parserPutServer, auth);
 }
@@ -96,8 +101,8 @@ function postServerPing(request, response) {
   var token = controllerToken.createToken();
   var lastConnection = now.format('YYYY-MM-DD HH:mm:ss Z');
   var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
-  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\', data = jsonb_set(json, \'{lastConnection}\', \'{}\') WHERE token=\'{}\' RETURNING *;'.format(token, exp, lastConnection, tk);
-  dataBase.query(q, response, parser.parserDeleteServer, auth);
+  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE token=\'{}\' RETURNING *;'.format(token, exp, '{lastConnection}', lastConnection, tk);
+  dataBase.query(q, response, parser.parserPostServer, auth);
 }
 
 module.exports = {
