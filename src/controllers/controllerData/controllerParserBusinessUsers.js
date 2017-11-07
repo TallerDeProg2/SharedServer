@@ -1,4 +1,5 @@
 var basicParser = require('./controllerParser.js');
+var logger = require('../../srv/log.js');
 
 function rdata(data){
   var businessUsers = [];
@@ -13,6 +14,10 @@ function rdata(data){
     };
   }
   return businessUsers;
+}
+
+function rdataToken(data) {
+  return {"expiresAt" : data[0].token, "token" : data[0].tokenexp};
 }
 
 function parserGetBusinessUsers(r, response) {
@@ -74,11 +79,27 @@ function parserPostBusinessUser(r, response){
   return basicParser.extendedParser(r, response, "businessUser", data, 201);
 }
 
+function parserPostToken(r, response){
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdataToken(data);
+  }
+  else{
+    return basicParser.reducedParser(r, response);
+  }
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+  }
+  logger.info("Mi data: "+JSON.stringify(data));
+  return basicParser.extendedParser(r, response, "token", data, 201);
+}
 
 module.exports = {
   parserGetBusinessUser : parserGetBusinessUser,
   parserGetBusinessUsers : parserGetBusinessUsers,
   parserPutBusinessUser : parserPutBusinessUser,
   parserDeleteBusinessUser : parserDeleteBusinessUser,
-  parserPostBusinessUser : parserPostBusinessUser
+  parserPostBusinessUser : parserPostBusinessUser,
+  parserPostToken : parserPostToken
 };

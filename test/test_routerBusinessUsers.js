@@ -1,9 +1,11 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 
+var assert = require('assert');
 var should = chai.should();
 chai.use(chaiHttp);
 
+var sleep = require('sleep');
 var moment = require('moment');
 var format = require('string-format');
 format.extend(String.prototype);
@@ -15,7 +17,7 @@ var logger = require('../src/srv/log.js');
 
 describe('Business Users endpoints', function() {
 
-  describe('GET Business Users', function() {
+  describe('GET business users', function() {
 
     it('it should GET all the business users', function(done) {
       chai.request(server)
@@ -112,6 +114,47 @@ describe('Business Users endpoints', function() {
           });
     });
 
+    it('it should return a new token each time', function(done) {
+      chai.request(server)
+          .post('/token')
+          .set('content-type', 'application/json')
+          .send({"username": "string2",
+            "password": "string"
+          })
+          .set('token', 'token')
+          .end(function(err, res) {
+              res.should.have.status(201);
+              var tk_old = res.body.token.token;
+              var exp_time_old = moment(res.body.token.expiresAt, 'YYYY-MM-DD HH:mm:ss Z');
+              sleep.sleep(1); //obtain new exp_time
+              chai.request(server)
+                  .post('/token')
+                  .set('content-type', 'application/json')
+                  .send({"username": "string2",
+                    "password": "string"
+                  })
+                  .set('token', 'token')
+                  .end(function(err, res) {
+                      res.should.have.status(201);
+                      var exp_time_new = moment(res.body.token.expiresAt, 'YYYY-MM-DD HH:mm:ss Z');
+                      res.body.token.token.should.not.be.eql(tk_old);
+                      assert.ok(exp_time_old.isBefore(exp_time_new));
+                      done();
+                  });
+          });
+    })
+
+    it('it should return status 400 when one of the parameters is missing (post token)', function(done) {
+      chai.request(server)
+          .post('/business-users')
+          .set('content-type', 'application/json')
+          .send({"username": "string2"})
+          .set('token', 'token')
+          .end(function(err, res) {
+            res.should.have.status(400);
+            done();
+          });
+    });
   });
 
   describe('PUT business users', function() {

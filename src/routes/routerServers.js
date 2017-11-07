@@ -40,8 +40,4 @@ router.delete('/servers/:serverId', function(request, response) {
     controller.deleteServer(serverId, request, response);
 });
 
-router.post('/token', function(request, response) {
-    controller.postToken(request, response);
-});
-
 /**#@-*/
