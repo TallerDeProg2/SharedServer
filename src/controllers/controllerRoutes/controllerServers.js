@@ -61,6 +61,11 @@ function putServer(serverId, request, response) {
   var _ref = controllerRef.createRef(serverId);
 
   var name = request.body.name;
+
+  if (!name){
+    return parser.parserPostServer({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+  }
+
   var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE id=\'{}\' AND rol=\'server\' AND _ref =\'{}\' RETURNING *;'.format(_ref, '{name}', name, serverId, old_ref);
   dataBase.query(q, response, parser.parserPutServer, auth);
 }

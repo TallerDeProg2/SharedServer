@@ -29,7 +29,7 @@ describe('Business Users endpoints', function() {
           });
     });
 
-    it('it should GET one server with id = "usercito" when asking for Get/me', function(done) {
+    it('it should GET one user with id = "usercito" when asking for Get/me', function(done) {
       chai.request(server)
           .get('/business-users/me')
           .set('token', 'token')
@@ -157,6 +157,21 @@ describe('Business Users endpoints', function() {
                   done();
               });
           });
+
+        it('it should get status 400 when one of the parameters is missing', function(done){
+          chai.request(server)
+              .put('/business-users/string')
+              .set('content-type', 'application/json')
+              .send({"username": "string",
+                "password": "nuevaPass",
+                "name": "string",
+              })
+              .set('token', 'token')
+              .end(function(err, res) {
+                  res.should.have.status(400);
+                  done();
+              });
+        });
     });
 
     it('it should get status 404 when the user does not exist', function(done){

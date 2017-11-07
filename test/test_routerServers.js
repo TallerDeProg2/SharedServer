@@ -206,8 +206,19 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should get status 400 when one of the parameters is not correct', function(){
-
+    it('it should get status 400 when one of the parameters is missing', function(){
+      chai.request(server)
+          .put('/servers/00')
+          .set('content-type', 'application/json')
+          .send({"id": "string", "_ref": "string",
+            "createdBy": "string",
+            "createdTime": 0,
+            "lastConnection": 0})
+          .set('token', 'token')
+          .end(function(err, res) {
+              res.should.have.status(400);
+              done();
+          });
     });
 
   });
