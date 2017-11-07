@@ -26,7 +26,7 @@ describe('Business Users endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.businessUsers.should.be.a('array');
-              res.body.businessUsers.length.should.be.eql(1);
+              res.body.businessUsers.length.should.be.eql(2);
             done();
           });
     });
@@ -94,7 +94,7 @@ describe('Business Users endpoints', function() {
               .end(function(err, res) {
                   res.should.have.status(200);
                   res.body.businessUsers.should.be.a('array');
-                  res.body.businessUsers.length.should.be.eql(3);
+                  res.body.businessUsers.length.should.be.eql(4);
                   done();
               });
           });
@@ -142,7 +142,7 @@ describe('Business Users endpoints', function() {
                       done();
                   });
           });
-    })
+    });
 
     it('it should return status 400 when one of the parameters is missing (post token)', function(done) {
       chai.request(server)

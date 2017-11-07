@@ -1,66 +1,76 @@
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserUsers.js');
-var token = require('../controllerLogic/controllerToken.js');
-var id = require('../controllerLogic/controllerId.js');
-var auth = require('../controllerLogic/controllerAuthorization.js');
+var controllerToken = require('../controllerLogic/controllerToken.js');
+var controllerId = require('../controllerLogic/controllerId.js');
+var controllerRef = require('../controllerLogic/controllerRef.js');
+var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
+var logger = require('../../srv/log.js');
+
+var format = require('string-format');
+format.extend(String.prototype);
+
+//users (id text, username text, password text, facebookId text, facebookToken text, firstName text, lastName text, country text, email text, birthdate timestamp, car jsonb, card jsonb)
 
 function getUsers(request, response) {
-  var tk = request.header.token;
-  var auth = new controllerAuth.AuthUser(tk);
-  var q = 'SELECT * FROM users';
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var q = 'SELECT * FROM users;';
   dataBase.query(q, response, parser.parserGetUsers, auth);
 }
 
+function getUser(userId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var q = 'SELECT * FROM users WHERE id=\'{}\''.format(userId);
+  dataBase.query(q, response, parser.parserGetUser, auth);
+}
 
 function postUser(request, response) {
-  var type = request.body.type;
-  var _refNew = "";
+  var id = controllerId.createId();
+  var driver = request.body.type == "driver";
+  var _ref = controllerRef.createRef(id);
   var username = request.body.username;
   var password = request.body.password;
-  var userIdFacebook = request.body.fb.userId;
-  var authTokenFacebook = request.body.fb.authToken;
+  var facebookId = request.body.fb.userId;
+  var facebookToken = request.body.fb.authToken;
   var firstName = request.body.firstName;
   var lastName = request.body.lastName;
   var country = request.body.country;
   var email = request.body.email;
   var birthdate = request.body.birthdate;
 
-  var tk = request.header.token;
-  var auth = new controllerAuth.AuthUser(tk);
-  var q = 'INSERT INTO users(type, _ref, username, password, userIdFacebook, authTokenFacebook, firstName, lastName, country, email, birthdate) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\');'.format(type, _ref, username, password, userIdFacebook, authTokenFacebook, firstName, lastName, country, email, birthdate);
-  dataBase.query(q, response, parser.parserDeleteUser, auth);
+  car = JSON.stringify({});
+  card = JSON.stringify({});
+
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthServer(tk);
+  var q = 'INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstName, lastName, country, email, birthdate, car, card) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\');'.format(id, _ref, driver, username, password, facebookId, facebookToken, firstName, lastName, country, email, birthdate, car, card);
+  dataBase.query(q, response, parser.parserPostUser, auth);
 }
 
 function postUsersValidate(request, response) {}
 
 function deleteUser(userId, request, response) {
-  var tk = request.header.token;
-  var auth = new controllerAuth.AuthUser(tk);
-  var q = 'DELETE * FROM users WHERE id=\'{}\''.format(userId);
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthManagerServer(tk);
+  var q = 'DELETE FROM users WHERE id=\'{}\''.format(userId);
   dataBase.query(q, response, parser.parserDeleteUser, auth);
-}
-
-function getUser(userId, request, response) {
-  var tk = request.header.token;
-  var auth = new controllerAuth.AuthUser(tk);
-  var q = 'SELECT * FROM users WHERE id=\''+userId+'\'';
-  dataBase.query(q, response, parser.parserGetUser, auth);
 }
 
 function putUser(userId, request, response) {
   var _ref = request.body._ref;
-  var _refNew = "";
+  var _refNew = controllerRef.createRef(userId);
   var password = request.body.password;
-  var userIdFacebook = request.body.fb.userId;
-  var authTokenFacebook = request.body.fb.authToken;
+  var facebookId = request.body.fb.userId;
+  var facebookToken = request.body.fb.authToken;
   var firstName = request.body.firstName;
   var lastName = request.body.lastName;
   var country = request.body.country;
+  var tk = request.headers.token;
 
-  var tk = request.header.token;
-  var auth = new controllerAuth.AuthUser(tk);
-  var q = 'UPDATE users SET _ref=\'{}\', password=\'{}\', userIdFacebook=\'{}\', authTokenFacebook=\'{}\', firstName=\'{}\', lastName=\'{}\', country=\'{}\' WHERE id=\'{}\';'.format(_refNew, password, userIdFacebook, authTokenFacebook, firstName, lastName, country, userId);
+  var auth = new controllerAuth.AuthServer(tk);
+  var q = 'UPDATE users SET _ref=\'{}\', password=\'{}\', facebookId=\'{}\', facebookToken=\'{}\', firstName=\'{}\', lastName=\'{}\', country=\'{}\' WHERE id=\'{}\' AND _ref=\'{}\';'.format(_refNew, password, facebookId, facebookToken, firstName, lastName, country, userId, _ref);
   dataBase.query(q, response, parser.parserPutUser, auth);
 }
 
