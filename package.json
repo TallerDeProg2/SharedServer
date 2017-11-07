@@ -24,6 +24,7 @@
     "moment": "^2.18.1",
     "morgan": "^1.8.2",
     "pg": "5.x",
+    "sleep": "^5.1.1",
     "string-format": "^0.5.0",
     "winston": "^2.3.1"
   },

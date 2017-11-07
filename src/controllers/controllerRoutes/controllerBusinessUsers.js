@@ -83,7 +83,6 @@ function putBusinessUser(userId, request, response) {
 }
 
 function getBusinessUsersMe(request, response) {
-  logger.info("Mi header es: "+request.headers.id);
   var id = request.headers.id;
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
@@ -91,7 +90,26 @@ function getBusinessUsersMe(request, response) {
   dataBase.query(q, response, parser.parserGetBusinessUser, auth);
 }
 
-function postToken(request, response) {}
+function postToken(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUser(tk);
+
+  var username = request.body.username;
+  var password = request.body.password;
+
+  if (!username || !password){
+    return parser.parserPostToken({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+  }
+
+  var now = moment();
+  var exp_date = moment(now).add(1, 'day'); //token duration is one day.
+
+  var token = controllerToken.createToken();
+  var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
+
+  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\' WHERE id=\'{}\' AND rol=\'user\' RETURNING *;'.format(token, exp, username);
+  dataBase.query(q, response, parser.parserPostToken, auth);
+}
 
 
 module.exports = {
