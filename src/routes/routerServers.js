@@ -28,16 +28,16 @@ router.put('/servers/:serverId', function(request, response) {
 
 router.post('/servers/:serverId', function(request, response) {
     var serverId = request.params.serverId;
-    controller.postServerToken(serverId, request, response);
+    if (serverId == "ping"){
+      controller.postServerPing(request, response);
+    }else{
+      controller.postServerToken(serverId, request, response);
+    }
 });
 
 router.delete('/servers/:serverId', function(request, response) {
     var serverId = request.params.serverId;
     controller.deleteServer(serverId, request, response);
-});
-
-router.post('/servers/ping', function(request, response) {
-    controller.postServerPing(request, response);
 });
 
 router.post('/token', function(request, response) {

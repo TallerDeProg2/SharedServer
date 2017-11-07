@@ -101,8 +101,8 @@ function postServerPing(request, response) {
   var token = controllerToken.createToken();
   var lastConnection = now.format('YYYY-MM-DD HH:mm:ss Z');
   var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
-  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\', data = jsonb_set(json, \'{lastConnection}\', \'{}\') WHERE token=\'{}\' RETURNING *;'.format(token, exp, lastConnection, tk);
-  dataBase.query(q, response, parser.parserDeleteServer, auth);
+  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE token=\'{}\' RETURNING *;'.format(token, exp, '{lastConnection}', lastConnection, tk);
+  dataBase.query(q, response, parser.parserPostServer, auth);
 }
 
 module.exports = {

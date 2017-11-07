@@ -1,6 +1,7 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 
+var assert = require('assert');
 var should = chai.should();
 chai.use(chaiHttp);
 
@@ -24,7 +25,7 @@ describe('Servers endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.servers.should.be.a('array');
-              res.body.servers.length.should.be.eql(1);
+              res.body.servers.length.should.be.eql(2);
             done();
           });
     });
@@ -122,6 +123,26 @@ describe('Servers endpoints', function() {
               res.body.server.token.should.not.be.eql("servercito-token");
               done();
           });
+    });
+
+    it('it should update the server token and the last connection', function(done){
+      chai.request(server)
+          .get('/servers/01')
+          .set('token', 'token')
+          .end(function(err, res) {
+              var last_connection_old = moment(res.body.server.lastConnection, 'YYYY-MM-DD HH:mm:ss Z');
+              chai.request(server)
+                  .post('/servers/ping')
+                  .set('token', 'servercito2-token')
+                  .end(function(err, res) {
+                      res.should.have.status(201);
+                      res.body.server.token.should.not.be.eql("servercito2-token");
+                      var last_connection =  moment(res.body.server.server.lastConnection, 'YYYY-MM-DD HH:mm:ss Z');
+                      assert.ok(last_connection_old.isBefore(last_connection));
+                      done();
+                  });
+          });
+
     });
 
     it('it should return status 404 when the server does not exist (postToken)', function(done){
