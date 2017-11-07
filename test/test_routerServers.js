@@ -141,40 +141,52 @@ describe('Servers endpoints', function() {
 
     it('it should get status 200 after updating a valid server', function(done){
       chai.request(server)
-          .put('/servers/00')
-          .set('content-type', 'application/json')
-          .send({"id": "string", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": 0,
-            "name": "string",
-            "lastConnection": 0})
-          .set('token', 'token')
-          .end(function(err, res) {
-              res.should.have.status(200);
-              done();
-          });
+      .get('/servers/00')
+      .set('token', 'token')
+      .end(function(err, res) {
+          var old_ref = res.body.server._ref;
+          chai.request(server)
+              .put('/servers/00')
+              .set('content-type', 'application/json')
+              .send({"id": "string", "_ref": old_ref,
+                "createdBy": "string",
+                "createdTime": 0,
+                "name": "string",
+                "lastConnection": 0})
+              .set('token', 'token')
+              .end(function(err, res) {
+                  res.should.have.status(200);
+                  done();
+              });
+      });
     });
 
     it('it should PUT a server', function(done){
       chai.request(server)
-          .put('/servers/00')
-          .set('content-type', 'application/json')
-          .send({"id": "0", "_ref": "string",
-            "createdBy": "string",
-            "createdTime": 0,
-            "name": "nuevoNombre",
-            "lastConnection": 0})
-          .set('token', 'token')
-          .end(function(err, res) {
-              res.should.have.status(200);
+      .get('/servers/00')
+      .set('token', 'token')
+      .end(function(err, res) {
+              var old_ref = res.body.server._ref;
               chai.request(server)
-              .get('/servers/00')
-              .set('token', 'token')
-              .end(function(err, res) {
-                  res.should.have.status(200);
-                  res.body.server.name.should.be.eql("nuevoNombre");
-                  done();
-              });
+                  .put('/servers/00')
+                  .set('content-type', 'application/json')
+                  .send({"id": "0", "_ref": old_ref,
+                    "createdBy": "string",
+                    "createdTime": 0,
+                    "name": "nuevoNombre",
+                    "lastConnection": 0})
+                  .set('token', 'token')
+                  .end(function(err, res) {
+                      res.should.have.status(200);
+                      chai.request(server)
+                      .get('/servers/00')
+                      .set('token', 'token')
+                      .end(function(err, res) {
+                          res.should.have.status(200);
+                          res.body.server.name.should.be.eql("nuevoNombre");
+                          done();
+                      });
+                  });
           });
     });
 

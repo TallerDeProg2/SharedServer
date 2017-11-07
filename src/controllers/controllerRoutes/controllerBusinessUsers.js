@@ -3,6 +3,7 @@ var parser = require('../controllerData/controllerParserBusinessUsers.js');
 
 var controllerToken = require('../controllerLogic/controllerToken.js');
 var controllerId = require('../controllerLogic/controllerId.js');
+var controllerRef = require('../controllerLogic/controllerRef.js');
 
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
@@ -32,7 +33,7 @@ function postBusinessUsers(request, response) {
   var exp_date_fr = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
 
   var id = controllerId.createId();
-  var _ref = "";
+  var _ref = controllerRef.createRef(id);
   var token = controllerToken.createToken();
   var tokenexp = exp_date_fr;
 
@@ -65,9 +66,7 @@ function putBusinessUser(userId, request, response) {
     userId = request.headers.id;
   }
 
-  logger.info("mi user id esss: "+userId);
-
-  var ref = "";
+  var _ref = controllerRef.createRef(userId);
 
   var json = {'username' : userId,
               'password' : request.body.password,
@@ -79,7 +78,7 @@ function putBusinessUser(userId, request, response) {
     return parser.parserPutBusinessUser({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
   }
 
-  var q = 'UPDATE srvUsers SET _ref=\'{}\', data = \'{}\' WHERE id=\'{}\' AND rol=\'user\' RETURNING *'.format(ref, JSON.stringify(json), userId);
+  var q = 'UPDATE srvUsers SET _ref=\'{}\', data = \'{}\' WHERE id=\'{}\' AND rol=\'user\' RETURNING *'.format(_ref, JSON.stringify(json), userId);
   dataBase.query(q, response, parser.parserPutBusinessUser, auth);
 }
 

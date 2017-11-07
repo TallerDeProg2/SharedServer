@@ -3,10 +3,9 @@ var parser = require('../controllerData/controllerParserServers.js');
 
 var controllerToken = require('../controllerLogic/controllerToken.js');
 var controllerId = require('../controllerLogic/controllerId.js');
+var controllerRef = require('../controllerLogic/controllerRef.js');
 
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
-
-//var ref = require('./controllerRef.js');
 
 var moment = require('moment');
 var format = require('string-format');
@@ -37,7 +36,7 @@ function postServer(request, response) {
   var exp_date_fr = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
 
   var id = controllerId.createId();
-  var _ref = "";
+  var _ref = controllerRef.createRef(id);
   var token = controllerToken.createToken();
   var exp = exp_date_fr;
 
@@ -58,10 +57,11 @@ function putServer(serverId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthManager(tk);
 
-  var _ref = "";
+  var old_ref = request.body._ref;
+  var _ref = controllerRef.createRef(serverId);
 
   var name = request.body.name;
-  var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE id=\'{}\' AND rol=\'server\' RETURNING *;'.format(_ref, '{name}', name, serverId);
+  var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE id=\'{}\' AND rol=\'server\' AND _ref =\'{}\' RETURNING *;'.format(_ref, '{name}', name, serverId, old_ref);
   dataBase.query(q, response, parser.parserPutServer, auth);
 }
 
