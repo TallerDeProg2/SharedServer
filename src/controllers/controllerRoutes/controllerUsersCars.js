@@ -70,7 +70,7 @@ function putUserCar(userId, request, response) {
       return parser.parserPutUserCar({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
-  var q = 'UPDATE users SET car=\'{}\' WHERE id=\'{}\' AND car->\'_ref\'=\'{}\' RETURNING *;'.format(JSON.stringify(car), userId, _ref);
+  var q = 'UPDATE users SET car=\'{}\' WHERE id=\'{}\' AND car->>\'_ref\'=\'{}\' RETURNING *;'.format(JSON.stringify(car), userId, _ref);
   dataBase.query(q, response, parser.parserPutUserCar, auth);
 }
 

@@ -118,25 +118,116 @@ describe('User\'s cars endpoints', function() {
           });
     });
 
-  it('it should get status 404 when the id doesn\'t exist', function(done){
-    chai.request(server)
-        .post('/users/29830832/cars')
-        .set('content-type', 'application/json')
-        .send({"brand": "brand",
-          "model": "model",
-          "color": "color",
-          "plate": "plate",
-          "year": "year",
-          "status": "status",
-          "radio": "radio",
-          "airconditioner": true,
-          "_ref": "abcde"})
-        .set('token', 'superservercito-token')
-        .end(function(err, res) {
-            res.should.have.status(404);
-            done();
-        });
+    it('it should get status 404 when the id doesn\'t exist', function(done){
+      chai.request(server)
+          .post('/users/29830832/cars')
+          .set('content-type', 'application/json')
+          .send({"brand": "brand",
+            "model": "model",
+            "color": "color",
+            "plate": "plate",
+            "year": "year",
+            "status": "status",
+            "radio": "radio",
+            "airconditioner": true,
+            "_ref": "abcde"})
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(404);
+              done();
+          });
+    });
   });
-});
+
+  describe('PUT user\'s cars', function() {
+
+    it('it should get status 200 after updating a valid user', function(done){
+      chai.request(server)
+          .put('/users/03/cars')
+          .set('content-type', 'application/json')
+          .send({"brand": "brandNew",
+            "model": "modelNew",
+            "color": "colorNew",
+            "plate": "plateNew",
+            "year": "yearNew",
+            "status": "statusNew",
+            "radio": "radioNew",
+            "airconditioner": false,
+            "_ref": "abcde"})
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              done();
+          });
+    });
+
+    it('it should PUT a user', function(done){
+      chai.request(server)
+      .get('/users/03/cars')
+      .set('token', 'superservercito-token')
+      .end(function(err, res) {
+              var old_ref = res.body.car._ref;
+              chai.request(server)
+                  .put('/users/03/cars')
+                  .set('content-type', 'application/json')
+                  .send({"brand": "tesla",
+                    "model": "1234",
+                    "color": "black",
+                    "plate": "plateNew",
+                    "year": "yearNew",
+                    "status": "statusNew",
+                    "radio": "radioNew",
+                    "airconditioner": true,
+                    "_ref": old_ref})
+                  .set('token', 'superservercito-token')
+                  .end(function(err, res) {
+                      res.should.have.status(200);
+                      chai.request(server)
+                      .get('/users/03/cars')
+                      .set('token', 'superservercito-token')
+                      .end(function(err, res) {
+                          res.should.have.status(200);
+                          res.body.car.brand.should.be.eql("tesla");
+                          res.body.car.color.should.be.eql("black");
+                          done();
+                      });
+                  });
+          });
+    });
+
+    it('it should get status 404 when the user does not exist', function(done){
+      chai.request(server)
+          .put('/users/9189028/cars')
+          .set('content-type', 'application/json')
+          .send({"brand": "brand",
+            "model": "model",
+            "color": "color",
+            "plate": "plate",
+            "year": "year",
+            "status": "status",
+            "radio": "radio",
+            "airconditioner": true,
+            "_ref": "abcde"})
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(404);
+              done();
+          });
+    });
+
+    it('it should get status 400 when one of the parameters is missing', function(done){
+      chai.request(server)
+          .put('/users/03/cars')
+          .set('token', 'superservercito-token')
+          .send({"brand": "brand",
+            "model": "model",
+            "color": "color"})
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(400);
+              done();
+          });
+    });
+  });
 
 });

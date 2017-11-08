@@ -9,7 +9,8 @@ function rdata(data){
     'year': data.car.year,
     'status': data.car.status,
     'radio': data.car.radio,
-    'airconditioner': data.car.airconditioner
+    'airconditioner': data.car.airconditioner,
+    '_ref': data.car._ref
   };
 }
 

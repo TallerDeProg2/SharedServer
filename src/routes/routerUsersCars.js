@@ -21,12 +21,12 @@ router.post('/users/:userId/cars', function(request, response) {
 router.delete('/users/:userId/cars', function(request, response) {
     var userId = request.params.userId;
     var carId = request.params.carId;
-    controller.deleteCar(userId, carId, request, response);
+    controller.deleteUserCar(userId, carId, request, response);
 });
 
 router.put('/users/:userId/cars', function(request, response) {
     var userId = request.params.userId;
-    controller.putCar(userId, request, response);
+    controller.putUserCar(userId, request, response);
 });
 
 /**#@-*/
