@@ -10,7 +10,7 @@ var logger = require('../../srv/log.js');
 var format = require('string-format');
 format.extend(String.prototype);
 
-//users (id text, username text, password text, facebookId text, facebookToken text, firstName text, lastName text, country text, email text, birthdate timestamp, car jsonb, card jsonb)
+//users (id text, username text, password text, facebookId text, facebookToken text, firstname text, lastname text, country text, email text, birthdate timestamp, car jsonb, card jsonb)
 
 function getUsers(request, response) {
   var tk = request.headers.token;
@@ -32,8 +32,8 @@ function postUser(request, response) {
   var _ref = controllerRef.createRef(id);
   var username = request.body.username;
   var password = request.body.password;
-  var firstName = request.body.firstName;
-  var lastName = request.body.lastName;
+  var firstname = request.body.firstname;
+  var lastname = request.body.lastname;
   var country = request.body.country;
   var email = request.body.email;
   var birthdate = request.body.birthdate;
@@ -49,14 +49,13 @@ function postUser(request, response) {
   car = JSON.stringify({});
   card = JSON.stringify({});
 
-  if (!username || !driver || !password || !firstName || !lastName || !country || !email || !birthdate){
-    logger.info("uyaaaa");
-    return parser.parserPostUser({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+  if (!username || !driver || !password || !firstname || !lastname || !country || !email || !birthdate){
+    return parser.parserPostUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthServer(tk);
-  var q = 'INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstName, lastName, country, email, birthdate, car, card) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, driver, username, password, facebookId, facebookToken, firstName, lastName, country, email, birthdate, car, card);
+  var q = 'INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card);
   dataBase.query(q, response, parser.parserPostUser, auth);
 }
 
@@ -65,7 +64,7 @@ function postUsersValidate(request, response) {}
 function deleteUser(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthManagerServer(tk);
-  var q = 'DELETE FROM users WHERE id=\'{}\''.format(userId);
+  var q = 'DELETE FROM users WHERE id=\'{}\' RETURNING *'.format(userId);
   dataBase.query(q, response, parser.parserDeleteUser, auth);
 }
 
@@ -73,15 +72,26 @@ function putUser(userId, request, response) {
   var _ref = request.body._ref;
   var _refNew = controllerRef.createRef(userId);
   var password = request.body.password;
-  var facebookId = request.body.fb.userId;
-  var facebookToken = request.body.fb.authToken;
-  var firstName = request.body.firstName;
-  var lastName = request.body.lastName;
+  var firstname = request.body.firstname;
+  var lastname = request.body.lastname;
   var country = request.body.country;
   var tk = request.headers.token;
 
+  var facebookId = '';
+  var facebookToken = '';
+
+  if (request.body.fb){
+    facebookId = request.body.fb.userId;
+    facebookToken = request.body.fb.authToken;
+  }
+
+  if (!_ref || !password || !firstname || !lastname || !country){
+    logger.info("uyaaa");
+    return parser.parserPutUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
   var auth = new controllerAuth.AuthServer(tk);
-  var q = 'UPDATE users SET _ref=\'{}\', password=\'{}\', facebookId=\'{}\', facebookToken=\'{}\', firstName=\'{}\', lastName=\'{}\', country=\'{}\' WHERE id=\'{}\' AND _ref=\'{}\';'.format(_refNew, password, facebookId, facebookToken, firstName, lastName, country, userId, _ref);
+  var q = 'UPDATE users SET _ref=\'{}\', password=\'{}\', facebookId=\'{}\', facebookToken=\'{}\', firstname=\'{}\', lastname=\'{}\', country=\'{}\' WHERE id=\'{}\' AND _ref=\'{}\' RETURNING *;'.format(_refNew, password, facebookId, facebookToken, firstname, lastname, country, userId, _ref);
   dataBase.query(q, response, parser.parserPutUser, auth);
 }
 

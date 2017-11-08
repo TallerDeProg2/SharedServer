@@ -18,6 +18,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     INSERT INTO srvusers(id, _ref, rol, token, tokenexp, data) VALUES ('superusercito', 'yyyyy', 'user', 'superusercito-token', '$time_exp',
       '{"username" : "superusercito", "password" : "pass", "name" : "superuser", "surname" : "cito", "roles" : ["admin"]}');
 
-    CREATE TABLE users (id text, _ref text, driver text, username text, password text, facebookId text, facebookToken text, firstName text, lastName text, country text, email text, birthdate timestamp, car jsonb, card jsonb);
-    INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstName, lastName, country, email, birthdate, car, card) VALUES ('02', 'defgh', 'passenger', 'usercitoapp', 'pass', 'usercito@app.com', '1234', 'usercito', 'app', 'applandia', 'usercito@app.com', '$created_time', '{}', '{}');
+    CREATE TABLE users (id text, _ref text, driver text, username text, password text, facebookId text, facebookToken text, firstname text, lastname text, country text, email text, birthdate timestamp, car jsonb, card jsonb);
+    INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card) VALUES ('02', 'defgh', 'passenger', 'usercitoapp', 'pass', 'usercito@app.com', '1234', 'usercito', 'app', 'applandia', 'usercito@app.com', '$created_time', '{}', '{}');
 EOSQL

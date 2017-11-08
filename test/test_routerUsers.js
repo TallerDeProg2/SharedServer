@@ -70,8 +70,8 @@ describe('Users endpoints', function() {
               "userId": "string",
               "authToken": "string"
             },
-            "firstName": "string",
-            "lastName": "string",
+            "firstname": "string",
+            "lastname": "string",
             "country": "string",
             "email": "string",
             "birthdate": now_fr,
@@ -99,8 +99,8 @@ describe('Users endpoints', function() {
               "userId": "string2",
               "authToken": "string2"
             },
-            "firstName": "string2",
-            "lastName": "string2",
+            "firstname": "string2",
+            "lastname": "string2",
             "country": "string2",
             "email": "string2",
             "birthdate": now_fr,
@@ -135,6 +135,120 @@ describe('Users endpoints', function() {
               done();
           });
     });
+  });
+
+  describe('PUT users', function() {
+
+    it('it should get status 200 after updating a valid user', function(done){
+      chai.request(server)
+          .put('/users/02')
+          .set('content-type', 'application/json')
+          .send({
+            "_ref": "defgh",
+            "type": "passenger",
+            "username": "usercitoapp",
+            "password": "passNueva",
+            "fb": {
+              "userId": "usercito@app.com",
+              "authToken": "1234"
+            },
+            "firstname": "usercito",
+            "lastname": "app",
+            "country": "applandia",
+            "email": "usercito@app.com",
+            "birthdate": 0,
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              done();
+          });
+    });
+
+    it('it should PUT a user', function(done){
+      chai.request(server)
+      .get('/users/02')
+      .set('token', 'superservercito-token')
+      .end(function(err, res) {
+              var old_ref = res.body.user._ref;
+
+              logger.info("Mi ref es: "+old_ref);
+              chai.request(server)
+                  .put('/users/02')
+                  .set('content-type', 'application/json')
+                  .send({
+                    "_ref": old_ref,
+                    "type": "passenger",
+                    "username": "usercitoapp",
+                    "password": "passNueva",
+                    "fb": {
+                      "userId": "usercito@app.com",
+                      "authToken": "1234"
+                    },
+                    "firstname": "usercita",
+                    "lastname": "app",
+                    "country": "applandia",
+                    "email": "usercito@app.com",
+                    "birthdate": 0,
+                  })
+                  .set('token', 'superservercito-token')
+                  .end(function(err, res) {
+                      res.should.have.status(200);
+                      chai.request(server)
+                      .get('/users/02')
+                      .set('token', 'superservercito-token')
+                      .end(function(err, res) {
+                          res.should.have.status(200);
+                          logger.info("Mi bodyg es:"+JSON.stringify(res.body));
+                          res.body.user.firstname.should.be.eql("usercita");
+                          done();
+                      });
+                  });
+          });
+    });
+
+    it('it should get status 404 when the user does not exist', function(done){
+      chai.request(server)
+          .put('/users/768768')
+          .set('content-type', 'application/json')
+          .send({
+            "_ref": "hkjhkh",
+            "type": "passenger",
+            "username": "usercitoapp",
+            "password": "passNueva",
+            "fb": {
+              "userId": "usercito@app.com",
+              "authToken": "1234"
+            },
+            "firstname": "usercito",
+            "lastname": "app",
+            "country": "applandia",
+            "email": "usercito_2017@app.com",
+            "birthdate": 0,
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(404);
+              done();
+          });
+    });
+
+    it('it should get status 400 when one of the parameters is missing', function(done){
+      chai.request(server)
+          .put('/users/02')
+          .set('token', 'superservercito-token')
+          .send({
+            "_ref": "jhkh",
+            "type": "passenger",
+            "username": "usercitoapp"
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(400);
+              done();
+          });
+    });
+
   });
 
 });

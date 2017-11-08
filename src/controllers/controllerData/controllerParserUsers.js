@@ -7,12 +7,12 @@ function rdata(data){
   for (var i = 0; i < data.length; i++) {
       users[i] = {
         "id": data[i].id,
-        "_ref": data[i].ref,
+        "_ref": data[i]._ref,
         "type": data[i].driver,
         "cars": data[i].car,
         "username": data[i].username,
-        "firstName": data[i].firstName,
-        "lastName": data[i].lastName,
+        "firstname": data[i].firstname,
+        "lastname": data[i].lastname,
         "country": data[i].country,
         "email": data[i].email,
         "birthdate": data[i].birthdate,
@@ -41,7 +41,9 @@ function parserGetUser(r, response){
   return basicParser.extendedParser(r, response, "user", data, 200);
 }
 
-function parserPutUser(r, response){} //200
+function parserPutUser(r, response){
+  parserGetUser(r, response);
+}
 
 function parserDeleteUser(r, response){} //204
 
