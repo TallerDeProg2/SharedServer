@@ -141,7 +141,7 @@ describe('User\'s cars endpoints', function() {
 
   describe('PUT user\'s cars', function() {
 
-    it('it should get status 200 after updating a valid user', function(done){
+    it('it should get status 200 after updating a valid car', function(done){
       chai.request(server)
           .put('/users/03/cars')
           .set('content-type', 'application/json')
@@ -161,7 +161,7 @@ describe('User\'s cars endpoints', function() {
           });
     });
 
-    it('it should PUT a user', function(done){
+    it('it should PUT a car', function(done){
       chai.request(server)
       .get('/users/03/cars')
       .set('token', 'superservercito-token')
@@ -228,6 +228,30 @@ describe('User\'s cars endpoints', function() {
               done();
           });
     });
+  });
+
+  describe('DELETE user\'s car', function() {
+
+    it('it should return status 404 when the id es invalid', function(done) {
+      chai.request(server)
+          .delete('/users/58798790/cars')
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(404);
+              done();
+          });
+    });
+
+    it('it should return status 204 when the id es valid', function(done) {
+      chai.request(server)
+          .delete('/users/03/cars')
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(204);
+              done();
+          });
+    });
+
   });
 
 });
