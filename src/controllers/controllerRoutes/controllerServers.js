@@ -46,7 +46,7 @@ function postServer(request, response) {
               'lastConnection' : now_fr};
 
   if (!json.createdBy || !json.createdTime || !json.name){
-    return parser.parserPostServer({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+    return parser.parserPostServer({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
   var q = 'INSERT INTO srvusers(id, _ref, rol, token, tokenexp, data) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\') RETURNING *;'.format(id, _ref, "server", token, exp, JSON.stringify(json));
@@ -63,7 +63,7 @@ function putServer(serverId, request, response) {
   var name = request.body.name;
 
   if (!name){
-    return parser.parserPostServer({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+    return parser.parserPutServer({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
   var q = 'UPDATE srvusers SET _ref=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE id=\'{}\' AND rol=\'server\' AND _ref =\'{}\' RETURNING *;'.format(_ref, '{name}', name, serverId, old_ref);

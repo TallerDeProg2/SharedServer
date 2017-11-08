@@ -1,14 +1,87 @@
 var basicParser = require('./controllerParser.js');
+var logger = require('../../srv/log.js');
 
-function parserGetUsers(r, response) {} //200
 
-function parserGetUser(r, response){} //200
+function rdata(data){
+  var users = [];
+  for (var i = 0; i < data.length; i++) {
+      users[i] = {
+        "id": data[i].id,
+        "_ref": data[i]._ref,
+        "type": data[i].driver,
+        "cars": data[i].car,
+        "username": data[i].username,
+        "firstname": data[i].firstname,
+        "lastname": data[i].lastname,
+        "country": data[i].country,
+        "email": data[i].email,
+        "birthdate": data[i].birthdate,
+    };
+  }
+  return users;
+}
 
-function parserPutUser(r, response){} //200
+function parserGetUsers(r, response) {
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdata(data);
+  }
+  return basicParser.extendedParser(r, response, "users", data, 200);
+}
 
-function parserDeleteUser(r, response){} //204
+function parserGetUser(r, response){
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdata(data)[0];
+  }
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+  }
+  return basicParser.extendedParser(r, response, "user", data, 200);
+}
 
-function parserPostUser(r, response){} //201
+function parserPutUser(r, response){
+  parserGetUser(r, response);
+}
+
+function parserDeleteUser(r, response){
+  if ((r.success) && (!r.data_retrieved.length)){
+    r.status = 404;
+    r.success = false;
+  }
+  if (!r.success){
+    return basicParser.reducedParser(r, response);
+  }
+  return response.sendStatus(204);
+}
+
+function parserPostUser(r, response){
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdata(data)[0];
+  }
+  else{
+    return basicParser.reducedParser(r, response);
+  }
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+  }
+  return basicParser.extendedParser(r, response, "user", data, 201);
+}
+
+function parserPostValidateUser(r, response){
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdata(data)[0];
+  }
+  if (!r.data_retrieved.length){
+    r.status = 400;
+    r.success = false;
+  }
+  return basicParser.extendedParser(r, response, "user", data, 200);
+}
 
 //----------------------------------------------//
 
@@ -18,5 +91,6 @@ module.exports = {
   parserGetUsers : parserGetUsers,
   parserPutUser : parserPutUser,
   parserDeleteUser : parserDeleteUser,
-  parserPostUser : parserPostUser
+  parserPostUser : parserPostUser,
+  parserPostValidateUser : parserPostValidateUser
 };

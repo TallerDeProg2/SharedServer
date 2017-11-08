@@ -25,7 +25,7 @@ describe('Servers endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.servers.should.be.a('array');
-              res.body.servers.length.should.be.eql(2);
+              res.body.servers.length.should.be.eql(3);
             done();
           });
     });
@@ -227,7 +227,7 @@ describe('Servers endpoints', function() {
           });
     });
 
-    it('it should get status 400 when one of the parameters is missing', function(){
+    it('it should get status 400 when one of the parameters is missing', function(done){
       chai.request(server)
           .put('/servers/00')
           .set('content-type', 'application/json')

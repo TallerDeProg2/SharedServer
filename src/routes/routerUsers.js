@@ -13,7 +13,7 @@ router.get('/users', function(request, response) {
 });
 
 router.post('/users', function(request, response) {
-    controller.postUsers(request, response);
+    controller.postUser(request, response);
 });
 
 router.post('/users/validate', function(request, response) {
