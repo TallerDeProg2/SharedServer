@@ -248,6 +248,29 @@ describe('Users endpoints', function() {
               done();
           });
     });
+  });
+
+  describe('DELETE users', function() {
+
+    it('it should return status 404 when the id es invalid', function(done) {
+      chai.request(server)
+          .delete('/users/58798790')
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(404);
+              done();
+          });
+    });
+
+    it('it should return status 204 when the id es valid', function(done) {
+      chai.request(server)
+          .delete('/users/02')
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(204);
+              done();
+          });
+    });
 
   });
 
