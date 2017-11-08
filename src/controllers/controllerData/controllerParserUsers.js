@@ -45,7 +45,20 @@ function parserPutUser(r, response){} //200
 
 function parserDeleteUser(r, response){} //204
 
-function parserPostUser(r, response){} //201
+function parserPostUser(r, response){
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdata(data)[0];
+  }
+  else{
+    return basicParser.reducedParser(r, response);
+  }
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+  }
+  return basicParser.extendedParser(r, response, "user", data, 201);
+}
 
 //----------------------------------------------//
 

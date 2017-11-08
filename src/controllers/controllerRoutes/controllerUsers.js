@@ -28,24 +28,35 @@ function getUser(userId, request, response) {
 
 function postUser(request, response) {
   var id = controllerId.createId();
-  var driver = request.body.type == "driver";
+  var driver = request.body.type;
   var _ref = controllerRef.createRef(id);
   var username = request.body.username;
   var password = request.body.password;
-  var facebookId = request.body.fb.userId;
-  var facebookToken = request.body.fb.authToken;
   var firstName = request.body.firstName;
   var lastName = request.body.lastName;
   var country = request.body.country;
   var email = request.body.email;
   var birthdate = request.body.birthdate;
 
+  var facebookId = '';
+  var facebookToken = '';
+
+  if (request.body.fb){
+    facebookId = request.body.fb.userId;
+    facebookToken = request.body.fb.authToken;
+  }
+
   car = JSON.stringify({});
   card = JSON.stringify({});
 
+  if (!username || !driver || !password || !firstName || !lastName || !country || !email || !birthdate){
+    logger.info("uyaaaa");
+    return parser.parserPostUser({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+  }
+
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthServer(tk);
-  var q = 'INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstName, lastName, country, email, birthdate, car, card) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\');'.format(id, _ref, driver, username, password, facebookId, facebookToken, firstName, lastName, country, email, birthdate, car, card);
+  var q = 'INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstName, lastName, country, email, birthdate, car, card) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, driver, username, password, facebookId, facebookToken, firstName, lastName, country, email, birthdate, car, card);
   dataBase.query(q, response, parser.parserPostUser, auth);
 }
 
