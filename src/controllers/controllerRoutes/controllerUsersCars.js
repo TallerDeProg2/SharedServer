@@ -21,7 +21,7 @@ function postUserCar(userId, request, response) {
     var tk = request.headers.token;
     var auth = new controllerAuth.AuthManagerServer(tk);
 
-    var new_ref = controllerRef.createRef(id);
+    var new_ref = controllerRef.createRef(userId);
     var car = {'brand': request.body.brand,
       'model': request.body.model,
       'color': request.body.color,
@@ -34,11 +34,11 @@ function postUserCar(userId, request, response) {
     };
 
     if (!car.model || !car.color || !car.plate || !car.year || !car.status || !car.radio){
-        return parser.parserPutUserCar({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+        return parser.parserPostUserCar({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
     }
 
     var q = 'UPDATE users SET car=\'{}\' WHERE id=\'{}\' RETURNING *;'.format(JSON.stringify(car), userId);
-    dataBase.query(q, response, parser.parserPutUserCar, auth);
+    dataBase.query(q, response, parser.parserPostUserCar, auth);
 }
 
 function deleteUserCar(userId, request, response) {
@@ -53,7 +53,7 @@ function putUserCar(userId, request, response) {
   var auth = new controllerAuth.AuthManagerServer(tk);
 
   var _ref = request.body._ref;
-  var new_ref = controllerRef.createRef(id);
+  var new_ref = controllerRef.createRef(userId);
 
   var car = {'brand': request.body.brand,
     'model': request.body.model,

@@ -26,7 +26,15 @@ function parserGetUserCar(r, response){
 }
 
 function parserPostUserCar(r, response){
-  return parserGetUserCar(r,response);
+  var data = r.data_retrieved[0];
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+  }
+  if (r.success){
+    data = rdata(data);
+  }
+  return basicParser.extendedParser(r, response, "car", data, 201);
 }
 
 function parserDeleteUserCar(r, response){
