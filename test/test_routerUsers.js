@@ -23,7 +23,7 @@ describe('Users endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.users.should.be.a('array');
-              res.body.users.length.should.be.eql(1);
+              res.body.users.length.should.be.eql(3);
             done();
           });
     });
