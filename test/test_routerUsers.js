@@ -135,6 +135,71 @@ describe('Users endpoints', function() {
               done();
           });
     });
+
+    it('it should get status 200 after validating a user (password)', function(done){
+      chai.request(server)
+          .post('/users/validate')
+          .set('content-type', 'application/json')
+          .send({
+            "username": "usercitoapp",
+            "password": "pass",
+            "facebookauthtoken": ""
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              logger.info("Body validating (2): "+JSON.stringify(res.body));
+              res.should.have.status(200);
+              done();
+          });
+    });
+
+    it('it should get status 200 after validating a user (facebookToken)', function(done){
+      chai.request(server)
+          .post('/users/validate')
+          .set('content-type', 'application/json')
+          .send({
+            "username": "usercito@app.com",
+            "password": "",
+            "facebookauthtoken": "1234"
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              logger.info("Body validating (2): "+JSON.stringify(res.body));
+              res.should.have.status(200);
+              done();
+          });
+    });
+
+    it('it should get status 400 when one of the parameters is missing (POST validate)', function(done){
+      chai.request(server)
+          .post('/users/validate')
+          .set('content-type', 'application/json')
+          .send({
+            "username": "usercitoapp"
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(400);
+              done();
+          });
+    });
+
+    it('it should get status 400 when the validation fails', function(done){
+      chai.request(server)
+          .post('/users/validate')
+          .set('content-type', 'application/json')
+          .send({
+            "username": "usercitoapp",
+            "password": "wrongPass",
+            "facebookauthtoken": ""
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(400);
+              done();
+          });
+    });
+
   });
 
   describe('PUT users', function() {

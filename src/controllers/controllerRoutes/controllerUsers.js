@@ -27,6 +27,9 @@ function getUser(userId, request, response) {
 }
 
 function postUser(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthServer(tk);
+
   var id = controllerId.createId();
   var driver = request.body.type;
   var _ref = controllerRef.createRef(id);
@@ -59,7 +62,27 @@ function postUser(request, response) {
   dataBase.query(q, response, parser.parserPostUser, auth);
 }
 
-function postUsersValidate(request, response) {}
+function postUsersValidate(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthServer(tk);
+
+  var username = request.body.username;
+  var password = request.body.password;
+  var facebookToken = request.body.facebookauthtoken;
+
+  if (!facebookToken && !password){
+    logger.info("Mi username: "+username+", mi password: "+password+", mi facebookToken: "+facebookToken);
+    return parser.parserPostValidateUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  if (!facebookToken){
+    var q = 'SELECT * FROM users WHERE username=\'{}\' AND password=\'{}\''.format(username, password);
+  }else{
+    var q = 'SELECT * FROM users WHERE facebookId=\'{}\' AND facebookToken=\'{}\''.format(username, facebookToken);
+  }
+
+  dataBase.query(q, response, parser.parserPostValidateUser);
+}
 
 function deleteUser(userId, request, response) {
   var tk = request.headers.token;

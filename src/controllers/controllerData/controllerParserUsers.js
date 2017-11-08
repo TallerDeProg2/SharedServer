@@ -71,6 +71,18 @@ function parserPostUser(r, response){
   return basicParser.extendedParser(r, response, "user", data, 201);
 }
 
+function parserPostValidateUser(r, response){
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdata(data)[0];
+  }
+  if (!r.data_retrieved.length){
+    r.status = 400;
+    r.success = false;
+  }
+  return basicParser.extendedParser(r, response, "user", data, 200);
+}
+
 //----------------------------------------------//
 
 
@@ -79,5 +91,6 @@ module.exports = {
   parserGetUsers : parserGetUsers,
   parserPutUser : parserPutUser,
   parserDeleteUser : parserDeleteUser,
-  parserPostUser : parserPostUser
+  parserPostUser : parserPostUser,
+  parserPostValidateUser : parserPostValidateUser
 };
