@@ -1,15 +1,59 @@
 var basicParser = require('./controllerParser.js');
 var logger = require('../../srv/log.js');
 
-function parserGetRules(r, response) {}
+function rdata(data) {
+  var rules = [];
+  for (var i = 0; i < data.length; i++) {
+    rules[i] = {'id' : data[i].id,
+                '_ref' : data[i]._ref,
+                'lastCommit' : data[i].commits[0],
+                'active' : data[i].active};
+  }
+  return rules;
+}
 
-function parserGetRule(r, response) {}
+function parserGetRules(r, response) {
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdata(data);
+  }
+  return basicParser.extendedParser(r, response, "rules", data, 200);
+}
 
-function parserPostRule(r, response) {}
+function parserGetRule(r, response) {
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdata(data)[0];
+  }
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+  }
+  return basicParser.extendedParser(r, response, "rule", data, 200);
+}
 
-function parserPutRule(r, response) {}
+function parserPostRule(r, response) {
+  var data = r.data_retrieved;
+  if (r.success){
+    data = rdataPost(data)[0];
+  }
+  else{
+    return basicParser.reducedParser(r, response);
+  }
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+  }
+  return basicParser.extendedParser(r, response, "rule", data, 201);
+}
 
-function parserDeleteRule(r, response) {}
+function parserPutRule(r, response) {
+  return parserGetRule(r, response);
+}
+
+function parserDeleteRule(r, response) {
+  return basicParser.deleteParser(r, response);
+}
 
 function parserGetRuleCommits(r, response) {}
 

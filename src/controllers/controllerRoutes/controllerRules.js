@@ -35,9 +35,9 @@ function postRule(request, response) {
   var now = moment();
   var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
 
-  var commits = {'commits' : [{_ref : {'message' : request.body.message,
+  var commits = {'commits' : [{'_ref' : _ref, 'message' : request.body.message,
                           'body' : request.body.blob,
-                          'timestamp' : now_fr}}]};
+                          'timestamp' : now_fr}]};
 
   var active = request.body.active;
 
@@ -54,12 +54,12 @@ function putRule(ruleId, request, response) {
   var now = moment();
   var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
 
-  var new_commit = {_ref : {'message' : request.body.message,
+  var new_commit = {'_ref' : _ref, 'message' : request.body.message,
                           'body' : request.body.blob,
-                          'timestamp' : now_fr}};
+                          'timestamp' : now_fr};
 
   var active = request.body.active;
-  var q = 'UPDATE rules SET _ref=\'{}\', commits=jsonb_insert(commits, \'{}\', \'\"{}\"\'), active=\'{}\' where WHERE id=\'{}\' AND _ref=\'{}\';'.format(_ref, '{commits, 0}', JSON.stringify(commit));
+  var q = 'UPDATE rules SET _ref=\'{}\', commits=jsonb_insert(commits, \'{}\', \'\"{}\"\'), active=\'{}\' where WHERE id=\'{}\' AND _ref=\'{}\' RETURNING *;'.format(_ref, '{commits, 0}', JSON.stringify(commit));
 
   dataBase.query(q, response, parser.parserPutRule, auth);
 }
