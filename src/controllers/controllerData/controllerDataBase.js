@@ -1,9 +1,17 @@
-var pg = require('pg');
+var promise = require('bluebird');
+var options = {
+  promiseLib: promise
+};
+var pgp_lib = require('pg-promise')(options);
+
 var uri='postgres://qiesztuyzkkrdc:7f4388c1acf33c0f8a94630cc9dec43d619d3d4bcff6a2c301b80b9601ecc7ee@ec2-23-23-244-83.compute-1.amazonaws.com:5432/defee7cf3635gv?ssl=true';
 
 if (process.env.URI){
   uri = process.env.URI;
 }
+
+var pg = require('pg');
+var pg_promise = pgp_lib(uri);
 
 var logger = require('../../srv/log.js');
 
@@ -60,4 +68,9 @@ function query(q, response, parser, auth=null, complete=null){
   });
 }
 
+function promise_query_get(q){
+  return pg_promise.any(q);
+}
+
 module.exports.query = query;
+module.exports.promise_query_get = promise_query_get;
