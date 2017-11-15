@@ -1,5 +1,5 @@
 var dataBase = require('../controllerData/controllerDataBase.js');
-var parser = require('../controllerData/controllerParserServers.js');
+var parser = require('../controllerData/controllerParserRules.js');
 
 var controllerToken = require('../controllerLogic/controllerToken.js');
 var controllerId = require('../controllerLogic/controllerId.js');
@@ -15,14 +15,14 @@ function getRules(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM rules;';
-  dataBase.query(q, response, parser.parserGetRule, auth);
+  dataBase.query(q, response, parser.parserGetRules, auth);
 }
 
 function getRule(ruleId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM rules where id=\'{}\';'.format(ruleId);
-  dataBase.query(q, response, parser.parserGetRules, auth);
+  dataBase.query(q, response, parser.parserGetRule, auth);
 }
 
 function postRule(request, response) {

@@ -31,4 +31,11 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
       "airconditioner": true,
       "_ref": "abcde"}', '{}');
     INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card) VALUES ('04', 'fghij', 'driver', 'drivernocar', 'pass', 'driver@nocar.com', '1234', 'driver', 'nocar', 'applandia', 'driver@nocar.com', '$created_time', '{}', '{}');
+
+    CREATE TABLE rules(id text, _ref text, commits jsonb, active boolean);
+    INSERT INTO rules(id, _ref, commits, active) VALUES ('04', 'fghij',
+    '{"commits" : [{"_ref" : "fghij",
+                    "message" : "test commit",
+                    "body" : "",
+                    "timestamp" : "$created_time"}]}', false);
 EOSQL
