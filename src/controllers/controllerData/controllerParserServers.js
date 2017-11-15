@@ -56,26 +56,11 @@ function parserGetServer(r, response){
 }
 
 function parserPutServer(r, response){
-  var data = r.data_retrieved;
-  if (r.success){
-    data = rdata(data)[0];
-  }
-  if (!r.data_retrieved.length){
-    r.status = 404;
-    r.success = false;
-  }
-  return basicParser.extendedParser(r, response, "server", data, 200);
+  return parserGetServer(r, response);
 }
 
 function parserDeleteServer(r, response){
-  if ((r.success) && (!r.data_retrieved.length)){
-    r.status = 404;
-    r.success = false;
-  }
-  if (!r.success){
-    return basicParser.reducedParser(r, response);
-  }
-  return response.sendStatus(204);
+  return basicParser.deleteParser(r, response);
 }
 
 function parserPostServer(r, response){

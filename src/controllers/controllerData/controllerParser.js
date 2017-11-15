@@ -25,9 +25,21 @@ function extendedParser(r, response, tag, rdata, ok_status){
   return response.status(ok_status).json(jObj);
 }
 
+function deleteParser(r, response) {
+  if ((r.success) && (!r.data_retrieved.length)){
+    r.status = 404;
+    r.success = false;
+  }
+  if (!r.success){
+    return reducedParser(r, response);
+  }
+  return response.sendStatus(204);
+}
+
 //----------------------------------------------//
 
 module.exports = {
   extendedParser : extendedParser,
-  reducedParser : reducedParser
+  reducedParser : reducedParser,
+  deleteParser : deleteParser
 };
