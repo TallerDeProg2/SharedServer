@@ -41,7 +41,11 @@ function postRule(request, response) {
 
   var active = request.body.active;
 
-  var q = 'INSERT INTO rules(id, _ref, commits, active) values(\'{}\', \'{}\', \'{}\', \'{}\');'.format(id, _ref, JSON.stringify(commits), active);
+  if (!request.body.blob || !request.body.message){
+    return parser.parserPostRules({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var q = 'INSERT INTO rules(id, _ref, commits, active) values(\'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, JSON.stringify(commits), active);
   dataBase.query(q, response, parser.parserPostRule, auth);
 }
 

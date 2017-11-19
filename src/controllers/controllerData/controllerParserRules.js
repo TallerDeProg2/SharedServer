@@ -6,7 +6,7 @@ function rdata(data) {
   for (var i = 0; i < data.length; i++) {
     rules[i] = {'id' : data[i].id,
                 '_ref' : data[i]._ref,
-                'lastCommit' : data[i].commits[0],
+                'lastcommit' : data[i].commits.commits[0],
                 'active' : data[i].active};
   }
   return rules;
@@ -35,7 +35,7 @@ function parserGetRule(r, response) {
 function parserPostRule(r, response) {
   var data = r.data_retrieved;
   if (r.success){
-    data = rdataPost(data)[0];
+    data = rdata(data)[0];
   }
   else{
     return basicParser.reducedParser(r, response);

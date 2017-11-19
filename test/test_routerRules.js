@@ -15,6 +15,8 @@ var logger = require('../src/srv/log.js');
 
 describe('Rules endpoints', function() {
 
+  var ref_first_commit = "";
+
   describe('GET rules', function() {
 
     it('it should GET all the rules', function(done) {
@@ -51,4 +53,66 @@ describe('Rules endpoints', function() {
     });
 
   });
+
+  describe('POST rules', function() {
+
+    it('it should get status 201 after creating a valid rule', function(done){
+      var now = moment();
+      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
+      chai.request(server)
+          .post('/rules')
+          .set('content-type', 'application/json')
+          .send({"id": "string", "_ref": "string",
+          "message" : "I am a commit", "blob" : "body wannabe",
+          "active" : false})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(201);
+              done();
+          });
+    });
+
+    it('it should POST a rule', function(done){
+      var now = moment();
+      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
+      chai.request(server)
+          .post('/rules')
+          .set('content-type', 'application/json')
+          .send({"id": "string", "_ref": "string",
+          "message" : "I am another commit", "blob" : "body wannabe",
+          "active" : false})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(201);
+              var id = res.body.rule.id;
+              var ref_first_commit = res.body.rule._ref;
+              chai.request(server)
+              .get('/rules/'+id)
+              .set('token', 'superusercito-token')
+              .end(function(err, res) {
+                  logger.info("BODY POST: "+JSON.stringify(res.body));
+                  res.should.have.status(200);
+                  res.body.rule.lastcommit.message.should.be.eql("I am another commit");
+                  done();
+              });
+          });
+    });
+
+    it('it should get status 400 when one of the parameters is missing', function(done){
+      chai.request(server)
+          .post('/servers')
+          .set('content-type', 'application/json')
+          .send({"id": "string", "_ref": "string",
+          "message" : "I am a commit"})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(400);
+              done();
+          });
+    });
+
+  });
+
 });
