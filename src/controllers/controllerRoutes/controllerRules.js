@@ -58,12 +58,16 @@ function putRule(ruleId, request, response) {
   var now = moment();
   var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
 
+  if (!request.body.blob || !request.body.message){
+    return parser.parserPutRule({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
   var new_commit = {'_ref' : _ref, 'message' : request.body.message,
                           'body' : request.body.blob,
                           'timestamp' : now_fr};
 
   var active = request.body.active;
-  var q = 'UPDATE rules SET _ref=\'{}\', commits=jsonb_insert(commits, \'{}\', \'\"{}\"\'), active=\'{}\' where WHERE id=\'{}\' AND _ref=\'{}\' RETURNING *;'.format(_ref, '{commits, 0}', JSON.stringify(commit));
+  var q = 'UPDATE rules SET _ref=\'{}\', commits=jsonb_insert(commits, \'{}\', \'{}\'), active=\'{}\' WHERE id=\'{}\' AND _ref=\'{}\' RETURNING *;'.format(_ref, '{commits, 0}', JSON.stringify(new_commit), active, ruleId, old_ref);
 
   dataBase.query(q, response, parser.parserPutRule, auth);
 }

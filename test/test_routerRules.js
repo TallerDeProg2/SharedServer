@@ -92,7 +92,6 @@ describe('Rules endpoints', function() {
               .get('/rules/'+id)
               .set('token', 'superusercito-token')
               .end(function(err, res) {
-                  logger.info("BODY POST: "+JSON.stringify(res.body));
                   res.should.have.status(200);
                   res.body.rule.lastcommit.message.should.be.eql("I am another commit");
                   done();
@@ -106,6 +105,81 @@ describe('Rules endpoints', function() {
           .set('content-type', 'application/json')
           .send({"id": "string", "_ref": "string",
           "message" : "I am a commit"})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(400);
+              done();
+          });
+    });
+
+  });
+
+  describe('PUT rules', function() {
+
+    it('it should get status 200 after updating a valid rule', function(done){
+      chai.request(server)
+          .put('/rules/04')
+          .set('content-type', 'application/json')
+          .send({"_ref" : "fghij",
+                "message" : "test commit",
+                "blob" : "new body",
+                "active" : false})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              done();
+          });
+    });
+
+    it('it should PUT a server', function(done){
+      chai.request(server)
+      .get('/rules/04')
+      .set('token', 'superusercito-token')
+      .end(function(err, res) {
+              var old_ref = res.body.rule._ref;
+              chai.request(server)
+                  .put('/rules/04')
+                  .set('token', 'superusercito-token')
+                  .send({"_ref" : old_ref,
+                        "message" : "test commit",
+                        "blob" : "new new body",
+                        "active" : false})
+                  .set('token', 'token')
+                  .end(function(err, res) {
+                      res.should.have.status(200);
+                      chai.request(server)
+                      .get('/rules/04')
+                      .set('token', 'token')
+                      .end(function(err, res) {
+                          res.should.have.status(200);
+                          res.body.rule.lastcommit.body.should.be.eql("new new body");
+                          done();
+                      });
+                  });
+          });
+    });
+
+    it('it should get status 404 when the server does not exist', function(done){
+      chai.request(server)
+          .put('/rules/12092808')
+          .set('content-type', 'application/json')
+          .send({"_ref" : "fghij",
+                "message" : "test commit",
+                "blob" : "new body",
+                "active" : false})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(404);
+              done();
+          });
+    });
+
+    it('it should get status 400 when one of the parameters is missing', function(done){
+      chai.request(server)
+          .put('/rules/04')
+          .set('content-type', 'application/json')
+          .send({"_ref" : "fghij",
+                "message" : "test commit"})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(400);

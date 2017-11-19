@@ -36,6 +36,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     INSERT INTO rules(id, _ref, commits, active) VALUES ('04', 'fghij',
     '{"commits" : [{"_ref" : "fghij",
                     "message" : "test commit",
-                    "body" : "",
+                    "blob" : "",
                     "timestamp" : "$created_time"}]}', false);
 EOSQL
