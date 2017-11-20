@@ -7,6 +7,8 @@ var controllerRef = require('../controllerLogic/controllerRef.js');
 
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
+var RuleEngine = require('node-rules');
+
 var moment = require('moment');
 var format = require('string-format');
 format.extend(String.prototype);
@@ -110,17 +112,25 @@ function runRule(ruleId, request, response) {
 
 
 function _runRules(query, request, response, parser, auth){
-  /*var resolve_auth = promise_query_get(auth.query());
+  var resolve_auth = dataBase.promise_query_get(auth.query());
   resolve_auth.then(function (result) {
       var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result.rows});
       if (!result_auth.success){
         return parser(result_auth, response);
       }
-      promise_query_get(query).then(/*RUN RULES).cath(/*SHOW ERROR);
-    )
-    .catch(function (err) {
-      return next(err);
-    });*/
+      dataBase.promise_query_get(query)
+        .then(function(rules){ resolveRules(request.fact, rules, parser, response); })
+        .cath(parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error (could not run rules)"}));
+    }).catch(function(err) {
+      return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err});
+    });
+}
+
+function resolveRules(fact, rules, parser, response){
+  var R = new RuleEngine(rules);
+  R.execute(fact,function(result){
+    return parser(result, response);
+  });
 }
 
 module.exports = {
