@@ -55,9 +55,51 @@ function parserDeleteRule(r, response) {
   return basicParser.deleteParser(r, response);
 }
 
-function parserGetRuleCommits(r, response) {}
+function parserGetRuleCommits(r, response) {
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+    var data = r.data_retrieved;
+  }else{
+    var data = r.data_retrieved[0].commits.commits;
+  }
+  return basicParser.extendedParser(r, response, "commits", data, 200);
+}
 
-function parserGetRuleCommit(r, response) {}
+class ParserGetRuleCommit{
+
+  constructor(commitId){
+    this.commitId = commitId;
+  }
+
+  obtainCommit(commits){
+    for (var i = 0; i < commits.length; i++) {
+      if (commits[i]._ref == this.commitId){
+        return commits[i];
+      }
+    }
+    return {};
+  }
+
+  parser(r, response){
+    if (!r.data_retrieved.length){
+      r.status = 404;
+      r.success = false;
+      var data = r.data_retrieved;
+    }else{
+      var commit = this.obtainCommit(r.data_retrieved[0].commits.commits);
+      var data = {'id' : data[i].id,
+                  '_ref' : data[i]._ref,
+                  'lastcommit' : commit,
+                  'active' : data[i].active};
+      if (!commit){
+        r.status = 404;
+        r.success = false;
+      }
+    }
+    return basicParser.extendedParser(r, response, "commits", data, 200);
+  }
+}
 
 function parserRunRules(r, response) {}
 
@@ -71,7 +113,7 @@ module.exports = {
   parserPutRule : parserPutRule,
   parserDeleteRule : parserDeleteRule,
   parserGetRuleCommits : parserGetRuleCommits,
-  parserGetRuleCommit : parserGetRuleCommit,
+  ParserGetRuleCommit : ParserGetRuleCommit,
   parserRunRules : parserRunRules,
   parserRunRule : parserRunRule
 };

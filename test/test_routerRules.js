@@ -121,7 +121,7 @@ describe('Rules endpoints', function() {
           .put('/rules/04')
           .set('content-type', 'application/json')
           .send({"_ref" : "fghij",
-                "message" : "test commit",
+                "message" : "new test commit",
                 "blob" : "new body",
                 "active" : false})
           .set('token', 'superusercito-token')
@@ -141,7 +141,7 @@ describe('Rules endpoints', function() {
                   .put('/rules/04')
                   .set('token', 'superusercito-token')
                   .send({"_ref" : old_ref,
-                        "message" : "test commit",
+                        "message" : "new new test commit",
                         "blob" : "new new body",
                         "active" : false})
                   .set('token', 'token')
@@ -186,6 +186,54 @@ describe('Rules endpoints', function() {
               done();
           });
     });
+
+  });
+
+  describe('GET rule\'s commits', function() {
+
+    it('it should GET all the rule\'s commits', function(done) {
+      chai.request(server)
+          .get('/rules/04/commits')
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              logger.info("body get commits: "+JSON.stringify(res.body));
+              res.body.commits.should.be.a('array');
+              res.body.commits.length.should.be.eql(3);
+            done();
+          });
+    });
+
+    it('it should return status 404 when the rule id es invalid', function(done) {
+      chai.request(server)
+          .get('/rules/90199809/commits')
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(404);
+              done();
+          });
+    });
+
+    /*it('it should GET one rule commit with id = "fghij"', function(done) {
+      chai.request(server)
+          .get('/rules/04/commits/fghij')
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              res.body.rule.message.should.be.eql("test commit");
+            done();
+          });
+    });
+
+    it('it should return status 404 when the commit id es invalid', function(done) {
+      chai.request(server)
+          .get('/rules/04/commits/01')
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(404);
+              done();
+          });
+    });*/
 
   });
 

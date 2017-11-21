@@ -82,16 +82,17 @@ function deleteRule(ruleId, request, response) {
 
 function getRuleCommits(ruleId, request, response) {
   var tk = request.headers.token;
-  var auth = new controllerAuth.AuthUser(tk);
+  var auth = new controllerAuth.AuthManager(tk);
   var q = 'SELECT commits FROM rules WHERE id=\'{}\';'.format(ruleId);
   dataBase.query(q, response, parser.parserGetRuleCommits, auth);
 }
 
 function getRuleCommit(ruleId, commitId, request, response) {
   var tk = request.headers.token;
-  var auth = new controllerAuth.AuthUser(tk);
-  var q = 'SELECT commits FROM rules WHERE id=\'{}\';'.format(ruleId);
-  dataBase.query(q, response, parser.parserGetRuleCommit, auth);
+  var auth = new controllerAuth.AuthManager(tk);
+  var parserGetRuleCommit = new parser.ParserGetRuleCommit(commitId);
+  var q = 'SELECT * FROM rules WHERE id=\'{}\';'.format(ruleId);
+  dataBase.query(q, response, parserGetRuleCommit.parser, auth);
 }
 
 function runRules(request, response) {
