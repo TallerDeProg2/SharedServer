@@ -66,39 +66,32 @@ function parserGetRuleCommits(r, response) {
   return basicParser.extendedParser(r, response, "commits", data, 200);
 }
 
-class ParserGetRuleCommit{
-
-  constructor(commitId){
-    this.commitId = commitId;
-  }
-
-  obtainCommit(commits){
-    for (var i = 0; i < commits.length; i++) {
-      if (commits[i]._ref == this.commitId){
-        return commits[i];
-      }
-    }
-    return {};
-  }
-
-  parser(r, response){
-    if (!r.data_retrieved.length){
+function parserGetRuleCommit(r, response, commitId){
+  if (!r.data_retrieved.length){
+    r.status = 404;
+    r.success = false;
+    var data = r.data_retrieved;
+  }else{
+    var commit = obtainCommit(r.data_retrieved[0].commits.commits, commitId);
+    var data = {'id' : r.data_retrieved[0].id,
+                '_ref' : r.data_retrieved[0]._ref,
+                'lastcommit' : commit,
+                'active' : r.data_retrieved[0].active};
+    if (!commit){
       r.status = 404;
       r.success = false;
-      var data = r.data_retrieved;
-    }else{
-      var commit = this.obtainCommit(r.data_retrieved[0].commits.commits);
-      var data = {'id' : data[i].id,
-                  '_ref' : data[i]._ref,
-                  'lastcommit' : commit,
-                  'active' : data[i].active};
-      if (!commit){
-        r.status = 404;
-        r.success = false;
-      }
     }
-    return basicParser.extendedParser(r, response, "commits", data, 200);
   }
+  return basicParser.extendedParser(r, response, "rule", data, 200);
+}
+
+function obtainCommit(commits, commitId){
+  for (var i = 0; i < commits.length; i++) {
+    if (commits[i]._ref == commitId){
+      return commits[i];
+    }
+  }
+  return null;
 }
 
 function parserRunRules(r, response) {}
@@ -113,7 +106,7 @@ module.exports = {
   parserPutRule : parserPutRule,
   parserDeleteRule : parserDeleteRule,
   parserGetRuleCommits : parserGetRuleCommits,
-  ParserGetRuleCommit : ParserGetRuleCommit,
+  parserGetRuleCommit : parserGetRuleCommit,
   parserRunRules : parserRunRules,
   parserRunRule : parserRunRule
 };

@@ -92,9 +92,8 @@ function getRuleCommits(ruleId, request, response) {
 function getRuleCommit(ruleId, commitId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthManager(tk);
-  var parserGetRuleCommit = new parser.ParserGetRuleCommit(commitId);
   var q = 'SELECT * FROM rules WHERE id=\'{}\';'.format(ruleId);
-  dataBase.query(q, response, parserGetRuleCommit.parser, auth);
+  dataBase.query(q, response, parser.parserGetRuleCommit, auth, commitId);
 }
 
 function runRules(request, response) {

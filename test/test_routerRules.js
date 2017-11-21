@@ -214,13 +214,14 @@ describe('Rules endpoints', function() {
           });
     });
 
-    /*it('it should GET one rule commit with id = "fghij"', function(done) {
+    it('it should GET one rule commit with id = "fghij"', function(done) {
       chai.request(server)
           .get('/rules/04/commits/fghij')
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
-              res.body.rule.message.should.be.eql("test commit");
+              logger.info("body get commit"+JSON.stringify(res.body));
+              res.body.rule.lastcommit.message.should.be.eql("test commit");
             done();
           });
     });
@@ -233,7 +234,7 @@ describe('Rules endpoints', function() {
               res.should.have.status(404);
               done();
           });
-    });*/
+    });
 
   });
 
