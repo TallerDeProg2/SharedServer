@@ -17,7 +17,7 @@ describe('Rules endpoints', function() {
 
   var ref_first_commit = "";
 
-  /*describe('GET rules', function() {
+  describe('GET rules', function() {
 
     it('it should GET all the rules', function(done) {
       chai.request(server)
@@ -236,7 +236,7 @@ describe('Rules endpoints', function() {
           });
     });
 
-  });*/
+  });
 
   describe('RUN rules', function() {
 
@@ -252,7 +252,7 @@ describe('Rules endpoints', function() {
 
   });
 
-  /*describe('DELETE rules', function() {
+  describe('DELETE rules', function() {
 
     it('it should return status 404 when the id es invalid', function(done) {
       chai.request(server)
@@ -274,5 +274,5 @@ describe('Rules endpoints', function() {
           });
     });
 
-  });*/
+  });
 });

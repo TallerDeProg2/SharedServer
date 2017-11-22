@@ -130,10 +130,10 @@ function _runRules(query, request, response, parser, auth){
       logger.info("Ya autoriceee");
       dataBase.promise_query_get(query)
         .then(function(rules){
-                logger.info("Por resolver");
-                resolveRules(request.fact, rules.rows, parser, response);
+                logger.info("Por resolver, mis rules son: "+rules);
+                resolveRules(request.fact, rules, parser, response);
               })
-        .cath(parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error (could not run rules)"}, response));
+        .catch(parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error (could not run rules)"}, response));
     }).catch(function(err, done) {
       return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
@@ -141,11 +141,13 @@ function _runRules(query, request, response, parser, auth){
 }
 
 function resolveRules(fact, rules, parser, response){
-  logger.info("Resolviendo!");
-  if (!rules){
-    return parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"});
+  logger.info("Resolviendo! Mis rules son: "+rules);
+  if (!rules.length){
+    logger.info("No hay rules");
+    return parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
   }
   rules = rules.map(rule => deserialize(rule.blob));
+  logger.info("Ya hice el map");
   fact = deserialize(fact);
   var R = new RuleEngine(rules, { ignoreFactChanges: true });
   R.execute(fact,function(result){
