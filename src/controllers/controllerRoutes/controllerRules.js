@@ -7,7 +7,12 @@ var controllerRef = require('../controllerLogic/controllerRef.js');
 
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
-//var RuleEngine = require('node-rules');
+var logger = require('../../srv/log.js');
+
+var serialize = require('serialize-javascript');
+var deserialize = str => eval('(' + str + ')');
+
+var RuleEngine = require('node-rules');
 
 var moment = require('moment');
 var format = require('string-format');
@@ -104,6 +109,7 @@ function runRules(request, response) {
 }
 
 function runRule(ruleId, request, response) {
+  logger.info("Entro a runRule");
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM rules WHERE id=\'{}\';'.format(ruleId);
@@ -112,25 +118,39 @@ function runRule(ruleId, request, response) {
 
 
 function _runRules(query, request, response, parser, auth){
-  /*var resolve_auth = dataBase.promise_query_get(auth.query());
+  logger.info("Entro a _runRules");
+  var resolve_auth = dataBase.promise_query_get(auth.query());
   resolve_auth.then(function (result) {
-      var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result.rows});
+      logger.info("Estoy en el thennn");
+      var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result});
       if (!result_auth.success){
+        logger.info("Fallo la auth wachiin");
         return parser(result_auth, response);
       }
+      logger.info("Ya autoriceee");
       dataBase.promise_query_get(query)
-        .then(function(rules){ resolveRules(request.fact, rules, parser, response); })
-        .cath(parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error (could not run rules)"}));
-    }).catch(function(err) {
-      return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err});
-    });*/
+        .then(function(rules){
+                logger.info("Por resolver");
+                resolveRules(request.fact, rules.rows, parser, response);
+              })
+        .cath(parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error (could not run rules)"}, response));
+    }).catch(function(err, done) {
+      return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+    });
+    return resolve_auth;
 }
 
 function resolveRules(fact, rules, parser, response){
-  /*var R = new RuleEngine(rules);
+  logger.info("Resolviendo!");
+  if (!rules){
+    return parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"});
+  }
+  rules = rules.map(rule => deserialize(rule.blob));
+  fact = deserialize(fact);
+  var R = new RuleEngine(rules, { ignoreFactChanges: true });
   R.execute(fact,function(result){
-    return parser(result, response);
-  });*/
+    return parser({'success': true, 'status': 200, 'data_retrieved': [serialize(result)]}, response);
+  });
 }
 
 module.exports = {

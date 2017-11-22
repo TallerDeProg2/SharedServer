@@ -96,7 +96,9 @@ function obtainCommit(commits, commitId){
 
 function parserRunRules(r, response) {}
 
-function parserRunRule(r, response) {}
+function parserRunRule(r, response) {
+  return basicParser.extendedParser(r, response, "facts", r.data_retrieved, 200);
+}
 
 
 module.exports = {
