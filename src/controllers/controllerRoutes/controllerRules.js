@@ -124,18 +124,20 @@ function _runRules(query, request, response, parser, auth){
       logger.info("Estoy en el thennn");
       var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result});
       if (!result_auth.success){
-        logger.info("Fallo la auth wachiin");
+        logger.info("Fallo la auth");
         return parser(result_auth, response);
       }
       logger.info("Ya autoriceee");
       dataBase.promise_query_get(query)
         .then(function(rules){
                 logger.info("Por resolver, mis rules son: "+rules);
-                resolveRules(request.fact, rules, parser, response);
+                return resolveRules(request.fact, rules, parser, response);
               })
-        .catch(parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error (could not run rules)"}, response));
-    }).catch(function(err, done) {
-      return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+        .catch(function(){
+          return parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
+        });
+      }).catch(function(err, done) {
+        return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
     return resolve_auth;
 }
