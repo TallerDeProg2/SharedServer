@@ -127,7 +127,10 @@ function _runRules(query, request, response, parser, auth){
 
       var get_rules = dataBase.promise_query_get(query);
       get_rules.then(function(rules){
-                resolveRules(request.body.fact.blob, rules, parser, response);
+                var facts = request.body.facts;
+                facts = facts.map(fact => fact.blob);
+                rules = rules.map(rule => rule.commits.commits[0].blob);
+                resolveRules(facts, rules, parser, response);
               }).catch(function(){
                 parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
               });
@@ -138,13 +141,22 @@ function _runRules(query, request, response, parser, auth){
     return resolve_auth;
 }
 
-function resolveRules(fact, rules, parser, response){
-  rules = rules.map(rule => deserialize(rule.commits.commits[0].blob));
-  fact.cost = 50;
+function resolveRules(facts, rules, parser, response){
+  rules = rules.map(rule => deserialize(rule));
   var R = new RuleEngine(rules, { ignoreFactChanges: true });
-  R.execute(fact, function(result){
-    return parser({'success': true, 'status': 200, 'data_retrieved': [result]}, response);
-  });
+  facts = facts.map(fact => { fact.cost = 50; return fact});
+  var results_promise = facts.map(fact => {
+        return new Promise(resolve => {
+          R.execute(fact, r => resolve(r));
+        });
+      });
+  Promise.all(results_promise).then(function(results) {
+    results = results.map(result => {
+        var result = {'language': 'node-rules/javascript', 'blob': result};
+        return result;
+      });
+    return parser({'success': true, 'status': 200, 'data_retrieved': results}, response);
+  })
 }
 
 module.exports = {

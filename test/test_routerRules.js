@@ -21,14 +21,14 @@ describe('Rules endpoints', function() {
       chai.request(server)
           .post('/rules/run')
           .set('content-type', 'application/json')
-          .send({"fact": { "language": "string",
+          .send({"facts": [{ "language": "string",
                            "blob":  {"distance" : 2,
                                     "time" : 2}
-                          }})
+                          }]})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
-              res.body.facts[0].cost.should.be.eql(90);
+              res.body.facts[0].blob.cost.should.be.eql(90);
               done();
           });
     });
@@ -37,30 +37,52 @@ describe('Rules endpoints', function() {
       chai.request(server)
           .post('/rules/04/run')
           .set('content-type', 'application/json')
-          .send({"fact": { "language": "string",
+          .send({"facts": [{ "language": "string",
                            "blob":  {"distance" : 2,
                                     "time" : 2}
-                          }})
+                          }]})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
-              res.body.facts[0].cost.should.be.eql(80);
+              res.body.facts[0].blob.cost.should.be.eql(80);
               done();
           });
     });
 
-    it('it should return cost 1050 when the distance is 2 and the rule to run is the 06 (not active rule)', function(done) {
+    it('it should return cost 1050 when the time is 2 and the rule to run is the 06 (not active rule)', function(done) {
       chai.request(server)
           .post('/rules/06/run')
           .set('content-type', 'application/json')
-          .send({"fact": { "language": "string",
+          .send({"facts": [{ "language": "string",
                            "blob":  {"distance" : 2,
                                     "time" : 2}
-                          }})
+                          }]})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
-              res.body.facts[0].cost.should.be.eql(1050);
+              res.body.facts[0].blob.cost.should.be.eql(1050);
+              done();
+          });
+    });
+
+    it('it should return cost 1050 when the time is 2 and 2050 when it is 4 and the rule to run is the 06 (run more than one fact)', function(done) {
+      chai.request(server)
+          .post('/rules/06/run')
+          .set('content-type', 'application/json')
+          .send({"facts": [{ "language": "string",
+                           "blob":  {"distance" : 2,
+                                    "time" : 2}},
+                          { "language": "string",
+                            "blob":  {"distance" : 2,
+                                      "time" : 4}
+                          }]})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              res.body.facts.should.be.a('array');
+              res.body.facts.length.should.be.eql(2);
+              res.body.facts[0].blob.cost.should.be.eql(1050);
+              res.body.facts[1].blob.cost.should.be.eql(2050);
               done();
           });
     });
