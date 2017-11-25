@@ -109,7 +109,6 @@ function runRules(request, response) {
 }
 
 function runRule(ruleId, request, response) {
-  logger.info("Entro a runRule");
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM rules WHERE id=\'{}\';'.format(ruleId);
@@ -118,24 +117,21 @@ function runRule(ruleId, request, response) {
 
 
 function _runRules(query, request, response, parser, auth){
-  logger.info("Entro a _runRules");
   var resolve_auth = dataBase.promise_query_get(auth.query());
   resolve_auth.then(function (result) {
-      logger.info("Estoy en el thennn");
+
       var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result});
       if (!result_auth.success){
-        logger.info("Fallo la auth");
         return parser(result_auth, response);
       }
-      logger.info("Ya autoriceee");
-      dataBase.promise_query_get(query)
-        .then(function(rules){
-                logger.info("Por resolver, mis rules son: "+rules);
-                return resolveRules(request.fact, rules, parser, response);
-              })
-        .catch(function(){
-          return parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
-        });
+
+      var get_rules = dataBase.promise_query_get(query);
+      get_rules.then(function(rules){
+                resolveRules(request.body.fact.blob, rules, parser, response);
+              }).catch(function(){
+                parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
+              });
+
       }).catch(function(err, done) {
         return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
@@ -143,17 +139,11 @@ function _runRules(query, request, response, parser, auth){
 }
 
 function resolveRules(fact, rules, parser, response){
-  logger.info("Resolviendo! Mis rules son: "+rules);
-  if (!rules.length){
-    logger.info("No hay rules");
-    return parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
-  }
-  rules = rules.map(rule => deserialize(rule.blob));
-  logger.info("Ya hice el map");
-  fact = deserialize(fact);
+  rules = rules.map(rule => deserialize(rule.commits.commits[0].blob));
+  fact.cost = 50;
   var R = new RuleEngine(rules, { ignoreFactChanges: true });
-  R.execute(fact,function(result){
-    return parser({'success': true, 'status': 200, 'data_retrieved': [serialize(result)]}, response);
+  R.execute(fact, function(result){
+    return parser({'success': true, 'status': 200, 'data_retrieved': [result]}, response);
   });
 }
 

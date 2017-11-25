@@ -15,7 +15,34 @@ var logger = require('../src/srv/log.js');
 
 describe('Rules endpoints', function() {
 
-  var ref_first_commit = "";
+  describe('RUN rules', function() {
+
+    it('it should return cost 80 when the distance is 2', function(done) {
+      chai.request(server)
+          .post('/rules/04/run')
+          .set('content-type', 'application/json')
+          .send({"fact": { "language": "string",
+                           "blob":  {"distance" : 2 }
+                          }})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              res.body.facts[0].cost.should.be.eql(80);
+              done();
+          });
+    });
+
+    it('it should return status 404 when the id es invalid', function(done) {
+      chai.request(server)
+          .post('/rules/290830/run')
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(404);
+              done();
+          });
+    });
+
+  });
 
   describe('GET rules', function() {
 
@@ -197,7 +224,6 @@ describe('Rules endpoints', function() {
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
-              logger.info("body get commits: "+JSON.stringify(res.body));
               res.body.commits.should.be.a('array');
               res.body.commits.length.should.be.eql(3);
             done();
@@ -220,7 +246,6 @@ describe('Rules endpoints', function() {
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
-              logger.info("body get commit"+JSON.stringify(res.body));
               res.body.rule.lastcommit.message.should.be.eql("test commit");
             done();
           });
@@ -238,19 +263,7 @@ describe('Rules endpoints', function() {
 
   });
 
-  describe('RUN rules', function() {
 
-    it('it should return status 404 when the id es invalid', function(done) {
-      chai.request(server)
-          .post('/rules/290830/run')
-          .set('token', 'superusercito-token')
-          .end(function(err, res) {
-              res.should.have.status(404);
-              done();
-          });
-    });
-
-  });
 
   describe('DELETE rules', function() {
 
