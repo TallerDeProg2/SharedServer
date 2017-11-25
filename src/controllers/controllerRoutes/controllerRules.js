@@ -104,7 +104,7 @@ function getRuleCommit(ruleId, commitId, request, response) {
 function runRules(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
-  var q = 'SELECT * FROM rules;';
+  var q = 'SELECT * FROM rules WHERE active=true;';
   return _runRules(q, request, response, parser.parserRunRules, auth);
 }
 

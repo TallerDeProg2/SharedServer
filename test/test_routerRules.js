@@ -17,7 +17,7 @@ describe('Rules endpoints', function() {
 
   describe('RUN rules', function() {
 
-    it('it should return cost 90 when running all the rules with distance 2 and time 2', function(done) {
+    it('it should return cost 90 when running all the rules with distance 2 and time 2 (it should only run active rules)', function(done) {
       chai.request(server)
           .post('/rules/run')
           .set('content-type', 'application/json')
@@ -33,7 +33,7 @@ describe('Rules endpoints', function() {
           });
     });
 
-    it('it should return cost 80 when the distance is 2 and the rule to run is the 04', function(done) {
+    it('it should return cost 80 when the distance is 2 and the rule to run is the 04 (active rule)', function(done) {
       chai.request(server)
           .post('/rules/04/run')
           .set('content-type', 'application/json')
@@ -45,6 +45,22 @@ describe('Rules endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.facts[0].cost.should.be.eql(80);
+              done();
+          });
+    });
+
+    it('it should return cost 1050 when the distance is 2 and the rule to run is the 06 (not active rule)', function(done) {
+      chai.request(server)
+          .post('/rules/06/run')
+          .set('content-type', 'application/json')
+          .send({"fact": { "language": "string",
+                           "blob":  {"distance" : 2,
+                                    "time" : 2}
+                          }})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              res.body.facts[0].cost.should.be.eql(1050);
               done();
           });
     });
@@ -70,7 +86,7 @@ describe('Rules endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.rules.should.be.a('array');
-              res.body.rules.length.should.be.eql(2);
+              res.body.rules.length.should.be.eql(3);
             done();
           });
     });
