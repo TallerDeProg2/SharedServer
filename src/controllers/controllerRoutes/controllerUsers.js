@@ -56,8 +56,6 @@ function postUser(request, response) {
     return parser.parserPostUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
-  var tk = request.headers.token;
-  var auth = new controllerAuth.AuthServer(tk);
   var q = 'INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card);
   dataBase.query(q, response, parser.parserPostUser, auth);
 }
@@ -75,10 +73,12 @@ function postUsersValidate(request, response) {
     return parser.parserPostValidateUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
+  var q = "";
+
   if (!facebookToken){
-    var q = 'SELECT * FROM users WHERE username=\'{}\' AND password=\'{}\''.format(username, password);
+    q = 'SELECT * FROM users WHERE username=\'{}\' AND password=\'{}\''.format(username, password);
   }else{
-    var q = 'SELECT * FROM users WHERE facebookId=\'{}\' AND facebookToken=\'{}\''.format(username, facebookToken);
+    q = 'SELECT * FROM users WHERE facebookId=\'{}\' AND facebookToken=\'{}\''.format(username, facebookToken);
   }
 
   dataBase.query(q, response, parser.parserPostValidateUser);
