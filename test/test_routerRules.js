@@ -17,12 +17,29 @@ describe('Rules endpoints', function() {
 
   describe('RUN rules', function() {
 
-    it('it should return cost 80 when the distance is 2', function(done) {
+    it('it should return cost 90 when running all the rules with distance 2 and time 2', function(done) {
+      chai.request(server)
+          .post('/rules/run')
+          .set('content-type', 'application/json')
+          .send({"fact": { "language": "string",
+                           "blob":  {"distance" : 2,
+                                    "time" : 2}
+                          }})
+          .set('token', 'superusercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              res.body.facts[0].cost.should.be.eql(90);
+              done();
+          });
+    });
+
+    it('it should return cost 80 when the distance is 2 and the rule to run is the 04', function(done) {
       chai.request(server)
           .post('/rules/04/run')
           .set('content-type', 'application/json')
           .send({"fact": { "language": "string",
-                           "blob":  {"distance" : 2 }
+                           "blob":  {"distance" : 2,
+                                    "time" : 2}
                           }})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
@@ -32,7 +49,7 @@ describe('Rules endpoints', function() {
           });
     });
 
-    it('it should return status 404 when the id es invalid', function(done) {
+    it('it should return status 404 when the rule id es invalid', function(done) {
       chai.request(server)
           .post('/rules/290830/run')
           .set('token', 'superusercito-token')
@@ -53,12 +70,12 @@ describe('Rules endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.rules.should.be.a('array');
-              res.body.rules.length.should.be.eql(1);
+              res.body.rules.length.should.be.eql(2);
             done();
           });
     });
 
-    it('it should GET one rule with id = "0"', function(done) {
+    it('it should GET one rule with id = "04"', function(done) {
       chai.request(server)
           .get('/rules/04')
           .set('token', 'superusercito-token')

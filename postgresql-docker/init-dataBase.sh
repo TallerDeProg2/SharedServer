@@ -38,4 +38,9 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
                     "message" : "test commit",
                     "blob" : "{\"condition\":function (R) { R.when(this); },\"consequence\":function (R) { this.cost = this.cost + this.distance * 15; R.next(); } }",
                     "timestamp" : "$created_time"}]}', false);
+    INSERT INTO rules(id, _ref, commits, active) VALUES ('05', 'fghij',
+    '{"commits" : [{"_ref" : "fghij",
+                    "message" : "test commit",
+                    "blob" : "{\"condition\":function (R) { R.when(this); },\"consequence\":function (R) { this.cost = this.cost + this.time * 5; R.next(); } }",
+                    "timestamp" : "$created_time"}]}', false);
 EOSQL

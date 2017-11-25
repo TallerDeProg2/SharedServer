@@ -94,10 +94,11 @@ function obtainCommit(commits, commitId){
   return null;
 }
 
-function parserRunRules(r, response) {}
+function parserRunRules(r, response) {
+  return parserRunRule(r, response);
+}
 
 function parserRunRule(r, response) {
-  logger.info("Entro al parserRules con r: "+JSON.stringify(r));
   return basicParser.extendedParser(r, response, "facts", r.data_retrieved, 200);
 }
 
