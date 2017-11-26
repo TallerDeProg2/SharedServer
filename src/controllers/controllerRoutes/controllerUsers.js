@@ -49,14 +49,16 @@ function postUser(request, response) {
     facebookToken = request.body.fb.authToken;
   }
 
-  car = JSON.stringify({});
-  card = JSON.stringify({});
+  var car = JSON.stringify({});
+  var card = JSON.stringify({});
+  var transactions = JSON.stringify({});
+  var balance = 0;
 
   if (!username || !driver || !password || !firstname || !lastname || !country || !email || !birthdate){
     return parser.parserPostUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
-  var q = 'INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card);
+  var q = 'INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance);
   dataBase.query(q, response, parser.parserPostUser, auth);
 }
 
