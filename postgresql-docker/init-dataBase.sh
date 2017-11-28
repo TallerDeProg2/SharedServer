@@ -38,8 +38,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     }', 0);
     INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) VALUES ('04', 'fghij', 'driver', 'drivernocar', 'pass', 'driver@nocar.com', '1234', 'driver', 'nocar', 'applandia', 'driver@nocar.com', '$created_time', '{}', '{}', '{"transactions" : []}', 0);
 
-    CREATE TABLE trips(id text, driverId text, passengerId text, start jsonb, stop jsonb, totaltime integer, distance integer, cost integer);
-    INSERT INTO trips(id, driverId, passengerId, start, stop, totaltime, distance, cost) VALUES (01, 03, 02,
+    CREATE TABLE trips(id text, driver text, passenger text, start jsonb, stop jsonb, totaltime integer, distance integer, cost integer);
+    INSERT INTO trips(id, driver, passenger, start, stop, totaltime, distance, cost) VALUES ('01', '03', '02',
     '{"address": {
         "street": "string",
         "location": {
@@ -52,6 +52,19 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
               "lat": 30,
               "lon": 30
             }}}', 30, 4, 150);
+    INSERT INTO trips(id, driver, passenger, start, stop, totaltime, distance, cost) VALUES ('02', '04', '02',
+    '{"address": {
+        "street": "string",
+        "location": {
+          "lat": 10,
+          "lon": 0
+        }}}',
+        '{"address": {
+            "street": "string",
+            "location": {
+              "lat": 40,
+              "lon": 40
+            }}}', 35, 5, 180);
 
     CREATE TABLE rules(id text, _ref text, commits jsonb, active boolean);
     INSERT INTO rules(id, _ref, commits, active) VALUES ('04', 'fghij',
