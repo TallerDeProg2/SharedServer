@@ -4,6 +4,8 @@ var token = require('../controllerLogic/controllerToken.js');
 var id = require('../controllerLogic/controllerId.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
+var controllerRules = require('./controllerRules.js');
+
 function getUserTrips(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUserServer(tk);
@@ -13,7 +15,16 @@ function getUserTrips(userId, request, response) {
 
 function postTrips(request, response) {}
 
-function postTripEstimate(request, response) {}
+function postTripEstimate(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthServer(tk);
+  var trip = {"distance" : request.body.distance,
+              "time" : request.body.traveltime,
+              "paymethod" : request.body.paymethod,
+              "day" : request.body.day,
+              "travelhour" : request.body.travelhour};
+  return getEstimateForTrip(trip, response, parser, auth);
+}
 
 function getTrip(tripId, request, response) {
   var tk = request.headers.token;

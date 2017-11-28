@@ -105,18 +105,21 @@ function runRules(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM rules WHERE active=true;';
-  return _runRules(q, request, response, parser.parserRunRules, auth);
+  var facts = request.body.facts;
+  facts = facts.map(fact => fact.blob);
+  return _runRules(q, facts, response, parser.parserRunRules, auth);
 }
 
 function runRule(ruleId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM rules WHERE id=\'{}\';'.format(ruleId);
-  return _runRules(q, request, response, parser.parserRunRule, auth);
+  var facts = request.body.facts;
+  facts = facts.map(fact => fact.blob);
+  return _runRules(q, facts, response, parser.parserRunRule, auth);
 }
 
-
-function _runRules(query, request, response, parser, auth){
+function _runRules(query, facts, response, parser, auth){
   var resolve_auth = dataBase.promise_query_get(auth.query());
   resolve_auth.then(function (result) {
 
@@ -127,8 +130,6 @@ function _runRules(query, request, response, parser, auth){
 
       var get_rules = dataBase.promise_query_get(query);
       get_rules.then(function(rules){
-                var facts = request.body.facts;
-                facts = facts.map(fact => fact.blob);
                 rules = rules.map(rule => rule.commits.commits[0].blob);
                 resolveRules(facts, rules, parser, response);
               }).catch(function(){
@@ -139,6 +140,11 @@ function _runRules(query, request, response, parser, auth){
         return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
     return resolve_auth;
+}
+
+function getEstimateForTrip(facts, response, parser, auth){
+  var q = 'SELECT * FROM rules WHERE active=true;';
+  return _runRules(q, facts, response, parser, auth);
 }
 
 function resolveRules(facts, rules, parser, response){
@@ -168,5 +174,6 @@ module.exports = {
   getRuleCommits : getRuleCommits,
   getRuleCommit : getRuleCommit,
   runRules : runRules,
-  runRule : runRule
+  runRule : runRule,
+  getEstimateForTrip : getEstimateForTrip
 };
