@@ -44,7 +44,7 @@ function postBusinessUsers(request, response) {
               'roles' : request.body.roles};
 
   if (!json.username || !json.password || !json.name || !json.surname || !json.roles){
-    return parser.parserPostBusinessUser({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+    return parser.parserPostBusinessUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
   var q = 'INSERT INTO srvUsers(id, _ref, token, tokenexp, rol, data) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *'.format(request.body.username, _ref, token, tokenexp, "user", JSON.stringify(json));
@@ -75,7 +75,7 @@ function putBusinessUser(userId, request, response) {
               'roles' : request.body.roles};
 
   if (!json.password || !json.name || !json.surname || !json.roles){
-    return parser.parserPutBusinessUser({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+    return parser.parserPutBusinessUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
   var q = 'UPDATE srvUsers SET _ref=\'{}\', data = \'{}\' WHERE id=\'{}\' AND rol=\'user\' RETURNING *'.format(_ref, JSON.stringify(json), userId);
@@ -98,7 +98,7 @@ function postToken(request, response) {
   var password = request.body.password;
 
   if (!username || !password){
-    return parser.parserPostToken({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+    return parser.parserPostToken({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
   var now = moment();

@@ -36,9 +36,9 @@ describe('Paymethods endpoints', function() {
           .get('/paymethods')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
-              res.should.have.status(200);
-              res.body.paymethods.should.be.a('array');
-              res.body.paymethods.length.should.be.eql(2);
+            res.should.have.status(200);
+            res.body.paymethods.should.be.a('array');
+            res.body.paymethods.length.should.not.be.eql(0);
             done();
           });
     });
