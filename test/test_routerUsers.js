@@ -10,7 +10,6 @@ var format = require('string-format');
 format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
-var logger = require('../src/srv/log.js');
 
 describe('Users endpoints', function() {
 
@@ -34,7 +33,6 @@ describe('Users endpoints', function() {
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
-              logger.info("Mi body esss: "+JSON.stringify(res.body));
               res.body.user.username.should.be.eql("usercitoapp");
             done();
           });
@@ -147,7 +145,6 @@ describe('Users endpoints', function() {
           })
           .set('token', 'superservercito-token')
           .end(function(err, res) {
-              logger.info("Body validating (2): "+JSON.stringify(res.body));
               res.should.have.status(200);
               done();
           });
@@ -164,7 +161,6 @@ describe('Users endpoints', function() {
           })
           .set('token', 'superservercito-token')
           .end(function(err, res) {
-              logger.info("Body validating (2): "+JSON.stringify(res.body));
               res.should.have.status(200);
               done();
           });
@@ -237,7 +233,6 @@ describe('Users endpoints', function() {
       .end(function(err, res) {
               var old_ref = res.body.user._ref;
 
-              logger.info("Mi ref es: "+old_ref);
               chai.request(server)
                   .put('/users/02')
                   .set('content-type', 'application/json')
@@ -264,7 +259,6 @@ describe('Users endpoints', function() {
                       .set('token', 'superservercito-token')
                       .end(function(err, res) {
                           res.should.have.status(200);
-                          logger.info("Mi bodyg es:"+JSON.stringify(res.body));
                           res.body.user.firstname.should.be.eql("usercita");
                           done();
                       });

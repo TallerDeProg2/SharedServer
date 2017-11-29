@@ -12,8 +12,6 @@ format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
 
-var logger = require('../src/srv/log.js');
-
 describe('Business Users endpoints', function() {
 
   describe('GET business users', function() {

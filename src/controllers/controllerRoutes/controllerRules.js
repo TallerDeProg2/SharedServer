@@ -7,8 +7,6 @@ var controllerRef = require('../controllerLogic/controllerRef.js');
 
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
-var logger = require('../../srv/log.js');
-
 var serialize = require('serialize-javascript');
 var deserialize = str => eval('(' + str + ')');
 
@@ -43,7 +41,7 @@ function postRule(request, response) {
   var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
 
   var commits = {'commits' : [{'_ref' : _ref, 'message' : request.body.message,
-                          'body' : request.body.blob,
+                          'blob' : request.body.blob,
                           'timestamp' : now_fr}]};
 
   var active = request.body.active;
@@ -70,7 +68,7 @@ function putRule(ruleId, request, response) {
   }
 
   var new_commit = {'_ref' : _ref, 'message' : request.body.message,
-                          'body' : request.body.blob,
+                          'blob' : request.body.blob,
                           'timestamp' : now_fr};
 
   var active = request.body.active;
@@ -135,7 +133,7 @@ function _runRules(query, facts, response, parser, auth){
               }
                 rules = rules.map(rule => rule.commits.commits[0].blob);
                 resolveRules(facts, rules, parser, response);
-              }).catch(function(){
+              }).catch(function(err){
                 parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
               });
 

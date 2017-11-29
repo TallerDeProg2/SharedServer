@@ -1,6 +1,5 @@
 var assert = require('assert');
 var controller = require('../src/controllers/controllerData/controllerDataBase.js');
-var logger = require('../src/srv/log.js');
 
 //------------->Parsers for testing<---------------//
 function parserStatus500(js, response, done){

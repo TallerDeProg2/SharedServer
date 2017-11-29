@@ -7,7 +7,14 @@ function parserGetUserTrips(r, response) {
 
 function parserPostTrips(r, response) {}
 
-function parserPostTripEstimate(r, response) {}
+function parserPostTripEstimate(r, response) {
+  var data = r.data_retrieved;
+  if (r.success){
+    data = {"currency": "pesos",
+            "value": r.data_retrieved[0].blob.cost};
+  }
+  return basicParser.extendedParser(r, response, "cost", data, 200);
+}
 
 function parserGetTrip(r, response) {
   var data = r.data_retrieved;

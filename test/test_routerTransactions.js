@@ -10,8 +10,6 @@ var format = require('string-format');
 format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
-var logger = require('../src/srv/log.js');
-
 
 describe('Paymethods endpoints', function() {
 

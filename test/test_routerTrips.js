@@ -10,8 +10,6 @@ var format = require('string-format');
 format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
-var logger = require('../src/srv/log.js');
-
 
 describe('Trips endpoints', function() {
 
@@ -50,6 +48,27 @@ describe('Trips endpoints', function() {
               res.body.trip.driver.should.be.eql('03');
               res.body.trip.passenger.should.be.eql('02');
             done();
+          });
+    });
+
+  });
+
+  describe('POST trips', function() {
+
+    it('it should return cost 90 when given distance 2 and time 2 (POST trip/estimate)', function(done) {
+      chai.request(server)
+          .post('/trips/estimate')
+          .set('content-type', 'application/json')
+          .send({"distance" : 2,
+                 "traveltime" : 2,
+                 "paymethod" : "cash",
+                 "day" : "wednesday",
+                 "travelhour" : "15:30"})
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(200);
+              res.body.cost.value.should.be.eql(90);
+              done();
           });
     });
 

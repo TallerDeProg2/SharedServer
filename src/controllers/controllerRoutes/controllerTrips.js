@@ -23,7 +23,7 @@ function postTripEstimate(request, response) {
               "paymethod" : request.body.paymethod,
               "day" : request.body.day,
               "travelhour" : request.body.travelhour};
-  return getEstimateForTrip(trip, response, parser, auth);
+  return controllerRules.getEstimateForTrip([trip], response, parser.parserPostTripEstimate, auth);
 }
 
 function getTrip(tripId, request, response) {

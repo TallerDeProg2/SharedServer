@@ -11,8 +11,6 @@ format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
 
-var logger = require('../src/srv/log.js');
-
 describe('Servers endpoints', function() {
 
   describe('GET servers', function() {

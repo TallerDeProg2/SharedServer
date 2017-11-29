@@ -5,13 +5,22 @@ var assert = require('assert');
 var should = chai.should();
 chai.use(chaiHttp);
 
+var serialize = require('serialize-javascript');
+
 var moment = require('moment');
 var format = require('string-format');
 format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
 
-var logger = require('../src/srv/log.js');
+var rule = { condition : function (R) {
+                        R.when(this);
+                      },
+           consequence : function (R) {
+              this.cost = this.cost + this.distance * 15;
+              R.next();
+            }
+          };
 
 describe('Rules endpoints', function() {
 
@@ -154,7 +163,8 @@ describe('Rules endpoints', function() {
           .post('/rules')
           .set('content-type', 'application/json')
           .send({"id": "string", "_ref": "string",
-          "message" : "I am a commit", "blob" : "body wannabe",
+          "message" : "I am a commit",
+          "blob" : serialize(rule),
           "active" : false})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
@@ -171,8 +181,9 @@ describe('Rules endpoints', function() {
           .post('/rules')
           .set('content-type', 'application/json')
           .send({"id": "string", "_ref": "string",
-          "message" : "I am another commit", "blob" : "body wannabe",
-          "active" : false})
+          "message" : "I am another commit",
+          "blob" : serialize(rule),
+          "active" : true})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(201);
@@ -212,8 +223,8 @@ describe('Rules endpoints', function() {
           .set('content-type', 'application/json')
           .send({"_ref" : "fghij",
                 "message" : "new test commit",
-                "blob" : "new body",
-                "active" : false})
+                "blob" : serialize(rule),
+                "active" : true})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
@@ -221,7 +232,7 @@ describe('Rules endpoints', function() {
           });
     });
 
-    it('it should PUT a server', function(done){
+    it('it should PUT a rule', function(done){
       chai.request(server)
       .get('/rules/04')
       .set('token', 'superusercito-token')
@@ -232,8 +243,8 @@ describe('Rules endpoints', function() {
                   .set('token', 'superusercito-token')
                   .send({"_ref" : old_ref,
                         "message" : "new new test commit",
-                        "blob" : "new new body",
-                        "active" : false})
+                        "blob" : serialize(rule),
+                        "active" : true})
                   .set('token', 'token')
                   .end(function(err, res) {
                       res.should.have.status(200);
@@ -242,21 +253,21 @@ describe('Rules endpoints', function() {
                       .set('token', 'token')
                       .end(function(err, res) {
                           res.should.have.status(200);
-                          res.body.rule.lastcommit.body.should.be.eql("new new body");
+                          res.body.rule.lastcommit.message.should.be.eql("new new test commit");
                           done();
                       });
                   });
           });
     });
 
-    it('it should get status 404 when the server does not exist', function(done){
+    it('it should get status 404 when the rule does not exist', function(done){
       chai.request(server)
           .put('/rules/12092808')
           .set('content-type', 'application/json')
           .send({"_ref" : "fghij",
                 "message" : "test commit",
-                "blob" : "new body",
-                "active" : false})
+                "blob" : serialize(rule),
+                "active" : true})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(404);
