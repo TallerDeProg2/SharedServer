@@ -90,6 +90,14 @@ describe('Rules endpoints', function() {
     it('it should return status 404 when the rule id es invalid', function(done) {
       chai.request(server)
           .post('/rules/290830/run')
+          .set('content-type', 'application/json')
+          .send({"facts": [{ "language": "string",
+                           "blob":  {"distance" : 2,
+                                    "time" : 2}},
+                          { "language": "string",
+                            "blob":  {"distance" : 2,
+                                      "time" : 4}
+                          }]})
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(404);

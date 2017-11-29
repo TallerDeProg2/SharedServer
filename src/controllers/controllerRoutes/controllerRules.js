@@ -130,10 +130,13 @@ function _runRules(query, facts, response, parser, auth){
 
       var get_rules = dataBase.promise_query_get(query);
       get_rules.then(function(rules){
+              if (!rules.length){
+                parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
+              }
                 rules = rules.map(rule => rule.commits.commits[0].blob);
                 resolveRules(facts, rules, parser, response);
               }).catch(function(){
-                parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
+                parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
               });
 
       }).catch(function(err, done) {
