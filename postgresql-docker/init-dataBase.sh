@@ -31,4 +31,21 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
       "airconditioner": true,
       "_ref": "abcde"}', '{}');
     INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card) VALUES ('04', 'fghij', 'driver', 'drivernocar', 'pass', 'driver@nocar.com', '1234', 'driver', 'nocar', 'applandia', 'driver@nocar.com', '$created_time', '{}', '{}');
+
+    CREATE TABLE rules(id text, _ref text, commits jsonb, active boolean);
+    INSERT INTO rules(id, _ref, commits, active) VALUES ('04', 'fghij',
+    '{"commits" : [{"_ref" : "fghij",
+                    "message" : "test commit",
+                    "blob" : "{\"condition\":function (R) { R.when(this); },\"consequence\":function (R) { this.cost = this.cost + this.distance * 15; R.next(); } }",
+                    "timestamp" : "$created_time"}]}', true);
+    INSERT INTO rules(id, _ref, commits, active) VALUES ('05', 'fghij',
+    '{"commits" : [{"_ref" : "fghij",
+                    "message" : "test commit",
+                    "blob" : "{\"condition\":function (R) { R.when(this); },\"consequence\":function (R) { this.cost = this.cost + this.time * 5; R.next(); } }",
+                    "timestamp" : "$created_time"}]}', true);
+    INSERT INTO rules(id, _ref, commits, active) VALUES ('06', 'fghij',
+    '{"commits" : [{"_ref" : "fghij",
+                    "message" : "test commit",
+                    "blob" : "{\"condition\":function (R) { R.when(this); },\"consequence\":function (R) { this.cost = this.cost + this.time * 500; R.next(); } }",
+                    "timestamp" : "$created_time"}]}', false);
 EOSQL

@@ -54,14 +54,7 @@ function parserPutBusinessUser(r, response){
 }
 
 function parserDeleteBusinessUser(r, response){
-  if ((r.success) && (!r.data_retrieved.length)){
-    r.status = 404;
-    r.success = false;
-  }
-  if (!r.success){
-    return basicParser.reducedParser(r, response);
-  }
-  return response.sendStatus(204);
+  return basicParser.deleteParser(r, response);
 }
 
 function parserPostBusinessUser(r, response){
@@ -91,7 +84,6 @@ function parserPostToken(r, response){
     r.status = 404;
     r.success = false;
   }
-  logger.info("Mi data: "+JSON.stringify(data));
   return basicParser.extendedParser(r, response, "token", data, 201);
 }
 

@@ -1,5 +1,6 @@
 var controller = require('../controllers/controllerRoutes/controllerRules.js');
 
+var logger = require('../srv/log.js');
 var router = require('./router.js');
 
 /**#@+
@@ -29,6 +30,15 @@ router.delete('/rules/:ruleId', function(request, response) {
 router.put('/rules/:ruleId', function(request, response) {
     var ruleId = request.params.ruleId;
     controller.putRule(ruleId, request, response);
+});
+
+router.get('/rules', function(request, response) {
+    controller.getRules(request, response);
+});
+
+router.get('/rules/:ruleId', function(request, response) {
+  var ruleId = request.params.ruleId;
+  controller.getRule(ruleId, request, response);
 });
 
 router.get('/rules/:ruleId/commits', function(request, response) {

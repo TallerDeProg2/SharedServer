@@ -11,7 +11,6 @@ var format = require('string-format');
 format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
-var dataBase = require('../src/controllers/controllerData/controllerDataBase.js');
 
 var logger = require('../src/srv/log.js');
 
