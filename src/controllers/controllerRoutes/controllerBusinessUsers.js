@@ -13,8 +13,6 @@ var moment = require('moment');
 var format = require('string-format');
 format.extend(String.prototype);
 
-var logger = require('../../srv/log.js');
-
 function getBusinessUsers(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthAdmin(tk);
