@@ -12,6 +12,8 @@ var paymentUri = "/payments";
 var clientId = "9792de0d-949e-40dd-ad98-c6fad7dff5d9";
 var clientSecret = "e3cc5d9e-8a85-490a-a910-47155002893c";
 
+var logger = require('../../srv/log.js');
+
 function getUserTransactions(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUserServer(tk);
@@ -34,33 +36,37 @@ function getUserTransactions(userId, request, response) {
 */
 
 function postUserTransactions(userId, request, response) {
-  var tripId = request.body.trip.id;
-  var tripCost = request.body.trip.cost;
+  var tripId = request.body.trip;
   var currency = request.body.payment.currency;
   var value = request.body.payment.value;
   var paymethod = request.body.payment.paymethod;
+  var transaction_id = request.body.payment.transaction_id;
   var tk = getPaymentToken();
   tk.then(function (tk_data){
     var options = {
 			method: 'POST',
 			uri: baseUri + paymentUri,
 			body: {
-				currency: currency,
-				value: value,
-				paymentMethod: paymethod
+				currency : currency,
+				value : value,
+				paymentMethod : paymethod,
+        transaction_id : transaction_id
 			},
 			headers: {
 				'Authorization': 'Bearer ' + token
 			},
 			json: true
     };
+    logger.info("Mi body ess: "+JSON.stringify(options.body));
     rp(options).then(function (payment_response) {
-      parser.parserGetPaymethods({'success': true, 'status': 200, 'data_retrieved': paymethods_retrieved}, response);
-    }).catch(function (payment_response) {
-      parser.parserGetPaymethods({'success': false, 'status': 500, 'data_retrieved': err}, response);
+      logger.info("POST TRANSACTION ME DEVOLVIO: "+JSON.stringify(payment_response));
+      parser.parserPostUserTransactions({'success': true, 'status': 200, 'data_retrieved': payment_response}, response);
+    }).catch(function (err) {
+      logger.info("TUVE ERROR: "+err);
+      parser.parserPostUserTransactions({'success': false, 'status': 500, 'data_retrieved': err}, response);
     });
-  }).catch(function (payment_response) {
-    parser.parserGetPaymethods({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
+  }).catch(function (err) {
+    parser.parserPostUserTransactions({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
   });
 
 }
