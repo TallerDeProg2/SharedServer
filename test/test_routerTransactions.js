@@ -17,7 +17,7 @@ describe('Paymethods endpoints', function() {
 
     it('it should GET all the user\'s transactions', function(done) {
       chai.request(server)
-          .get('/users/03/transactions')
+          .get('/users/2/transactions')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
@@ -31,7 +31,7 @@ describe('Paymethods endpoints', function() {
 
   describe('GET paymethods', function() {
 
-    /*it('it should GET all the paymethods', function(done) {
+    it('it should GET all the paymethods', function(done) {
       chai.request(server)
           .get('/paymethods')
           .set('token', 'superservercito-token')
@@ -41,7 +41,7 @@ describe('Paymethods endpoints', function() {
             res.body.paymethods.length.should.not.be.eql(0);
             done();
           });
-    });*/
+    });
 
   });
 
