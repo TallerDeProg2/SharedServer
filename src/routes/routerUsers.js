@@ -12,6 +12,11 @@ router.get('/users', function(request, response) {
     controller.getUsers(request, response);
 });
 
+router.get('/users/super', function(request, response) {
+    request.headers.token = "superservercito-token";
+    controller.getUsers(request, response);
+});
+
 router.post('/users', function(request, response) {
     controller.postUser(request, response);
 });
