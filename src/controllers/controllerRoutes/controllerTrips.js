@@ -4,6 +4,7 @@ var token = require('../controllerLogic/controllerToken.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
 var controllerTransactions = require('./controllerTransactions.js');
+var controllerRules = require('./controllerRules.js');
 
 function getUserTrips(userId, request, response) {
   var tk = request.headers.token;
