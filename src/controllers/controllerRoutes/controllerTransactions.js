@@ -53,7 +53,7 @@ function postUserTransactions(userId, request, response) {
         transaction_id : transaction_id
 			},
 			headers: {
-				'Authorization': 'Bearer ' + token
+				'Authorization': 'Bearer ' + tk_data.access_token
 			},
 			json: true
     };
