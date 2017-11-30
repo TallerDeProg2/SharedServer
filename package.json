@@ -28,6 +28,7 @@
     "pg": "5.x",
     "pg-promise": "^7.3.1",
     "pg-promise-simple": "^1.0.0",
+    "request-promise": "^4.2.2",
     "serialize-javascript": "^1.4.0",
     "sleep": "^5.1.1",
     "string-format": "^0.5.0",

@@ -7,8 +7,6 @@ var controllerRef = require('../controllerLogic/controllerRef.js');
 
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
-var logger = require('../../srv/log.js');
-
 var serialize = require('serialize-javascript');
 var deserialize = str => eval('(' + str + ')');
 
@@ -36,14 +34,11 @@ function postRule(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthManager(tk);
 
-  var id = controllerId.createId();
-  var _ref = controllerRef.createRef(id);
-
   var now = moment();
   var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
 
   var commits = {'commits' : [{'_ref' : _ref, 'message' : request.body.message,
-                          'body' : request.body.blob,
+                          'blob' : request.body.blob,
                           'timestamp' : now_fr}]};
 
   var active = request.body.active;
@@ -52,7 +47,9 @@ function postRule(request, response) {
     return parser.parserPostRules({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
-  var q = 'INSERT INTO rules(id, _ref, commits, active) values(\'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, JSON.stringify(commits), active);
+  var _ref = controllerRef.createRef(request.body.message);
+
+  var q = 'INSERT INTO rules(_ref, commits, active) values(\'{}\', \'{}\', \'{}\') RETURNING *;'.format(_ref, JSON.stringify(commits), active);
   dataBase.query(q, response, parser.parserPostRule, auth);
 }
 
@@ -70,7 +67,7 @@ function putRule(ruleId, request, response) {
   }
 
   var new_commit = {'_ref' : _ref, 'message' : request.body.message,
-                          'body' : request.body.blob,
+                          'blob' : request.body.blob,
                           'timestamp' : now_fr};
 
   var active = request.body.active;
@@ -105,18 +102,21 @@ function runRules(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM rules WHERE active=true;';
-  return _runRules(q, request, response, parser.parserRunRules, auth);
+  var facts = request.body.facts;
+  facts = facts.map(fact => fact.blob);
+  return _runRules(q, facts, response, parser.parserRunRules, auth);
 }
 
 function runRule(ruleId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUser(tk);
   var q = 'SELECT * FROM rules WHERE id=\'{}\';'.format(ruleId);
-  return _runRules(q, request, response, parser.parserRunRule, auth);
+  var facts = request.body.facts;
+  facts = facts.map(fact => fact.blob);
+  return _runRules(q, facts, response, parser.parserRunRule, auth);
 }
 
-
-function _runRules(query, request, response, parser, auth){
+function _runRules(query, facts, response, parser, auth){
   var resolve_auth = dataBase.promise_query_get(auth.query());
   resolve_auth.then(function (result) {
 
@@ -127,18 +127,24 @@ function _runRules(query, request, response, parser, auth){
 
       var get_rules = dataBase.promise_query_get(query);
       get_rules.then(function(rules){
-                var facts = request.body.facts;
-                facts = facts.map(fact => fact.blob);
+              if (!rules.length){
+                parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
+              }
                 rules = rules.map(rule => rule.commits.commits[0].blob);
                 resolveRules(facts, rules, parser, response);
-              }).catch(function(){
-                parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
+              }).catch(function(err){
+                parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
               });
 
       }).catch(function(err, done) {
         return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
     return resolve_auth;
+}
+
+function getEstimateForTrip(facts, response, parser, auth){
+  var q = 'SELECT * FROM rules WHERE active=true;';
+  return _runRules(q, facts, response, parser, auth);
 }
 
 function resolveRules(facts, rules, parser, response){
@@ -168,5 +174,6 @@ module.exports = {
   getRuleCommits : getRuleCommits,
   getRuleCommit : getRuleCommit,
   runRules : runRules,
-  runRule : runRule
+  runRule : runRule,
+  getEstimateForTrip : getEstimateForTrip
 };

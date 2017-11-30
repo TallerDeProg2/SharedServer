@@ -2,7 +2,6 @@ var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserBusinessUsers.js');
 
 var controllerToken = require('../controllerLogic/controllerToken.js');
-var controllerId = require('../controllerLogic/controllerId.js');
 var controllerRef = require('../controllerLogic/controllerRef.js');
 
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
@@ -32,8 +31,6 @@ function postBusinessUsers(request, response) {
   var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
   var exp_date_fr = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
 
-  var id = controllerId.createId();
-  var _ref = controllerRef.createRef(id);
   var token = controllerToken.createToken();
   var tokenexp = exp_date_fr;
 
@@ -44,10 +41,12 @@ function postBusinessUsers(request, response) {
               'roles' : request.body.roles};
 
   if (!json.username || !json.password || !json.name || !json.surname || !json.roles){
-    return parser.parserPostBusinessUser({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+    return parser.parserPostBusinessUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
-  var q = 'INSERT INTO srvUsers(id, _ref, token, tokenexp, rol, data) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *'.format(request.body.username, _ref, token, tokenexp, "user", JSON.stringify(json));
+  var _ref = controllerRef.createRef(request.body.username);
+
+  var q = 'INSERT INTO srvUsers(_ref, token, tokenexp, rol, data) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *'.format(_ref, token, tokenexp, "user", JSON.stringify(json));
   dataBase.query(q, response, parser.parserPostBusinessUser, auth);
 }
 
@@ -68,14 +67,14 @@ function putBusinessUser(userId, request, response) {
 
   var _ref = controllerRef.createRef(userId);
 
-  var json = {'username' : userId,
+  var json = {'username' : request.body.username,
               'password' : request.body.password,
               'name' : request.body.name,
               'surname' : request.body.surname,
               'roles' : request.body.roles};
 
   if (!json.password || !json.name || !json.surname || !json.roles){
-    return parser.parserPutBusinessUser({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+    return parser.parserPutBusinessUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
   var q = 'UPDATE srvUsers SET _ref=\'{}\', data = \'{}\' WHERE id=\'{}\' AND rol=\'user\' RETURNING *'.format(_ref, JSON.stringify(json), userId);
@@ -98,7 +97,7 @@ function postToken(request, response) {
   var password = request.body.password;
 
   if (!username || !password){
-    return parser.parserPostToken({'success': false, 'status': 400, 'data': "Atribute missing"}, response);
+    return parser.parserPostToken({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
   var now = moment();
@@ -107,7 +106,7 @@ function postToken(request, response) {
   var token = controllerToken.createToken();
   var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
 
-  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\' WHERE id=\'{}\' AND rol=\'user\' RETURNING *;'.format(token, exp, username);
+  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\' WHERE data->>\'username\'=\'{}\' AND rol=\'user\' RETURNING *;'.format(token, exp, username);
   dataBase.query(q, response, parser.parserPostToken, auth);
 }
 

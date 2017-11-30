@@ -10,7 +10,6 @@ var format = require('string-format');
 format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
-var logger = require('../src/srv/log.js');
 
 describe('Users endpoints', function() {
 
@@ -28,13 +27,12 @@ describe('Users endpoints', function() {
           });
     });
 
-    it('it should GET one user with id = "02"', function(done) {
+    it('it should GET one user with id = 1', function(done) {
       chai.request(server)
-          .get('/users/02')
+          .get('/users/1')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
-              logger.info("Mi body esss: "+JSON.stringify(res.body));
               res.body.user.username.should.be.eql("usercitoapp");
             done();
           });
@@ -147,7 +145,6 @@ describe('Users endpoints', function() {
           })
           .set('token', 'superservercito-token')
           .end(function(err, res) {
-              logger.info("Body validating (2): "+JSON.stringify(res.body));
               res.should.have.status(200);
               done();
           });
@@ -164,7 +161,6 @@ describe('Users endpoints', function() {
           })
           .set('token', 'superservercito-token')
           .end(function(err, res) {
-              logger.info("Body validating (2): "+JSON.stringify(res.body));
               res.should.have.status(200);
               done();
           });
@@ -206,7 +202,7 @@ describe('Users endpoints', function() {
 
     it('it should get status 200 after updating a valid user', function(done){
       chai.request(server)
-          .put('/users/02')
+          .put('/users/1')
           .set('content-type', 'application/json')
           .send({
             "_ref": "defgh",
@@ -232,14 +228,13 @@ describe('Users endpoints', function() {
 
     it('it should PUT a user', function(done){
       chai.request(server)
-      .get('/users/02')
+      .get('/users/1')
       .set('token', 'superservercito-token')
       .end(function(err, res) {
               var old_ref = res.body.user._ref;
 
-              logger.info("Mi ref es: "+old_ref);
               chai.request(server)
-                  .put('/users/02')
+                  .put('/users/1')
                   .set('content-type', 'application/json')
                   .send({
                     "_ref": old_ref,
@@ -260,11 +255,10 @@ describe('Users endpoints', function() {
                   .end(function(err, res) {
                       res.should.have.status(200);
                       chai.request(server)
-                      .get('/users/02')
+                      .get('/users/1')
                       .set('token', 'superservercito-token')
                       .end(function(err, res) {
                           res.should.have.status(200);
-                          logger.info("Mi bodyg es:"+JSON.stringify(res.body));
                           res.body.user.firstname.should.be.eql("usercita");
                           done();
                       });
@@ -300,7 +294,7 @@ describe('Users endpoints', function() {
 
     it('it should get status 400 when one of the parameters is missing', function(done){
       chai.request(server)
-          .put('/users/02')
+          .put('/users/1')
           .set('token', 'superservercito-token')
           .send({
             "_ref": "jhkh",
@@ -329,7 +323,7 @@ describe('Users endpoints', function() {
 
     it('it should return status 204 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/users/02')
+          .delete('/users/1')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(204);
