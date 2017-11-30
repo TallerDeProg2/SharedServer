@@ -5,8 +5,6 @@ var controllerId = require('../controllerLogic/controllerId.js');
 var controllerRef = require('../controllerLogic/controllerRef.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
-var logger = require('../../srv/log.js');
-
 var format = require('string-format');
 format.extend(String.prototype);
 

@@ -12,8 +12,6 @@ var paymentUri = "/payments";
 var clientId = "9792de0d-949e-40dd-ad98-c6fad7dff5d9";
 var clientSecret = "e3cc5d9e-8a85-490a-a910-47155002893c";
 
-var logger = require('../../srv/log.js');
-
 function getUserTransactions(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUserServer(tk);
@@ -81,12 +79,9 @@ function makePayment(currency, value, paymethod, transaction_id, response){
 			},
 			json: true
     };
-    logger.info("Mi body ess: "+JSON.stringify(options.body));
     rp(options).then(function (payment_response) {
-      logger.info("POST TRANSACTION ME DEVOLVIO: "+JSON.stringify(payment_response));
       parser.parserPostUserTransactions({'success': true, 'status': 200, 'data_retrieved': payment_response}, response);
     }).catch(function (err) {
-      logger.info("TUVE ERROR: "+err);
       parser.parserPostUserTransactions({'success': false, 'status': 500, 'data_retrieved': err}, response);
     });
   }).catch(function (err) {

@@ -5,8 +5,6 @@ var controllerId = require('../controllerLogic/controllerId.js');
 var controllerRef = require('../controllerLogic/controllerRef.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
-var logger = require('../../srv/log.js');
-
 var format = require('string-format');
 format.extend(String.prototype);
 
@@ -72,7 +70,6 @@ function postUsersValidate(request, response) {
   var facebookToken = request.body.facebookauthtoken;
 
   if (!facebookToken && !password){
-    logger.info("Mi username: "+username+", mi password: "+password+", mi facebookToken: "+facebookToken);
     return parser.parserPostValidateUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
@@ -112,7 +109,6 @@ function putUser(userId, request, response) {
   }
 
   if (!_ref || !password || !firstname || !lastname || !country){
-    logger.info("uyaaa");
     return parser.parserPutUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
