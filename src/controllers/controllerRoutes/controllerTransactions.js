@@ -21,54 +21,13 @@ function getUserTransactions(userId, request, response) {
   dataBase.query(q, response, parser.parserGetUserTransactions, auth);
 }
 
-/*
-  "transaction": {
-    "id": "string",
-    "trip": "string",
-    "timestamp": 0,
-    "cost": {
-      "currency": "string",
-      "value": 0
-    },
-    "description": "string",
-    "data": {}
-  }
-*/
-
 function postUserTransactions(userId, request, response) {
   var tripId = request.body.trip;
   var currency = request.body.payment.currency;
   var value = request.body.payment.value;
   var paymethod = request.body.payment.paymethod;
   var transaction_id = request.body.payment.transaction_id;
-  var tk = getPaymentToken();
-  tk.then(function (tk_data){
-    var options = {
-			method: 'POST',
-			uri: baseUri + paymentUri,
-			body: {
-				currency : currency,
-				value : value,
-				paymentMethod : paymethod,
-        transaction_id : transaction_id
-			},
-			headers: {
-				'Authorization': 'Bearer ' + tk_data.access_token
-			},
-			json: true
-    };
-    logger.info("Mi body ess: "+JSON.stringify(options.body));
-    rp(options).then(function (payment_response) {
-      logger.info("POST TRANSACTION ME DEVOLVIO: "+JSON.stringify(payment_response));
-      parser.parserPostUserTransactions({'success': true, 'status': 200, 'data_retrieved': payment_response}, response);
-    }).catch(function (err) {
-      logger.info("TUVE ERROR: "+err);
-      parser.parserPostUserTransactions({'success': false, 'status': 500, 'data_retrieved': err}, response);
-    });
-  }).catch(function (err) {
-    parser.parserPostUserTransactions({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
-  });
-
+  makePayment(currency, value, paymethod, transaction_id, response);
 }
 
 function getPaymethods(request, response) {
@@ -105,8 +64,39 @@ function getPaymentToken(){
 		return rp(options);
 }
 
+function makePayment(currency, value, paymethod, transaction_id, response){
+  var tk = getPaymentToken();
+  tk.then(function (tk_data){
+    var options = {
+			method: 'POST',
+			uri: baseUri + paymentUri,
+			body: {
+				currency : currency,
+				value : value,
+				paymentMethod : paymethod,
+        transaction_id : transaction_id
+			},
+			headers: {
+				'Authorization': 'Bearer ' + tk_data.access_token
+			},
+			json: true
+    };
+    logger.info("Mi body ess: "+JSON.stringify(options.body));
+    rp(options).then(function (payment_response) {
+      logger.info("POST TRANSACTION ME DEVOLVIO: "+JSON.stringify(payment_response));
+      parser.parserPostUserTransactions({'success': true, 'status': 200, 'data_retrieved': payment_response}, response);
+    }).catch(function (err) {
+      logger.info("TUVE ERROR: "+err);
+      parser.parserPostUserTransactions({'success': false, 'status': 500, 'data_retrieved': err}, response);
+    });
+  }).catch(function (err) {
+    parser.parserPostUserTransactions({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
+  });
+}
+
 module.exports = {
     getUserTransactions : getUserTransactions,
     postUserTransactions : postUserTransactions,
-    getPaymethods : getPaymethods
+    getPaymethods : getPaymethods,
+    makePayment : makePayment
 };

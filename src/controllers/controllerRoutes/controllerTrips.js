@@ -1,10 +1,9 @@
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserTrips.js');
 var token = require('../controllerLogic/controllerToken.js');
-var id = require('../controllerLogic/controllerId.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 
-var controllerRules = require('./controllerRules.js');
+var controllerTransactions = require('./controllerTransactions.js');
 
 function getUserTrips(userId, request, response) {
   var tk = request.headers.token;
@@ -13,7 +12,9 @@ function getUserTrips(userId, request, response) {
   dataBase.query(q, response, parser.parserGetUserTrips, auth);
 }
 
-function postTrips(request, response) {}
+function postTrips(request, response) {
+  controllerTransactions.makePayment(currency, value, paymethod, transaction_id, response);
+}
 
 function postTripEstimate(request, response) {
   var tk = request.headers.token;
