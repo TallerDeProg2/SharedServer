@@ -27,9 +27,9 @@ describe('Users endpoints', function() {
           });
     });
 
-    it('it should GET one user with id = "02"', function(done) {
+    it('it should GET one user with id = 1', function(done) {
       chai.request(server)
-          .get('/users/02')
+          .get('/users/1')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
@@ -202,7 +202,7 @@ describe('Users endpoints', function() {
 
     it('it should get status 200 after updating a valid user', function(done){
       chai.request(server)
-          .put('/users/02')
+          .put('/users/1')
           .set('content-type', 'application/json')
           .send({
             "_ref": "defgh",
@@ -228,13 +228,13 @@ describe('Users endpoints', function() {
 
     it('it should PUT a user', function(done){
       chai.request(server)
-      .get('/users/02')
+      .get('/users/1')
       .set('token', 'superservercito-token')
       .end(function(err, res) {
               var old_ref = res.body.user._ref;
 
               chai.request(server)
-                  .put('/users/02')
+                  .put('/users/1')
                   .set('content-type', 'application/json')
                   .send({
                     "_ref": old_ref,
@@ -255,7 +255,7 @@ describe('Users endpoints', function() {
                   .end(function(err, res) {
                       res.should.have.status(200);
                       chai.request(server)
-                      .get('/users/02')
+                      .get('/users/1')
                       .set('token', 'superservercito-token')
                       .end(function(err, res) {
                           res.should.have.status(200);
@@ -294,7 +294,7 @@ describe('Users endpoints', function() {
 
     it('it should get status 400 when one of the parameters is missing', function(done){
       chai.request(server)
-          .put('/users/02')
+          .put('/users/1')
           .set('token', 'superservercito-token')
           .send({
             "_ref": "jhkh",
@@ -323,7 +323,7 @@ describe('Users endpoints', function() {
 
     it('it should return status 204 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/users/02')
+          .delete('/users/1')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(204);

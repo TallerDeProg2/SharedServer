@@ -30,9 +30,8 @@ function postUser(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthServer(tk);
 
-  var id = controllerId.createId();
   var driver = request.body.type;
-  var _ref = controllerRef.createRef(id);
+
   var username = request.body.username;
   var password = request.body.password;
   var firstname = request.body.firstname;
@@ -58,7 +57,9 @@ function postUser(request, response) {
     return parser.parserPostUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
-  var q = 'INSERT INTO users(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance);
+  var _ref = controllerRef.createRef(username);
+
+  var q = 'INSERT INTO users(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance);
   dataBase.query(q, response, parser.parserPostUser, auth);
 }
 

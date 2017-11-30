@@ -13,7 +13,7 @@ var server = require('../src/srv/index.js');
 
 describe('User\'s cars endpoints', function() {
 
-  describe('GET user\'s car', function() {
+  /*describe('GET user\'s car', function() {
 
     it('it should GET one car of the user with id = 03', function(done) {
       chai.request(server)
@@ -251,6 +251,6 @@ describe('User\'s cars endpoints', function() {
           });
     });
 
-  });
+  });*/
 
 });
