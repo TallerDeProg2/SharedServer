@@ -8,6 +8,7 @@ var rp = require('request-promise');
 var baseUri = "http://shielded-escarpment-27661.herokuapp.com/api/v1";
 var tokenUri = "/user/oauth/authorize";
 var paymethodsUri = "/paymethods";
+var paymentUri = "/payments";
 var clientId = "9792de0d-949e-40dd-ad98-c6fad7dff5d9";
 var clientSecret = "e3cc5d9e-8a85-490a-a910-47155002893c";
 
@@ -18,8 +19,50 @@ function getUserTransactions(userId, request, response) {
   dataBase.query(q, response, parser.parserGetUserTransactions, auth);
 }
 
+/*
+  "transaction": {
+    "id": "string",
+    "trip": "string",
+    "timestamp": 0,
+    "cost": {
+      "currency": "string",
+      "value": 0
+    },
+    "description": "string",
+    "data": {}
+  }
+*/
+
 function postUserTransactions(userId, request, response) {
-  //TODO: ??????
+  var tripId = request.body.trip.id;
+  var tripCost = request.body.trip.cost;
+  var currency = request.body.payment.currency;
+  var value = request.body.payment.value;
+  var paymethod = request.body.payment.paymethod;
+  var tk = getPaymentToken();
+  tk.then(function (tk_data){
+    var options = {
+			method: 'POST',
+			uri: baseUri + paymentUri,
+			body: {
+				currency: currency,
+				value: value,
+				paymentMethod: paymethod
+			},
+			headers: {
+				'Authorization': 'Bearer ' + token
+			},
+			json: true
+    };
+    rp(options).then(function (payment_response) {
+      parser.parserGetPaymethods({'success': true, 'status': 200, 'data_retrieved': paymethods_retrieved}, response);
+    }).catch(function (payment_response) {
+      parser.parserGetPaymethods({'success': false, 'status': 500, 'data_retrieved': err}, response);
+    });
+  }).catch(function (payment_response) {
+    parser.parserGetPaymethods({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
+  });
+
 }
 
 function getPaymethods(request, response) {

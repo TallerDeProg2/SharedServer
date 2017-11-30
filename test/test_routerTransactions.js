@@ -9,6 +9,8 @@ var moment = require('moment');
 var format = require('string-format');
 format.extend(String.prototype);
 
+var logger = '../src/srv/log.js'
+
 var server = require('../src/srv/index.js');
 
 describe('Paymethods endpoints', function() {
@@ -39,6 +41,7 @@ describe('Paymethods endpoints', function() {
             res.should.have.status(200);
             res.body.paymethods.should.be.a('array');
             res.body.paymethods.length.should.not.be.eql(0);
+            //logger.info("METODOS DE PAGOO: "+JSON.stringify(res.body));
             done();
           });
     });
