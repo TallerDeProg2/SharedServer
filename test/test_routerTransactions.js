@@ -57,7 +57,7 @@ describe('Paymethods endpoints', function() {
           .send({"trip" : 1,
                  "payment": { "value" : 20,
                               "transaction_id" : "0c2f0554-a29f-4a4a-8ce5-adce6f2d7508",
-                              "currency" : "pesos",
+                              "currency" : "ARS",
                               "paymethod" :{
                                     "ccvv": "123",
                                     "expiration_month": "12",
