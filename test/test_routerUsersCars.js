@@ -13,11 +13,11 @@ var server = require('../src/srv/index.js');
 
 describe('User\'s cars endpoints', function() {
 
-  /*describe('GET user\'s car', function() {
+  describe('GET user\'s car', function() {
 
     it('it should GET one car of the user with id = 03', function(done) {
       chai.request(server)
-          .get('/users/03/cars')
+          .get('/users/2/cars')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
@@ -38,7 +38,7 @@ describe('User\'s cars endpoints', function() {
 
     it('it should return status 404 when the id is from a passenger', function(done) {
       chai.request(server)
-          .get('/users/02/cars')
+          .get('/users/1/cars')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(404);
@@ -55,7 +55,7 @@ describe('User\'s cars endpoints', function() {
       var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
 
       chai.request(server)
-          .post('/users/04/cars')
+          .post('/users/3/cars')
           .set('content-type', 'application/json')
           .send({"brand": "brand",
             "model": "model",
@@ -78,7 +78,7 @@ describe('User\'s cars endpoints', function() {
       var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
 
       chai.request(server)
-          .post('/users/04/cars')
+          .post('/users/3/cars')
           .set('content-type', 'application/json')
           .send({"brand": "brand",
             "model": "model",
@@ -93,7 +93,7 @@ describe('User\'s cars endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(201);
               chai.request(server)
-              .get('/users/04/cars')
+              .get('/users/3/cars')
               .set('token', 'superservercito-token')
               .end(function(err, res) {
                   res.should.have.status(200);
@@ -105,7 +105,7 @@ describe('User\'s cars endpoints', function() {
 
     it('it should get status 400 when one of the parameters is missing', function(done){
       chai.request(server)
-          .post('/users/03/cars')
+          .post('/users/3/cars')
           .set('content-type', 'application/json')
           .send({"brand": "brand",
             "model": "model",
@@ -142,7 +142,7 @@ describe('User\'s cars endpoints', function() {
 
     it('it should get status 200 after updating a valid car', function(done){
       chai.request(server)
-          .put('/users/03/cars')
+          .put('/users/2/cars')
           .set('content-type', 'application/json')
           .send({"brand": "brandNew",
             "model": "modelNew",
@@ -162,12 +162,12 @@ describe('User\'s cars endpoints', function() {
 
     it('it should PUT a car', function(done){
       chai.request(server)
-      .get('/users/03/cars')
+      .get('/users/2/cars')
       .set('token', 'superservercito-token')
       .end(function(err, res) {
               var old_ref = res.body.car._ref;
               chai.request(server)
-                  .put('/users/03/cars')
+                  .put('/users/2/cars')
                   .set('content-type', 'application/json')
                   .send({"brand": "tesla",
                     "model": "1234",
@@ -182,7 +182,7 @@ describe('User\'s cars endpoints', function() {
                   .end(function(err, res) {
                       res.should.have.status(200);
                       chai.request(server)
-                      .get('/users/03/cars')
+                      .get('/users/2/cars')
                       .set('token', 'superservercito-token')
                       .end(function(err, res) {
                           res.should.have.status(200);
@@ -216,7 +216,7 @@ describe('User\'s cars endpoints', function() {
 
     it('it should get status 400 when one of the parameters is missing', function(done){
       chai.request(server)
-          .put('/users/03/cars')
+          .put('/users/2/cars')
           .set('token', 'superservercito-token')
           .send({"brand": "brand",
             "model": "model",
@@ -243,7 +243,7 @@ describe('User\'s cars endpoints', function() {
 
     it('it should return status 204 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/users/03/cars')
+          .delete('/users/2/cars')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(204);
@@ -251,6 +251,6 @@ describe('User\'s cars endpoints', function() {
           });
     });
 
-  });*/
+  });
 
 });
