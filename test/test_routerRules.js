@@ -42,9 +42,9 @@ describe('Rules endpoints', function() {
           });
     });
 
-    it('it should return cost 80 when the distance is 2 and the rule to run is the 04 (active rule)', function(done) {
+    it('it should return cost 80 when the distance is 2 and the rule to run is the 1 (active rule)', function(done) {
       chai.request(server)
-          .post('/rules/04/run')
+          .post('/rules/1/run')
           .set('content-type', 'application/json')
           .send({"facts": [{ "language": "string",
                            "blob":  {"distance" : 2,
@@ -58,9 +58,9 @@ describe('Rules endpoints', function() {
           });
     });
 
-    it('it should return cost 1050 when the time is 2 and the rule to run is the 06 (not active rule)', function(done) {
+    it('it should return cost 1050 when the time is 2 and the rule to run is the 3 (not active rule)', function(done) {
       chai.request(server)
-          .post('/rules/06/run')
+          .post('/rules/3/run')
           .set('content-type', 'application/json')
           .send({"facts": [{ "language": "string",
                            "blob":  {"distance" : 2,
@@ -74,9 +74,9 @@ describe('Rules endpoints', function() {
           });
     });
 
-    it('it should return cost 1050 when the time is 2 and 2050 when it is 4 and the rule to run is the 06 (run more than one fact)', function(done) {
+    it('it should return cost 1050 when the time is 2 and 2050 when it is 4 and the rule to run is the 3 (run more than one fact)', function(done) {
       chai.request(server)
-          .post('/rules/06/run')
+          .post('/rules/3/run')
           .set('content-type', 'application/json')
           .send({"facts": [{ "language": "string",
                            "blob":  {"distance" : 2,
@@ -130,9 +130,9 @@ describe('Rules endpoints', function() {
           });
     });
 
-    it('it should GET one rule with id = "04"', function(done) {
+    it('it should GET one rule with id = 1', function(done) {
       chai.request(server)
-          .get('/rules/04')
+          .get('/rules/1')
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
@@ -219,7 +219,7 @@ describe('Rules endpoints', function() {
 
     it('it should get status 200 after updating a valid rule', function(done){
       chai.request(server)
-          .put('/rules/04')
+          .put('/rules/1')
           .set('content-type', 'application/json')
           .send({"_ref" : "fghij",
                 "message" : "new test commit",
@@ -234,23 +234,23 @@ describe('Rules endpoints', function() {
 
     it('it should PUT a rule', function(done){
       chai.request(server)
-      .get('/rules/04')
+      .get('/rules/1')
       .set('token', 'superusercito-token')
       .end(function(err, res) {
               var old_ref = res.body.rule._ref;
               chai.request(server)
-                  .put('/rules/04')
+                  .put('/rules/1')
                   .set('token', 'superusercito-token')
                   .send({"_ref" : old_ref,
                         "message" : "new new test commit",
                         "blob" : serialize(rule),
                         "active" : true})
-                  .set('token', 'token')
+                  .set('token', 'superusercito-token')
                   .end(function(err, res) {
                       res.should.have.status(200);
                       chai.request(server)
-                      .get('/rules/04')
-                      .set('token', 'token')
+                      .get('/rules/1')
+                      .set('token', 'superusercito-token')
                       .end(function(err, res) {
                           res.should.have.status(200);
                           res.body.rule.lastcommit.message.should.be.eql("new new test commit");
@@ -277,7 +277,7 @@ describe('Rules endpoints', function() {
 
     it('it should get status 400 when one of the parameters is missing', function(done){
       chai.request(server)
-          .put('/rules/04')
+          .put('/rules/1')
           .set('content-type', 'application/json')
           .send({"_ref" : "fghij",
                 "message" : "test commit"})
@@ -294,7 +294,7 @@ describe('Rules endpoints', function() {
 
     it('it should GET all the rule\'s commits', function(done) {
       chai.request(server)
-          .get('/rules/04/commits')
+          .get('/rules/1/commits')
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
@@ -316,7 +316,7 @@ describe('Rules endpoints', function() {
 
     it('it should GET one rule commit with id = "fghij"', function(done) {
       chai.request(server)
-          .get('/rules/04/commits/fghij')
+          .get('/rules/1/commits/fghij')
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
@@ -327,7 +327,7 @@ describe('Rules endpoints', function() {
 
     it('it should return status 404 when the commit id es invalid', function(done) {
       chai.request(server)
-          .get('/rules/04/commits/01')
+          .get('/rules/1/commits/01')
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(404);
@@ -353,7 +353,7 @@ describe('Rules endpoints', function() {
 
     it('it should return status 204 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/rules/04')
+          .delete('/rules/1')
           .set('token', 'superusercito-token')
           .end(function(err, res) {
               res.should.have.status(204);

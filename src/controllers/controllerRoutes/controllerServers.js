@@ -35,8 +35,6 @@ function postServer(request, response) {
   var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
   var exp_date_fr = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
 
-  var id = controllerId.createId();
-  var _ref = controllerRef.createRef(id);
   var token = controllerToken.createToken();
   var exp = exp_date_fr;
 
@@ -49,7 +47,9 @@ function postServer(request, response) {
     return parser.parserPostServer({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
-  var q = 'INSERT INTO srvusers(id, _ref, rol, token, tokenexp, data) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\') RETURNING *;'.format(id, _ref, "server", token, exp, JSON.stringify(json));
+  var _ref = controllerRef.createRef(json.name);
+
+  var q = 'INSERT INTO srvusers(_ref, rol, token, tokenexp, data) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\') RETURNING *;'.format(_ref, "server", token, exp, JSON.stringify(json));
   dataBase.query(q, response, parser.parserPostServer, auth);
 }
 

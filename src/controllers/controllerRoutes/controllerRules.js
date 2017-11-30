@@ -34,9 +34,6 @@ function postRule(request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthManager(tk);
 
-  var id = controllerId.createId();
-  var _ref = controllerRef.createRef(id);
-
   var now = moment();
   var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
 
@@ -50,7 +47,9 @@ function postRule(request, response) {
     return parser.parserPostRules({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 
-  var q = 'INSERT INTO rules(id, _ref, commits, active) values(\'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(id, _ref, JSON.stringify(commits), active);
+  var _ref = controllerRef.createRef(request.body.message);
+
+  var q = 'INSERT INTO rules(_ref, commits, active) values(\'{}\', \'{}\', \'{}\') RETURNING *;'.format(_ref, JSON.stringify(commits), active);
   dataBase.query(q, response, parser.parserPostRule, auth);
 }
 

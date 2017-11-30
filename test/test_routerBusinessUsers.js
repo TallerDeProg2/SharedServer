@@ -32,7 +32,7 @@ describe('Business Users endpoints', function() {
       chai.request(server)
           .get('/business-users/me')
           .set('token', 'token')
-          .set('id','usercito')
+          .set('id', 3)
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.businessUser.username.should.be.eql("usercito");
@@ -44,7 +44,7 @@ describe('Business Users endpoints', function() {
       chai.request(server)
           .get('/business-users/me')
           .set('token', 'token')
-          .set('id', '00')
+          .set('id', 1)
           .end(function(err, res) {
               res.should.have.status(404);
               done();
@@ -158,7 +158,7 @@ describe('Business Users endpoints', function() {
 
     it('it should get status 200 after updating a valid user', function(done){
       chai.request(server)
-          .put('/business-users/string')
+          .put('/business-users/6')
           .set('content-type', 'application/json')
           .send({"username": "string",
             "password": "nuevaPass",
@@ -183,13 +183,13 @@ describe('Business Users endpoints', function() {
             "surname": "string",
             "roles": ["admin"]
           })
-          .set('id', 'usercito')
+          .set('id', 3)
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(200);
               chai.request(server)
               .get('/business-users/me')
-              .set('id','usercito')
+              .set('id', 3)
               .set('token', 'token')
               .end(function(err, res) {
                   res.should.have.status(200);
@@ -238,7 +238,7 @@ describe('Business Users endpoints', function() {
           .send({"username": "usercito",
             "password": "string",
           })
-          .set('id','usercito')
+          .set('id',03)
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(400);
@@ -262,7 +262,7 @@ describe('Business Users endpoints', function() {
 
     it('it should return status 204 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/business-users/string2')
+          .delete('/business-users/3')
           .set('token', 'token')
           .end(function(err, res) {
               res.should.have.status(204);
