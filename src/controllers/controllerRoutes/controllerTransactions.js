@@ -39,7 +39,7 @@ function postUserTransactions(userId, request, response) {
 
       makePayment(currency, value, paymethod, transaction_id, response)
     }).catch(function(err, done) {
-      return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+      return parser.parserPostTrips({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
 }
 
@@ -74,7 +74,7 @@ function getPaymethods(request, response) {
       });
 
     }).catch(function(err, done) {
-      return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+      return parser.parserGetPaymethods({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
 }
 
