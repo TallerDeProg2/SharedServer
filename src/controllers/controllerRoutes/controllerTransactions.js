@@ -44,24 +44,38 @@ function postUserTransactions(userId, request, response) {
 }
 
 function getPaymethods(request, response) {
-  var tk = getPaymentToken();
-  tk.then(function (tk_data){
-    var options = {
-      method: 'GET',
-      uri: baseUri + paymethodsUri,
-      headers: {
-        'Authorization': 'Bearer ' + tk_data.access_token
-      },
-      json: true
-    };
-    rp(options).then(function (paymethods_retrieved) {
-      parser.parserGetPaymethods({'success': true, 'status': 200, 'data_retrieved': paymethods_retrieved}, response);
-    }).catch(function (err) {
-      parser.parserGetPaymethods({'success': false, 'status': 500, 'data_retrieved': err}, response);
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var resolve_auth = dataBase.promise_query_get(auth.query());
+  resolve_auth.then(function (result) {
+
+      var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result});
+      if (!result_auth.success){
+        return parser.parserPostTrips(result_auth, response);
+      }
+
+      var tk = getPaymentToken();
+      tk.then(function (tk_data){
+        var options = {
+          method: 'GET',
+          uri: baseUri + paymethodsUri,
+          headers: {
+            'Authorization': 'Bearer ' + tk_data.access_token
+          },
+          json: true
+        };
+        rp(options).then(function (paymethods_retrieved) {
+          parser.parserGetPaymethods({'success': true, 'status': 200, 'data_retrieved': paymethods_retrieved}, response);
+        }).catch(function (err) {
+          parser.parserGetPaymethods({'success': false, 'status': 500, 'data_retrieved': err}, response);
+        });
+      }).catch(function (err) {
+        parser.parserGetPaymethods({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
+      });
+
+    }).catch(function(err, done) {
+      return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
-  }).catch(function (err) {
-    parser.parserGetPaymethods({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
-  });
 }
 
 function getPaymentToken(){
