@@ -10,6 +10,7 @@ var format = require('string-format');
 format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
+var logger = require('../src/srv/log.js');
 
 describe('Users endpoints', function() {
 
@@ -162,6 +163,64 @@ describe('Users endpoints', function() {
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(200);
+              done();
+          });
+    });
+
+    it('it should get status 409 when trying to create an user with a repeated username', function(done){
+      var now = moment();
+      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
+      chai.request(server)
+          .post('/users')
+          .set('content-type', 'application/json')
+          .send({
+            "_ref": "string",
+            "type": "string",
+            "username": "string",
+            "password": "string",
+            "fb": {
+              "userId": "string",
+              "authToken": "string"
+            },
+            "firstname": "string",
+            "lastname": "string",
+            "country": "string",
+            "email": "stringn@mail.com",
+            "birthdate": now_fr,
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(409);
+              done();
+          });
+    });
+
+    it('it should get status 409 when trying to create an user with a repeated email', function(done){
+      var now = moment();
+      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
+      chai.request(server)
+          .post('/users')
+          .set('content-type', 'application/json')
+          .send({
+            "_ref": "string",
+            "type": "string",
+            "username": "stringn",
+            "password": "string",
+            "fb": {
+              "userId": "string",
+              "authToken": "string"
+            },
+            "firstname": "string",
+            "lastname": "string",
+            "country": "string",
+            "email": "string",
+            "birthdate": now_fr,
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(409);
               done();
           });
     });

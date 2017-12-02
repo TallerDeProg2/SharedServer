@@ -13,7 +13,7 @@ var paymentUri = "/payments";
 function getUserTrips(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUserServer(tk);
-  var q = 'SELECT * FROM trips WHERE (driver=\'{}\') OR (passenger=\'{}\')'.format(userId, userId);
+  var q = 'SELECT * FROM trips WHERE (driver=\'{}\') OR (passenger=\'{}\');'.format(userId, userId);
   dataBase.query(q, response, parser.parserGetUserTrips, auth);
 }
 
