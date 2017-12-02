@@ -20,12 +20,27 @@ function getUserTransactions(userId, request, response) {
 }
 
 function postUserTransactions(userId, request, response) {
-  var tripId = request.body.trip;
-  var currency = request.body.payment.currency;
-  var value = request.body.payment.value;
-  var paymethod = request.body.payment.paymethod;
-  var transaction_id = request.body.payment.transaction_id;
-  makePayment(currency, value, paymethod, transaction_id, response);
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var resolve_auth = dataBase.promise_query_get(auth.query());
+  resolve_auth.then(function (result) {
+
+      var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result});
+      if (!result_auth.success){
+        return parser.parserPostTrips(result_auth, response);
+      }
+
+      var tripId = request.body.trip;
+      var currency = request.body.payment.currency;
+      var value = request.body.payment.value;
+      var paymethod = request.body.payment.paymethod;
+      var transaction_id = request.body.payment.transaction_id;
+      var tk = getPaymentToken();
+
+      makePayment(currency, value, paymethod, transaction_id, response)
+    }).catch(function(err, done) {
+      return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+    });
 }
 
 function getPaymethods(request, response) {
@@ -92,6 +107,5 @@ function makePayment(currency, value, paymethod, transaction_id, response){
 module.exports = {
     getUserTransactions : getUserTransactions,
     postUserTransactions : postUserTransactions,
-    getPaymethods : getPaymethods,
-    makePayment : makePayment
+    getPaymethods : getPaymethods
 };
