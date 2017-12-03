@@ -20,9 +20,14 @@ function parserGetPaymethods(r, response) {
   return basicParser.extendedParser(r, response, "paymethods", r.data_retrieved.items, 200);
 }
 
+function parserNull(r, response) {
+  return;
+}
+
 
 module.exports = {
   parserGetUserTransactions : parserGetUserTransactions,
   parserPostUserTransactions : parserPostUserTransactions,
-  parserGetPaymethods : parserGetPaymethods
+  parserGetPaymethods : parserGetPaymethods,
+  parserNull : parserNull
 };

@@ -33,6 +33,11 @@ function postTrips(request, response) {
       var value = request.body.payment.value;
       var paymethod = request.body.payment.paymethod;
       var transaction_id = request.body.payment.transaction_id;
+
+      if (paymethod.method == "cash"){
+        return parser.parserPostTrips({'success': true, 'status': 200, 'data_retrieved': "OK"}, response);
+      }
+
       var tk = getPaymentToken();
       tk.then(function (tk_data){
         var options = {
@@ -63,12 +68,19 @@ function postTrips(request, response) {
           dataBase.query(q, response, parser.parserNull, auth);
           parser.parserPostTrips({'success': true, 'status': 200, 'data_retrieved': new_transaction}, response);
         }).catch(function (err) {
+          var _refNew = controllerRef.createRef(userId);
+          var q = 'UPDATE users SET _ref=\'{}\', balance=balance-{} WHERE id=\'{}\' RETURNING *;'.format(_refNew, value, userId);
+          dataBase.query(q, response, parser.parserNull, auth);
           parser.parserPostTrips({'success': false, 'status': 500, 'data_retrieved': err}, response);
         });
       }).catch(function (err) {
+        var _refNew = controllerRef.createRef(userId);
+        var q = 'UPDATE users SET _ref=\'{}\', balance=balance-{} WHERE id=\'{}\' RETURNING *;'.format(_refNew, value, userId);
+        dataBase.query(q, response, parser.parserNull, auth);
         parser.parserPostTrips({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
       });
     }).catch(function(err, done) {
+      var _refNew = controllerRef.createRef(userId);
       return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
 }

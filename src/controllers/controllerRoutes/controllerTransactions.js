@@ -3,6 +3,7 @@ var parser = require('../controllerData/controllerParserTransactions.js');
 var token = require('../controllerLogic/controllerToken.js');
 var id = require('../controllerLogic/controllerId.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
+var controllerRef = require('../controllerLogic/controllerRef.js');
 
 var rp = require('request-promise');
 var baseUri = "http://shielded-escarpment-27661.herokuapp.com/api/v1";
@@ -11,6 +12,8 @@ var paymethodsUri = "/paymethods";
 var paymentUri = "/payments";
 var clientId = "9792de0d-949e-40dd-ad98-c6fad7dff5d9";
 var clientSecret = "e3cc5d9e-8a85-490a-a910-47155002893c";
+
+var logger = require('../../srv/log.js');
 
 function getUserTransactions(userId, request, response) {
   var tk = request.headers.token;
@@ -37,9 +40,13 @@ function postUserTransactions(userId, request, response) {
       var transaction_id = request.body.payment.transaction_id;
       var tk = getPaymentToken();
 
+      var _refNew = controllerRef.createRef(userId);
+      var q = 'UPDATE users SET _ref=\'{}\', balance=balance+{} WHERE id=\'{}\' RETURNING *;'.format(_refNew, value, userId);
+      logger.info("Estoy por llamar a la database");
+      dataBase.query(q, response, parser.parserNull);
       makePayment(currency, value, paymethod, transaction_id, response)
     }).catch(function(err, done) {
-      return parser.parserPostTrips({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+      return parser.parserPostUserTransactions({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
 }
 

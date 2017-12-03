@@ -33,6 +33,7 @@ describe('Users endpoints', function() {
           .get('/users/1')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
+              ref_user1 = res.body.user.ref;
               res.should.have.status(200);
               res.body.user.username.should.be.eql("usercitoapp");
             done();
@@ -259,29 +260,37 @@ describe('Users endpoints', function() {
 
   describe('PUT users', function() {
 
-    it('it should get status 200 after updating a valid user', function(done){
+    it('it should get status 200 after updating a user', function(done){
       chai.request(server)
-          .put('/users/1')
-          .set('content-type', 'application/json')
-          .send({
-            "_ref": "defgh",
-            "type": "passenger",
-            "username": "usercitoapp",
-            "password": "passNueva",
-            "fb": {
-              "userId": "usercito@app.com",
-              "authToken": "1234"
-            },
-            "firstname": "usercito",
-            "lastname": "app",
-            "country": "applandia",
-            "email": "usercito@app.com",
-            "birthdate": 0,
-          })
-          .set('token', 'superservercito-token')
-          .end(function(err, res) {
-              res.should.have.status(200);
-              done();
+      .get('/users/1')
+      .set('token', 'superservercito-token')
+      .end(function(err, res) {
+              logger.info("mi body ess: "+ res.body);
+              var old_ref = res.body.user._ref;
+
+              chai.request(server)
+                  .put('/users/1')
+                  .set('content-type', 'application/json')
+                  .send({
+                    "_ref": old_ref,
+                    "type": "passenger",
+                    "username": "usercitoapp",
+                    "password": "passNueva",
+                    "fb": {
+                      "userId": "usercito@app.com",
+                      "authToken": "1234"
+                    },
+                    "firstname": "usercito",
+                    "lastname": "app",
+                    "country": "applandia",
+                    "email": "usercito@app.com",
+                    "birthdate": 0,
+                  })
+                  .set('token', 'superservercito-token')
+                  .end(function(err, res) {
+                      res.should.have.status(200);
+                      done();
+                  });
           });
     });
 
