@@ -10,6 +10,7 @@ var format = require('string-format');
 format.extend(String.prototype);
 
 var server = require('../src/srv/index.js');
+var logger = require('../src/srv/log.js');
 
 describe('Users endpoints', function() {
 
@@ -22,7 +23,7 @@ describe('Users endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.users.should.be.a('array');
-              res.body.users.length.should.be.eql(3);
+              res.body.users.length.should.be.eql(4);
             done();
           });
     });
@@ -32,6 +33,7 @@ describe('Users endpoints', function() {
           .get('/users/1')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
+              ref_user1 = res.body.user.ref;
               res.should.have.status(200);
               res.body.user.username.should.be.eql("usercitoapp");
             done();
@@ -166,6 +168,64 @@ describe('Users endpoints', function() {
           });
     });
 
+    it('it should get status 409 when trying to create an user with a repeated username', function(done){
+      var now = moment();
+      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
+      chai.request(server)
+          .post('/users')
+          .set('content-type', 'application/json')
+          .send({
+            "_ref": "string",
+            "type": "string",
+            "username": "string",
+            "password": "string",
+            "fb": {
+              "userId": "string",
+              "authToken": "string"
+            },
+            "firstname": "string",
+            "lastname": "string",
+            "country": "string",
+            "email": "stringn@mail.com",
+            "birthdate": now_fr,
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(409);
+              done();
+          });
+    });
+
+    it('it should get status 409 when trying to create an user with a repeated email', function(done){
+      var now = moment();
+      var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
+      chai.request(server)
+          .post('/users')
+          .set('content-type', 'application/json')
+          .send({
+            "_ref": "string",
+            "type": "string",
+            "username": "stringn",
+            "password": "string",
+            "fb": {
+              "userId": "string",
+              "authToken": "string"
+            },
+            "firstname": "string",
+            "lastname": "string",
+            "country": "string",
+            "email": "string",
+            "birthdate": now_fr,
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+              res.should.have.status(409);
+              done();
+          });
+    });
+
     it('it should get status 400 when one of the parameters is missing (POST validate)', function(done){
       chai.request(server)
           .post('/users/validate')
@@ -200,29 +260,37 @@ describe('Users endpoints', function() {
 
   describe('PUT users', function() {
 
-    it('it should get status 200 after updating a valid user', function(done){
+    it('it should get status 200 after updating a user', function(done){
       chai.request(server)
-          .put('/users/1')
-          .set('content-type', 'application/json')
-          .send({
-            "_ref": "defgh",
-            "type": "passenger",
-            "username": "usercitoapp",
-            "password": "passNueva",
-            "fb": {
-              "userId": "usercito@app.com",
-              "authToken": "1234"
-            },
-            "firstname": "usercito",
-            "lastname": "app",
-            "country": "applandia",
-            "email": "usercito@app.com",
-            "birthdate": 0,
-          })
-          .set('token', 'superservercito-token')
-          .end(function(err, res) {
-              res.should.have.status(200);
-              done();
+      .get('/users/1')
+      .set('token', 'superservercito-token')
+      .end(function(err, res) {
+              logger.info("mi body ess: "+ res.body);
+              var old_ref = res.body.user._ref;
+
+              chai.request(server)
+                  .put('/users/1')
+                  .set('content-type', 'application/json')
+                  .send({
+                    "_ref": old_ref,
+                    "type": "passenger",
+                    "username": "usercitoapp",
+                    "password": "passNueva",
+                    "fb": {
+                      "userId": "usercito@app.com",
+                      "authToken": "1234"
+                    },
+                    "firstname": "usercito",
+                    "lastname": "app",
+                    "country": "applandia",
+                    "email": "usercito@app.com",
+                    "birthdate": 0,
+                  })
+                  .set('token', 'superservercito-token')
+                  .end(function(err, res) {
+                      res.should.have.status(200);
+                      done();
+                  });
           });
     });
 
@@ -323,7 +391,7 @@ describe('Users endpoints', function() {
 
     it('it should return status 204 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/users/1')
+          .delete('/users/4')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(204);

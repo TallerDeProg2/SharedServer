@@ -57,8 +57,22 @@ function postUser(request, response) {
 
   var _ref = controllerRef.createRef(username);
 
-  var q = 'INSERT INTO users(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance);
-  dataBase.query(q, response, parser.parserPostUser, auth);
+  var q = 'SELECT * FROM users WHERE (username=\'{}\') OR (email=\'{}\');'.format(username, email);
+  var get_user = dataBase.promise_query_get(q);
+  get_user.then(function (results) {
+
+      if (results.length){
+        return parser.parserPostUser({'success': false, 'status': 409, 'data_retrieved': "Username or email already taken"}, response);
+      }
+
+      var q = 'INSERT INTO users(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance);
+      dataBase.query(q, response, parser.parserPostUser, auth);
+
+    }).catch(function(err, done) {
+      return parser.parserPostUser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+    });
+
+
 }
 
 function postUsersValidate(request, response) {
