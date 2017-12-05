@@ -19,7 +19,14 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
       '{"username" : "superusercito", "password" : "pass", "name" : "superuser", "surname" : "cito", "roles" : ["admin"]}');
 
     CREATE TABLE users (id serial primary key, _ref text, driver text, username text, password text, facebookId text, facebookToken text, firstname text, lastname text, country text, email text, birthdate timestamp, car jsonb, card jsonb, transactions jsonb, balance integer);
-    INSERT INTO users(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) VALUES ('defgh', 'passenger', 'usercitoapp', 'pass', 'usercito@app.com', '1234', 'usercito', 'app', 'applandia', 'usercito@app.com', '$created_time', '{}', '{}', '{"transactions" : []}', 0);
+    INSERT INTO users(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) VALUES ('defgh', 'passenger', 'usercitoapp', 'pass', 'usercito@app.com', '1234', 'usercito', 'app', 'applandia', 'usercito@app.com', '$created_time', '{}',
+    '{"ccvv": "123",
+      "expiration_month": "12",
+      "expiration_year": "19",
+      "method": "card",
+      "number": "1111222233334444",
+      "type": "visa"}',
+    '{"transactions" : []}', 0);
     INSERT INTO users(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) VALUES ('efghi', 'driver', 'drivercito', 'pass', 'driver@cito.com', '1234', 'driver', 'cito', 'applandia', 'driver@cito.com', '$created_time',
     '{"brand": "brand",
       "model": "model",
@@ -36,6 +43,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
                         "cost": 20,
                         "description": "string"}]
     }', 0);
+    INSERT INTO users(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) VALUES ('fghij', 'driver', 'drivernocar', 'pass', 'driver@nocar.com', '1234', 'driver', 'nocar', 'applandia', 'driver@nocar.com', '$created_time', '{}', '{}', '{"transactions" : []}', 0);
     INSERT INTO users(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) VALUES ('fghij', 'driver', 'drivernocar', 'pass', 'driver@nocar.com', '1234', 'driver', 'nocar', 'applandia', 'driver@nocar.com', '$created_time', '{}', '{}', '{"transactions" : []}', 0);
 
     CREATE TABLE trips(id serial primary key, driver text, passenger text, start jsonb, stop jsonb, totaltime integer, distance integer, cost integer);

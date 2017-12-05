@@ -23,7 +23,7 @@ describe('Users endpoints', function() {
           .end(function(err, res) {
               res.should.have.status(200);
               res.body.users.should.be.a('array');
-              res.body.users.length.should.be.eql(3);
+              res.body.users.length.should.be.eql(4);
             done();
           });
     });
@@ -391,7 +391,7 @@ describe('Users endpoints', function() {
 
     it('it should return status 204 when the id es valid', function(done) {
       chai.request(server)
-          .delete('/users/1')
+          .delete('/users/4')
           .set('token', 'superservercito-token')
           .end(function(err, res) {
               res.should.have.status(204);
