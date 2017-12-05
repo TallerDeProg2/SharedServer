@@ -1,4 +1,4 @@
-angular.module('Rules', []);
+var sharedRules = angular.module('Rules', []);
 
 function mainController($scope, $http) {
 	$scope.formData = {};
