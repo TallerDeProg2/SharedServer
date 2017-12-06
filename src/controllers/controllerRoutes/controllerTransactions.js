@@ -3,6 +3,7 @@ var parser = require('../controllerData/controllerParserTransactions.js');
 var token = require('../controllerLogic/controllerToken.js');
 var id = require('../controllerLogic/controllerId.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
+var controllerRef = require('../controllerLogic/controllerRef.js');
 
 var rp = require('request-promise');
 var baseUri = "http://shielded-escarpment-27661.herokuapp.com/api/v1";
@@ -12,6 +13,8 @@ var paymentUri = "/payments";
 var clientId = "9792de0d-949e-40dd-ad98-c6fad7dff5d9";
 var clientSecret = "e3cc5d9e-8a85-490a-a910-47155002893c";
 
+var logger = require('../../srv/log.js');
+
 function getUserTransactions(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUserServer(tk);
@@ -20,33 +23,66 @@ function getUserTransactions(userId, request, response) {
 }
 
 function postUserTransactions(userId, request, response) {
-  var tripId = request.body.trip;
-  var currency = request.body.payment.currency;
-  var value = request.body.payment.value;
-  var paymethod = request.body.payment.paymethod;
-  var transaction_id = request.body.payment.transaction_id;
-  makePayment(currency, value, paymethod, transaction_id, response);
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var resolve_auth = dataBase.promise_query_get(auth.query());
+  resolve_auth.then(function (result) {
+
+      var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result});
+      if (!result_auth.success){
+        return parser.parserPostTrips(result_auth, response);
+      }
+
+      var tripId = request.body.trip;
+      var currency = request.body.payment.currency;
+      var value = request.body.payment.value;
+      var paymethod = request.body.payment.paymethod;
+      var transaction_id = request.body.payment.transaction_id;
+      var tk = getPaymentToken();
+
+      var _refNew = controllerRef.createRef(userId);
+      var q = 'UPDATE users SET _ref=\'{}\', balance=balance+{} WHERE id=\'{}\' RETURNING *;'.format(_refNew, value, userId);
+      logger.info("Estoy por llamar a la database");
+      dataBase.query(q, response, parser.parserNull);
+      makePayment(currency, value, paymethod, transaction_id, response)
+    }).catch(function(err, done) {
+      return parser.parserPostUserTransactions({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+    });
 }
 
 function getPaymethods(request, response) {
-  var tk = getPaymentToken();
-  tk.then(function (tk_data){
-    var options = {
-      method: 'GET',
-      uri: baseUri + paymethodsUri,
-      headers: {
-        'Authorization': 'Bearer ' + tk_data.access_token
-      },
-      json: true
-    };
-    rp(options).then(function (paymethods_retrieved) {
-      parser.parserGetPaymethods({'success': true, 'status': 200, 'data_retrieved': paymethods_retrieved}, response);
-    }).catch(function (err) {
-      parser.parserGetPaymethods({'success': false, 'status': 500, 'data_retrieved': err}, response);
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var resolve_auth = dataBase.promise_query_get(auth.query());
+  resolve_auth.then(function (result) {
+
+      var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result});
+      if (!result_auth.success){
+        return parser.parserPostTrips(result_auth, response);
+      }
+
+      var tk = getPaymentToken();
+      tk.then(function (tk_data){
+        var options = {
+          method: 'GET',
+          uri: baseUri + paymethodsUri,
+          headers: {
+            'Authorization': 'Bearer ' + tk_data.access_token
+          },
+          json: true
+        };
+        rp(options).then(function (paymethods_retrieved) {
+          parser.parserGetPaymethods({'success': true, 'status': 200, 'data_retrieved': paymethods_retrieved}, response);
+        }).catch(function (err) {
+          parser.parserGetPaymethods({'success': false, 'status': 500, 'data_retrieved': err}, response);
+        });
+      }).catch(function (err) {
+        parser.parserGetPaymethods({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
+      });
+
+    }).catch(function(err, done) {
+      return parser.parserGetPaymethods({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });
-  }).catch(function (err) {
-    parser.parserGetPaymethods({'success': false, 'status': 401, 'data_retrieved': "Could not get token: "+err}, response);
-  });
 }
 
 function getPaymentToken(){
@@ -92,6 +128,5 @@ function makePayment(currency, value, paymethod, transaction_id, response){
 module.exports = {
     getUserTransactions : getUserTransactions,
     postUserTransactions : postUserTransactions,
-    getPaymethods : getPaymethods,
-    makePayment : makePayment
+    getPaymethods : getPaymethods
 };
