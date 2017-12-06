@@ -47,7 +47,13 @@ function postUser(request, response) {
   }
 
   var car = JSON.stringify({});
-  var card = JSON.stringify({});
+  var card = JSON.stringify({"ccvv": "",
+              "expiration_month": "",
+              "expiration_year": "",
+              "method": "",
+              "number": "",
+              "type": ""
+            });
   var transactions = JSON.stringify({"transactions" : []});
   var balance = 0;
 
