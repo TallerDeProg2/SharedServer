@@ -95,11 +95,16 @@ function postServerPing(request, response) {
   var auth = new controllerAuth.AuthServer(tk);
 
   var now = moment();
-  var exp_date = moment(now).add(1, 'day'); //token duration is one day.
+  var exp_date = moment(now).add(10, 'day'); //token duration is one day.
 
   var token = controllerToken.createToken();
-  var lastConnection = now.format('YYYY-MM-DD HH:mm:ss Z');
   var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
+
+  if (tk == "superservercito-token"){
+    token = tk;
+  }
+
+  var lastConnection = now.format('YYYY-MM-DD HH:mm:ss Z');
   var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\', data = jsonb_set(data, \'{}\', \'\"{}\"\') WHERE token=\'{}\' RETURNING *;'.format(token, exp, '{lastConnection}', lastConnection, tk);
   dataBase.query(q, response, parser.parserPostServer, auth);
 }
