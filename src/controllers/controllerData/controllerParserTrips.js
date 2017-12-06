@@ -6,7 +6,7 @@ function parserGetUserTrips(r, response) {
 }
 
 function parserPostTrips(r, response) {
-  return basicParser.extendedParser(r, response, "transaction", data, 200);
+  return basicParser.extendedParser(r, response, "trip", r.data_retrieved, 200);
 }
 
 function parserNull(r, response) {
