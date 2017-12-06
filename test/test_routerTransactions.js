@@ -108,6 +108,45 @@ describe('Paymethods endpoints', function() {
           });
     });
 
+    it('it should return status 400 when one of the parameters is missing (card)', function(done) {
+      chai.request(server)
+          .post('/users/1/transactions')
+          .set('content-type', 'application/json')
+          .send({"trip" : 1,
+                 "payment": { "value" : 20,
+                              "transaction_id" : "0c2f0554-a29f-4a4a-8ce5-adce6f2d7508",
+                              "currency" : "ARS",
+                              "paymethod" :{
+                                    "ccvv": "123",
+                                    "expiration_month": "12",
+                              }
+                            }
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+            res.should.have.status(400);
+            done();
+          });
+    });
+
+    it('it should return status 400 when the paymethod method is not cash or card', function(done) {
+      chai.request(server)
+          .post('/users/1/transactions')
+          .set('content-type', 'application/json')
+          .send({"trip" : 1,
+                 "payment": { "value" : 20,
+                              "transaction_id" : "0c2f0554-a29f-4a4a-8ce5-alkskaj",
+                              "currency" : "ARS",
+                              "paymethod" : { "method" : "drugs" }
+                            }
+          })
+          .set('token', 'superservercito-token')
+          .end(function(err, res) {
+            res.should.have.status(400);
+            done();
+          });
+    });
+
   });
 
 

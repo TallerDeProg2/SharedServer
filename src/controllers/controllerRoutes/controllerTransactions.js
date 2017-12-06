@@ -47,6 +47,14 @@ function postUserTransactions(userId, request, response) {
         }}, response);
   }
 
+  if (paymethod.method != "card") {
+    return parser.parserPostUserTransactions({'success': false, 'status': 400, 'data_retrieved': "You can only pay in card or cash!"}, response);
+  }
+
+  if (!paymethod.ccvv || !paymenthod.expiration_month || !paymenthod.expiration_year || !paymenthod.number || !paymethod.type) {
+    return parser.parserPostUserTransactions({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
   var resolve_auth = dataBase.promise_query_get(auth.query());
   resolve_auth.then(function (result) {
 
