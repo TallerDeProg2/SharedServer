@@ -51,7 +51,7 @@ function postUserTransactions(userId, request, response) {
     return parser.parserPostUserTransactions({'success': false, 'status': 400, 'data_retrieved': "You can only pay in card or cash!"}, response);
   }
 
-  if (!paymethod.ccvv || !paymenthod.expiration_month || !paymenthod.expiration_year || !paymenthod.number || !paymethod.type) {
+  if (!paymethod.ccvv || !paymethod.expiration_month || !paymethod.expiration_year || !paymethod.number || !paymethod.type) {
     return parser.parserPostUserTransactions({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
   }
 

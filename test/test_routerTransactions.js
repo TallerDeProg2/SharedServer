@@ -68,7 +68,7 @@ describe('Paymethods endpoints', function() {
           .set('token', 'superservercito-token')
           .end(function(err, res) {
             res.should.have.status(200);
-            res.body.transaction.transaction_id.should.be.eql("0c2f0554-a29f-4a4a-8ce5-adce6f2d7508");
+            res.body.transaction.currency.should.be.eql("ARS");
             done();
           });
     });
@@ -81,13 +81,13 @@ describe('Paymethods endpoints', function() {
                  "payment": { "value" : 20,
                               "transaction_id" : "0c2f0554-a29f-4a4a-8ce5-alkskaj",
                               "currency" : "ARS",
-                              "paymethod" : { "method" : "card" }
+                              "paymethod" : { "method" : "cash" }
                             }
           })
           .set('token', 'superservercito-token')
           .end(function(err, res) {
             res.should.have.status(200);
-            res.body.transaction.transaction_id.should.be.eql("0c2f0554-a29f-4a4a-8ce5-alkskaj");
+            res.body.transaction.currency.should.be.eql("ARS");
             done();
           });
     });
