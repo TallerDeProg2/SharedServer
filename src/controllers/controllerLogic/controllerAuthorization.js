@@ -29,14 +29,14 @@ class Auth{
 
   checkAuthorization(r, type){
     if (!r.data_retrieved.length){
-      return {'success': false, 'status': 404, 'data_retrieved': type+" does not exist."};
+      return {'success': false, 'status': 403, 'data_retrieved': type+" does not exist. Authentication failed."};
     }
     var exp = moment(r.data_retrieved[0].tokenexp, 'YYYY-MM-DD HH:mm:ss Z');
     var now = moment();
     if (exp.isBefore(now) ){
-      return {'success': false, 'status': 401, 'data_retrieved': "Token expired."};
+      return {'success': false, 'status': 401, 'data_retrieved': "Token expired. Authentication failed."};
     }if (this.tags.indexOf(this.obtainAuthLvl(r.data_retrieved[0])) == -1){
-      return {'success': false, 'status': 401, 'data_retrieved': "Unauthorized"};
+      return {'success': false, 'status': 401, 'data_retrieved': "Unauthorized. Authentication failed."};
     }
     return {'success': true, 'status': 200, 'data_retrieved': "Ok"};
   }
