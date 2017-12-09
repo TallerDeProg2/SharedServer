@@ -11,8 +11,8 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
-import { AuthenticationService } from './services/authentication.service';
-import { FlashMessagesModule } from 'angular2-flash-messages'
+import { AuthService } from './services/auth.service';
+import { FlashMessagesModule } from 'angular2-flash-messages';
 
 const appRoutes: Routes = [
   {path:'', component: HomeComponent},
@@ -35,7 +35,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     FlashMessagesModule
   ],
-  providers: [AuthenticationService],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
