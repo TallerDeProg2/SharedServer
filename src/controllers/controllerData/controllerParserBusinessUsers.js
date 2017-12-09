@@ -17,7 +17,7 @@ function rdata(data){
 }
 
 function rdataToken(data) {
-  return {"expiresAt" : data[0].token, "token" : data[0].tokenexp};
+  return {"expiresAt" : data[0].tokenexp, "token" : data[0].token};
 }
 
 function parserGetBusinessUsers(r, response) {
@@ -49,6 +49,7 @@ function parserPutBusinessUser(r, response){
   }if (!r.data_retrieved.length){
     r.status = 404;
     r.success = false;
+    r.data_retrieved = "User not found";
   }
   return basicParser.extendedParser(r, response, "businessUser", data, 200);
 }
@@ -77,6 +78,7 @@ function parserPostToken(r, response){
   if (!data.length){
     r.status = 404;
     r.success = false;
+    r.data_retrieved = "User or password invalid";
   }
   if (r.success){
     data = rdataToken(data);
