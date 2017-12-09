@@ -130,7 +130,6 @@ describe('Business Users endpoints', function() {
                   .send({"username": "string2",
                     "password": "string"
                   })
-                  .set('token', 'token')
                   .end(function(err, res) {
                       res.should.have.status(201);
                       var exp_time_new = moment(res.body.token.expiresAt, 'YYYY-MM-DD HH:mm:ss Z');
@@ -143,12 +142,37 @@ describe('Business Users endpoints', function() {
 
     it('it should return status 400 when one of the parameters is missing (post token)', function(done) {
       chai.request(server)
-          .post('/business-users')
+          .post('/token')
           .set('content-type', 'application/json')
           .send({"username": "string2"})
-          .set('token', 'token')
           .end(function(err, res) {
             res.should.have.status(400);
+            done();
+          });
+    });
+
+    it('it should return status 404 when the password is invalid (post token)', function(done) {
+      chai.request(server)
+          .post('/token')
+          .set('content-type', 'application/json')
+          .send({"username": "string2",
+            "password": "badpass"
+          })
+          .end(function(err, res) {
+            res.should.have.status(404);
+            done();
+          });
+    });
+
+    it('it should return status 404 when the username is invalid (post token)', function(done) {
+      chai.request(server)
+          .post('/token')
+          .set('content-type', 'application/json')
+          .send({"username": "badusername",
+            "password": "string"
+          })
+          .end(function(err, res) {
+            res.should.have.status(404);
             done();
           });
     });

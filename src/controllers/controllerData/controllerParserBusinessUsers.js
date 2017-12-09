@@ -74,15 +74,15 @@ function parserPostBusinessUser(r, response){
 
 function parserPostToken(r, response){
   var data = r.data_retrieved;
+  if (!data.length){
+    r.status = 404;
+    r.success = false;
+  }
   if (r.success){
     data = rdataToken(data);
   }
   else{
     return basicParser.reducedParser(r, response);
-  }
-  if (!r.data_retrieved.length){
-    r.status = 404;
-    r.success = false;
   }
   return basicParser.extendedParser(r, response, "token", data, 201);
 }
