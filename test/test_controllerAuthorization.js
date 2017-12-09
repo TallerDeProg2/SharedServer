@@ -13,10 +13,10 @@ describe('controllerAuthorization - AuthServer', function() {
     assert.equal(q, 'SELECT * FROM srvusers WHERE token=\'token\';');
   });
 
-  it('returns status 404 if there is no data (server)', function() {
+  it('returns status 403 if there is no data (server)', function() {
     var auth = new controller.AuthServer("token");
     var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[]});
-    assert.equal(js.status, 404);
+    assert.equal(js.status, 403);
   });
 
   it('returns status 401 if the token is expired (server)', function() {
@@ -49,10 +49,10 @@ describe('controllerAuthorization - AuthUser', function() {
       assert.equal(q, 'SELECT * FROM srvusers WHERE token=\'token\';');
     });
 
-    it('returns status 404 if there is no data (user)', function() {
+    it('returns status 403 if there is no data (user)', function() {
       var auth = new controller.AuthUser("token");
       var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[]});
-      assert.equal(js.status, 404);
+      assert.equal(js.status, 403);
     });
 
     it('returns status 401 if the token is expired (user)', function() {
@@ -85,10 +85,10 @@ describe('controllerAuthorization - AuthManager', function() {
       assert.equal(q, 'SELECT * FROM srvusers WHERE token=\'token\';');
     });
 
-    it('returns status 404 if there is no data (manager)', function() {
+    it('returns status 403 if there is no data (manager)', function() {
       var auth = new controller.AuthManager("token");
       var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[]});
-      assert.equal(js.status, 404);
+      assert.equal(js.status, 403);
     });
 
     it('returns status 401 if the token is expired (manager)', function() {
@@ -141,10 +141,10 @@ describe('controllerAuthorization - AuthAdmin', function() {
       assert.equal(q, 'SELECT * FROM srvusers WHERE token=\'token\';');
     });
 
-    it('returns status 404 if there is no data (admin)', function() {
+    it('returns status 403 if there is no data (admin)', function() {
       var auth = new controller.AuthAdmin("token");
       var js = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved':[]});
-      assert.equal(js.status, 404);
+      assert.equal(js.status, 403);
     });
 
     it('returns status 401 if the token is expired (admin)', function() {

@@ -1,7 +1,6 @@
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserUsersCars.js');
 var controllerToken = require('../controllerLogic/controllerToken.js');
-var controllerId = require('../controllerLogic/controllerId.js');
 var controllerRef = require('../controllerLogic/controllerRef.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 

@@ -1,7 +1,6 @@
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserTransactions.js');
 var token = require('../controllerLogic/controllerToken.js');
-var id = require('../controllerLogic/controllerId.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
 var controllerRef = require('../controllerLogic/controllerRef.js');
 
@@ -25,6 +24,36 @@ function getUserTransactions(userId, request, response) {
 function postUserTransactions(userId, request, response) {
   var tk = request.headers.token;
   var auth = new controllerAuth.AuthUserServer(tk);
+
+  var tripId = request.body.trip;
+  var currency = request.body.payment.currency;
+  var value = request.body.payment.value;
+  var paymethod = request.body.payment.paymethod;
+  var transaction_id = request.body.payment.transaction_id;
+
+  if (!tripId || !currency || !value || !paymethod || !transaction_id){
+    return parser.parserPostUserTransactions({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  if (paymethod.method == "cash"){
+    return parser.parserPostUserTransactions({'success': true, 'status': 200, 'data_retrieved': {
+        "transaction_id": transaction_id,
+        "currency": currency,
+        "value": value,
+        "paymentMethod": {
+        "method": "cash"
+        }
+        }}, response);
+  }
+
+  if (paymethod.method != "card") {
+    return parser.parserPostUserTransactions({'success': false, 'status': 400, 'data_retrieved': "You can only pay in card or cash!"}, response);
+  }
+
+  if (!paymethod.ccvv || !paymethod.expiration_month || !paymethod.expiration_year || !paymethod.number || !paymethod.type) {
+    return parser.parserPostUserTransactions({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
   var resolve_auth = dataBase.promise_query_get(auth.query());
   resolve_auth.then(function (result) {
 
@@ -33,18 +62,12 @@ function postUserTransactions(userId, request, response) {
         return parser.parserPostTrips(result_auth, response);
       }
 
-      var tripId = request.body.trip;
-      var currency = request.body.payment.currency;
-      var value = request.body.payment.value;
-      var paymethod = request.body.payment.paymethod;
-      var transaction_id = request.body.payment.transaction_id;
       var tk = getPaymentToken();
 
       var _refNew = controllerRef.createRef(userId);
       var q = 'UPDATE users SET _ref=\'{}\', balance=balance+{} WHERE id=\'{}\' RETURNING *;'.format(_refNew, value, userId);
-      logger.info("Estoy por llamar a la database");
       dataBase.query(q, response, parser.parserNull);
-      makePayment(currency, value, paymethod, transaction_id, response)
+      makePayment(currency, value, paymethod, transaction_id, response);
     }).catch(function(err, done) {
       return parser.parserPostUserTransactions({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
     });

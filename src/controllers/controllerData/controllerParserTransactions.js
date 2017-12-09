@@ -13,7 +13,7 @@ function parserGetUserTransactions(r, response){
 }
 
 function parserPostUserTransactions(r, response){
-  return basicParser.reducedParser(r, response);
+  return basicParser.extendedParser(r, response, "transaction", r.data_retrieved, 200);
 }
 
 function parserGetPaymethods(r, response) {
