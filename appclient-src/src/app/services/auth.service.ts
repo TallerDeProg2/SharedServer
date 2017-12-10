@@ -29,7 +29,7 @@ export class AuthService {
   }
 
   loggedIn(){
-    return tokenNotExpired();
+    return localStorage.getItem('id_token') != null;
   }
 
   logout(){
@@ -62,6 +62,19 @@ export class AuthService {
     headers.append('token', this.authToken);
     headers.append('Content-Type','application/json');
     return this.http.get('http://localhost:5000/rules', {headers: headers})
+      .map(res => {
+        let res_json = res.json();
+        res_json.success = res.status < 210;
+        return res_json;
+      });
+  }
+
+  getRuleCommits(ruleId){
+    let headers = new Headers();
+    this.loadToken();
+    headers.append('token', this.authToken);
+    headers.append('Content-Type','application/json');
+    return this.http.get('http://localhost:5000/rules/'+ruleId, {headers: headers})
       .map(res => {
         let res_json = res.json();
         res_json.success = res.status < 210;

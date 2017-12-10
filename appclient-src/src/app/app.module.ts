@@ -11,16 +11,18 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterRuleComponent } from './components/register-rule/register-rule.component';
+import { EditRuleComponent } from './components/edit-rule/edit-rule.component';
 
 import { AuthService } from './services/auth.service';
 import { FlashMessagesModule } from 'angular2-flash-messages';
-import { EditRuleComponent } from './components/edit-rule/edit-rule.component';
+
+import {AuthGuard} from './guards/auth.guard';
 
 const appRoutes: Routes = [
   {path:'', component: HomeComponent},
   {path:'login', component: LoginComponent},
-  {path:'dashboard', component: DashboardComponent},
-  {path:'register-rule', component: RegisterRuleComponent}
+  {path:'dashboard', component: DashboardComponent, canActivate:[AuthGuard]},
+  {path:'register-rule', component: RegisterRuleComponent, canActivate:[AuthGuard]}
 ]
 
 @NgModule({
@@ -40,7 +42,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     FlashMessagesModule
   ],
-  providers: [AuthService],
+  providers: [AuthService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
