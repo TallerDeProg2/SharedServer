@@ -56,4 +56,17 @@ export class AuthService {
       });
   }
 
+  getRules(){
+    let headers = new Headers();
+    this.loadToken();
+    headers.append('token', this.authToken);
+    headers.append('Content-Type','application/json');
+    return this.http.get('http://localhost:5000/rules', {headers: headers})
+      .map(res => {
+        let res_json = res.json();
+        res_json.success = res.status < 210;
+        return res_json;
+      });
+  }
+
 }

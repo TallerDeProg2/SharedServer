@@ -14,6 +14,7 @@ import { RegisterRuleComponent } from './components/register-rule/register-rule.
 
 import { AuthService } from './services/auth.service';
 import { FlashMessagesModule } from 'angular2-flash-messages';
+import { EditRuleComponent } from './components/edit-rule/edit-rule.component';
 
 const appRoutes: Routes = [
   {path:'', component: HomeComponent},
@@ -29,7 +30,8 @@ const appRoutes: Routes = [
     LoginComponent,
     HomeComponent,
     DashboardComponent,
-    RegisterRuleComponent
+    RegisterRuleComponent,
+    EditRuleComponent
   ],
   imports: [
     BrowserModule,
