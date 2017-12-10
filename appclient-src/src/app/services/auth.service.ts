@@ -30,12 +30,30 @@ export class AuthService {
 
   loggedIn(){
     return tokenNotExpired();
-}
+  }
 
   logout(){
     this.authToken = null;
     this.user = null;
     localStorage.clear();
+  }
+
+  loadToken(){
+    const token = localStorage.getItem('id_token');
+    this.authToken = token;
+  }
+
+  registerRule(rule){
+    let headers = new Headers();
+    this.loadToken();
+    headers.append('token', this.authToken);
+    headers.append('Content-Type','application/json');
+    return this.http.post('http://localhost:5000/rules', rule, {headers: headers})
+      .map(res => {
+        let res_json = res.json();
+        res_json.success = res.status < 210;
+        return res_json;
+      });
   }
 
 }
