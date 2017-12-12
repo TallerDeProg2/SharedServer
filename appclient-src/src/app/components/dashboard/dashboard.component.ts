@@ -35,7 +35,11 @@ export class DashboardComponent implements OnInit {
         cssClass: 'alert-danger', timeout: 3000});
       console.log("uya-2");
       return false;
-    });;
+    });
+  }
+
+  onRuleClick(ruleId){
+    this.router.navigate(['view-rule/', ruleId]);
   }
 
 }

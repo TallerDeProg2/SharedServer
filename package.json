@@ -6,7 +6,8 @@
   "scripts": {
     "test": "env URI='postgres://postgres:password@localhost:6000/postgres' ./node_modules/mocha/bin/mocha ./test/*",
     "test-travis": "env URI='postgres://postgres:password@localhost:6000/postgres' ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
-    "start": "node ./src/index.js"
+    "start": "node ./src/index.js",
+    "start-local" : "env URI='postgres://postgres:password@localhost:6000/postgres' node ./src/index.js"
   },
   "author": "",
   "license": "ISC",

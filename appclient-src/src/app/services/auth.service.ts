@@ -56,6 +56,19 @@ export class AuthService {
       });
   }
 
+  editRule(ruleId, rule){
+    let headers = new Headers();
+    this.loadToken();
+    headers.append('token', this.authToken);
+    headers.append('Content-Type','application/json');
+    return this.http.put('http://localhost:5000/rules/'+ruleId, rule, {headers: headers})
+      .map(res => {
+        let res_json = res.json();
+        res_json.success = res.status < 210;
+        return res_json;
+      });
+  }
+
   getRules(){
     let headers = new Headers();
     this.loadToken();
@@ -69,12 +82,25 @@ export class AuthService {
       });
   }
 
-  getRuleCommits(ruleId){
+  getRule(ruleId){
     let headers = new Headers();
     this.loadToken();
     headers.append('token', this.authToken);
     headers.append('Content-Type','application/json');
     return this.http.get('http://localhost:5000/rules/'+ruleId, {headers: headers})
+      .map(res => {
+        let res_json = res.json();
+        res_json.success = res.status < 210;
+        return res_json;
+      });
+  }
+
+  getRuleCommits(ruleId){
+    let headers = new Headers();
+    this.loadToken();
+    headers.append('token', this.authToken);
+    headers.append('Content-Type','application/json');
+    return this.http.get('http://localhost:5000/rules/'+ruleId+'/commits', {headers: headers})
       .map(res => {
         let res_json = res.json();
         res_json.success = res.status < 210;

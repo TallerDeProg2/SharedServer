@@ -16,13 +16,16 @@ import { EditRuleComponent } from './components/edit-rule/edit-rule.component';
 import { AuthService } from './services/auth.service';
 import { FlashMessagesModule } from 'angular2-flash-messages';
 
-import {AuthGuard} from './guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
+import { ViewRuleComponent } from './components/view-rule/view-rule.component';
 
 const appRoutes: Routes = [
   {path:'', component: HomeComponent},
   {path:'login', component: LoginComponent},
   {path:'dashboard', component: DashboardComponent, canActivate:[AuthGuard]},
-  {path:'register-rule', component: RegisterRuleComponent, canActivate:[AuthGuard]}
+  {path:'register-rule', component: RegisterRuleComponent, canActivate:[AuthGuard]},
+  {path:'view-rule/:id', component: ViewRuleComponent, canActivate:[AuthGuard]},
+  {path:'edit-rule/:id', component: EditRuleComponent, canActivate:[AuthGuard]}
 ]
 
 @NgModule({
@@ -33,7 +36,8 @@ const appRoutes: Routes = [
     HomeComponent,
     DashboardComponent,
     RegisterRuleComponent,
-    EditRuleComponent
+    EditRuleComponent,
+    ViewRuleComponent
   ],
   imports: [
     BrowserModule,

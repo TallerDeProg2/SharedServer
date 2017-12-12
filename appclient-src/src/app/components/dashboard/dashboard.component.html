@@ -13,15 +13,13 @@
     </tr>
   </thead>
   <tbody>
-    <li *ngFor="let rule of rules">
-      <tr>
-        <td scope="row">{{rule.id}}</td>
+      <tr *ngFor="let rule of rules" (click)="onRuleClick(rule.id)">
+        <td>{{rule.id}}</td>
         <td>{{rule.lastcommit.message}}</td>
         <td>{{rule.lastcommit.blob}}</td>
         <td>{{rule.lastcommit.timestamp}}</td>
         <td>{{rule.active}}</td>
       </tr>
-    </li>
   </tbody>
 </table>
 </div>
