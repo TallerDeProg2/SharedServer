@@ -36,10 +36,6 @@ function postRule(request, response) {
   var now = moment();
   var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
 
-  var commits = {'commits' : [{'_ref' : _ref, 'message' : request.body.message,
-                          'blob' : request.body.blob,
-                          'timestamp' : now_fr}]};
-
   var active = request.body.active;
 
   if (!request.body.blob || !request.body.message){
@@ -47,6 +43,10 @@ function postRule(request, response) {
   }
 
   var _ref = controllerRef.createRef(request.body.message);
+
+  var commits = {'commits' : [{'_ref' : _ref, 'message' : request.body.message,
+                          'blob' : request.body.blob,
+                          'timestamp' : now_fr}]};
 
   var q = 'INSERT INTO rules(_ref, commits, active) values(\'{}\', \'{}\', \'{}\') RETURNING *;'.format(_ref, JSON.stringify(commits), active);
   dataBase.query(q, response, parser.parserPostRule, auth);
