@@ -13,7 +13,7 @@ export class AuthService {
   authenticateUser(user){
     let headers = new Headers();
     headers.append('Content-type', 'application/json');
-    return this.http.post('http://localhost:5000/token', user, {headers: headers})
+    return this.http.post('/token', user, {headers: headers})
       .map(res => {
         let res_json = res.json();
         res_json.success = res.status < 210;
@@ -48,7 +48,7 @@ export class AuthService {
     this.loadToken();
     headers.append('token', this.authToken);
     headers.append('Content-Type','application/json');
-    return this.http.post('http://localhost:5000/rules', rule, {headers: headers})
+    return this.http.post('/rules', rule, {headers: headers})
       .map(res => {
         let res_json = res.json();
         res_json.success = res.status < 210;
@@ -61,7 +61,7 @@ export class AuthService {
     this.loadToken();
     headers.append('token', this.authToken);
     headers.append('Content-Type','application/json');
-    return this.http.put('http://localhost:5000/rules/'+ruleId, rule, {headers: headers})
+    return this.http.put('/rules/'+ruleId, rule, {headers: headers})
       .map(res => {
         let res_json = res.json();
         res_json.success = res.status < 210;
@@ -74,7 +74,7 @@ export class AuthService {
     this.loadToken();
     headers.append('token', this.authToken);
     headers.append('Content-Type','application/json');
-    return this.http.get('http://localhost:5000/rules', {headers: headers})
+    return this.http.get('/rules', {headers: headers})
       .map(res => {
         let res_json = res.json();
         res_json.success = res.status < 210;
@@ -87,7 +87,7 @@ export class AuthService {
     this.loadToken();
     headers.append('token', this.authToken);
     headers.append('Content-Type','application/json');
-    return this.http.get('http://localhost:5000/rules/'+ruleId, {headers: headers})
+    return this.http.get('/rules/'+ruleId, {headers: headers})
       .map(res => {
         let res_json = res.json();
         res_json.success = res.status < 210;
@@ -100,7 +100,7 @@ export class AuthService {
     this.loadToken();
     headers.append('token', this.authToken);
     headers.append('Content-Type','application/json');
-    return this.http.get('http://localhost:5000/rules/'+ruleId+'/commits', {headers: headers})
+    return this.http.get('/rules/'+ruleId+'/commits', {headers: headers})
       .map(res => {
         let res_json = res.json();
         res_json.success = res.status < 210;
