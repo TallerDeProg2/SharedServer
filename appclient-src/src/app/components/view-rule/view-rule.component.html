@@ -1,0 +1,23 @@
+<div>
+  <a class="btn btn-default" [routerLink]="['/edit-rule', ruleId]">Edit rule</a>
+</div>
+<div class="jumbotron text-left">
+  <table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Ref</th>
+      <th scope="col">Message</th>
+      <th scope="col">Blob</th>
+      <th scope="col">Timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr *ngFor="let commit of ruleCommits">
+        <td>{{commit._ref}}</td>
+        <td>{{commit.message}}</td>
+        <td>{{commit.blob}}</td>
+        <td>{{commit.timestamp}}</td>
+      </tr>
+  </tbody>
+</table>
+</div>

@@ -88,9 +88,6 @@ function getBusinessUsersMe(request, response) {
 }
 
 function postToken(request, response) {
-  var tk = request.headers.token;
-  var auth = new controllerAuth.AuthUser(tk);
-
   var username = request.body.username;
   var password = request.body.password;
 
@@ -104,8 +101,8 @@ function postToken(request, response) {
   var token = controllerToken.createToken();
   var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
 
-  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\' WHERE data->>\'username\'=\'{}\' AND rol=\'user\' RETURNING *;'.format(token, exp, username);
-  dataBase.query(q, response, parser.parserPostToken, auth);
+  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\' WHERE data->>\'username\'=\'{}\' AND data->>\'password\'=\'{}\' AND rol=\'user\' RETURNING *;'.format(token, exp, username, password);
+  dataBase.query(q, response, parser.parserPostToken);
 }
 
 

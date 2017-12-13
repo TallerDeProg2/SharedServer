@@ -5,6 +5,7 @@
 //----------------->Initial settings<----------------------//
 var express = require('express');
 var bodyParser = require('body-parser');
+var path = require('path');
 
 var router = require('../routes/router.js');
 var app = express();
@@ -46,6 +47,12 @@ var routerUsersCards = require('../routes/routerUsersCards.js');
 app.set('port', (process.env.PORT || 5000));
 
 app.use('/', router);
+
+app.use(express.static(path.join(__dirname, '../../public')));
+
+app.get('*', function(req, res) {
+	res.sendFile(path.join(__dirname, '../../public/index.html'));
+});
 
 app.listen(app.get('port'), function() {
   logger.info('Escuchando puerto ', app.get('port'));

@@ -1,0 +1,21 @@
+<form (submit)="onEditRuleSubmit()">
+  <fieldset>
+    <legend>Create a rule</legend>
+    <div class="form-group">
+      <label for="inputUsername">Message</label>
+      <input type="text" class="form-control" [(ngModel)]="messageNew" name="messageNew" id="inputMessage" placeholder="Message">
+    </div>
+    <div class="form-group">
+      <label for="blob">Blob</label>
+      <textarea class="form-control" [(ngModel)]="blobNew" name="blobNew" id="blob" rows="3" style="height: 77px;" placeholder="Add the body of the rule in NodeJs"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="active">Active</label>
+      <select class="form-control" [(ngModel)]="activeNew" name="activeNew" id="active">
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </fieldset>
+</form>

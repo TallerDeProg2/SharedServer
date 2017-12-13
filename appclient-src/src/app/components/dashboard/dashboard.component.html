@@ -1,0 +1,25 @@
+<div>
+  <a class="btn btn-default" [routerLink]="['/register-rule']">Create new rule</a>
+</div>
+<div class="jumbotron text-left">
+  <table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Message</th>
+      <th scope="col">Blob</th>
+      <th scope="col">Last commit</th>
+      <th scope="col">Active</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr *ngFor="let rule of rules" (click)="onRuleClick(rule.id)">
+        <td>{{rule.id}}</td>
+        <td>{{rule.lastcommit.message}}</td>
+        <td>{{rule.lastcommit.blob}}</td>
+        <td>{{rule.lastcommit.timestamp}}</td>
+        <td>{{rule.active}}</td>
+      </tr>
+  </tbody>
+</table>
+</div>

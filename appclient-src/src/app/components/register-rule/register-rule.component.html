@@ -1,0 +1,21 @@
+<form (submit)="onRegisterRuleSubmit()">
+  <fieldset>
+    <legend>Create a rule</legend>
+    <div class="form-group">
+      <label for="inputUsername">Message</label>
+      <input type="text" class="form-control" [(ngModel)]="message" name="message" id="inputMessage" placeholder="Message">
+    </div>
+    <div class="form-group">
+      <label for="blob">Blob</label>
+      <textarea class="form-control" [(ngModel)]="blob" name="blob" id="blob" rows="3" style="height: 77px;" placeholder="Add the body of the rule in NodeJs"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="active">Active</label>
+      <select class="form-control" [(ngModel)]="active" name="active" id="active">
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </fieldset>
+</form>
