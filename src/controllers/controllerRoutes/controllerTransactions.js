@@ -1,3 +1,9 @@
+/** @module controllerTransactions */
+
+/**
+* Controller for the endpoints of {@link routerTransactions}
+*/
+
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserTransactions.js');
 var token = require('../controllerLogic/controllerToken.js');

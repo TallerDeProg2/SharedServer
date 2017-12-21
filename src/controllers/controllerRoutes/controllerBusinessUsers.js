@@ -1,3 +1,9 @@
+/** @module controllerBusinessUsers */
+
+/**
+* Controller for the endpoints of {@link routerBusinessUsers}
+*/
+
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserBusinessUsers.js');
 

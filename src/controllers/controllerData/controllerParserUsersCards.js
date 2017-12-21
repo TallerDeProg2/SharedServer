@@ -1,3 +1,9 @@
+/** @module controllerParserUsersCards */
+
+/**
+* ControllerParser for the endpoints of {@link routerUsersCards}
+*/
+
 var basicParser = require('./controllerParser.js');
 var logger = require('../../srv/log.js');
 

@@ -1,3 +1,9 @@
+/** @module controllerRules */
+
+/**
+* Controller for the endpoints of {@link routerRules}
+*/
+
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserRules.js');
 

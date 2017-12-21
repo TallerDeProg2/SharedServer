@@ -1,3 +1,9 @@
+/** @module controllerUsersCards */
+
+/**
+* Controller for the endpoints of {@link routerUsersCards}
+*/
+
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserUsersCards.js');
 var controllerAuth = require('../controllerLogic/controllerAuthorization.js');

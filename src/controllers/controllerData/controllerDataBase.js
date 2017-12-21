@@ -1,3 +1,9 @@
+/** @module controllerDataBase */
+
+/**
+* controllerDataBase
+*/
+
 var promise = require('bluebird');
 var options = {
   promiseLib: promise
@@ -39,6 +45,14 @@ function unexpectedError(err, response, complete, parser){
 
 //-----------------------------------------------------------------------//
 
+/**
+ * @function query performs a query to the database and makes a response to the request via a @link controllerParser function.
+ * @param {string} q the query that will be performed.
+ * @param {response} response the response that will be send to the request.
+ * @param {Auth} auth an @Link Auth object, if it is null there is no authentication requested.
+ * @param {function} complete extra function for testing reasons.
+ * @memberof module:controllerDataBase
+ */
 function query(q, response, parser, auth=null, complete=null){
   logger.info("Query, message: "+ q);
   logger.info("urii: "+uri);
@@ -68,6 +82,11 @@ function query(q, response, parser, auth=null, complete=null){
   });
 }
 
+/**
+ * @function promise_query_get a GET query in the form of a promise.
+ * @param {string} q the query that will be performed.
+ * @memberof module:controllerDataBase
+ */
 function promise_query_get(q){
   return pg_promise.any(q);
 }

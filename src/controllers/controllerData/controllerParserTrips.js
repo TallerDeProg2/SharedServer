@@ -1,3 +1,9 @@
+/** @module controllerParserTrips */
+
+/**
+* ControllerParser for the endpoints of {@link routerTrips}
+*/
+
 var basicParser = require('./controllerParser.js');
 var logger = require('../../srv/log.js');
 

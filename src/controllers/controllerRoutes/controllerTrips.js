@@ -1,3 +1,9 @@
+/** @module controllerTrips */
+
+/**
+* Controller for the endpoints of {@link routerTrips}
+*/
+
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserTrips.js');
 var token = require('../controllerLogic/controllerToken.js');
