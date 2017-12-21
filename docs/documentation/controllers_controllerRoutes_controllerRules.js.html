@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/controllerRoutes/controllerRules.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/controllerRoutes/controllerRules.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module controllerRules */
+
+/**
+* Controller for the endpoints of {@link routerRules}
+*/
+
+var dataBase = require('../controllerData/controllerDataBase.js');
+var parser = require('../controllerData/controllerParserRules.js');
+
+var controllerToken = require('../controllerLogic/controllerToken.js');
+var controllerRef = require('../controllerLogic/controllerRef.js');
+
+var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
+
+var serialize = require('serialize-javascript');
+var deserialize = str => eval('(' + str + ')');
+
+var RuleEngine = require('node-rules');
+
+var moment = require('moment');
+var format = require('string-format');
+format.extend(String.prototype);
+
+function getRules(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUser(tk);
+  var q = 'SELECT * FROM rules;';
+  dataBase.query(q, response, parser.parserGetRules, auth);
+}
+
+function getRule(ruleId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUser(tk);
+  var q = 'SELECT * FROM rules where id=\'{}\';'.format(ruleId);
+  dataBase.query(q, response, parser.parserGetRule, auth);
+}
+
+function postRule(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthManager(tk);
+
+  var now = moment();
+  var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
+  var active = request.body.active;
+
+  if (!request.body.blob || !request.body.message){
+    return parser.parserPostRules({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var _ref = controllerRef.createRef(request.body.message);
+
+  var commits = {'commits' : [{'_ref' : _ref, 'message' : request.body.message,
+                          'blob' : request.body.blob,
+                          'timestamp' : now_fr}]};
+
+  var q = 'INSERT INTO rules(_ref, commits, active) values(\'{}\', \'{}\', \'{}\') RETURNING *;'.format(_ref, JSON.stringify(commits), active);
+  dataBase.query(q, response, parser.parserPostRule, auth);
+}
+
+function putRule(ruleId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthManager(tk);
+  var old_ref = request.body._ref;
+
+  var _ref = controllerRef.createRef(ruleId);
+  var now = moment();
+  var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
+  if (!request.body.blob || !request.body.message){
+    return parser.parserPutRule({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var new_commit = {'_ref' : _ref, 'message' : request.body.message,
+                          'blob' : request.body.blob,
+                          'timestamp' : now_fr};
+
+  var active = request.body.active;
+  var q = 'UPDATE rules SET _ref=\'{}\', commits=jsonb_insert(commits, \'{}\', \'{}\'), active=\'{}\' WHERE id=\'{}\' AND _ref=\'{}\' RETURNING *;'.format(_ref, '{commits, 0}', JSON.stringify(new_commit), active, ruleId, old_ref);
+
+  dataBase.query(q, response, parser.parserPutRule, auth);
+}
+
+function deleteRule(ruleId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthManager(tk);
+
+  var q = 'DELETE FROM rules WHERE id=\'{}\' RETURNING *;'.format(ruleId);
+  dataBase.query(q, response, parser.parserDeleteRule, auth);
+}
+
+function getRuleCommits(ruleId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthManager(tk);
+  var q = 'SELECT commits FROM rules WHERE id=\'{}\';'.format(ruleId);
+  dataBase.query(q, response, parser.parserGetRuleCommits, auth);
+}
+
+function getRuleCommit(ruleId, commitId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthManager(tk);
+  var q = 'SELECT * FROM rules WHERE id=\'{}\';'.format(ruleId);
+  dataBase.query(q, response, parser.parserGetRuleCommit, auth, commitId);
+}
+
+function runRules(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUser(tk);
+  var q = 'SELECT * FROM rules WHERE active=true;';
+  var facts = request.body.facts;
+  facts = facts.map(fact => fact.blob);
+  return _runRules(q, facts, response, parser.parserRunRules, auth);
+}
+
+function runRule(ruleId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUser(tk);
+  var q = 'SELECT * FROM rules WHERE id=\'{}\';'.format(ruleId);
+  var facts = request.body.facts;
+  facts = facts.map(fact => fact.blob);
+  return _runRules(q, facts, response, parser.parserRunRule, auth);
+}
+
+function _runRules(query, facts, response, parser, auth){
+  var resolve_auth = dataBase.promise_query_get(auth.query());
+  resolve_auth.then(function (result) {
+
+      var result_auth = auth.checkAuthorization({'success': true, 'status': 200, 'data_retrieved': result});
+      if (!result_auth.success){
+        return parser(result_auth, response);
+      }
+
+      var get_rules = dataBase.promise_query_get(query);
+      get_rules.then(function(rules){
+              if (!rules.length){
+                parser({'success': false, 'status': 404, 'data_retrieved': "Rules not found"}, response);
+              }
+                rules = rules.map(rule => rule.commits.commits[0].blob);
+                resolveRules(facts, rules, parser, response);
+              }).catch(function(err){
+                parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+              });
+
+      }).catch(function(err, done) {
+        return parser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+    });
+    return resolve_auth;
+}
+
+function getEstimateForTrip(facts, response, parser, auth){
+  var q = 'SELECT * FROM rules WHERE active=true;';
+  return _runRules(q, facts, response, parser, auth);
+}
+
+function resolveRules(facts, rules, parser, response){
+  rules = rules.map(rule => deserialize(rule));
+  var R = new RuleEngine(rules, { ignoreFactChanges: true });
+  facts = facts.map(fact => { fact.cost = 50; return fact});
+  var results_promise = facts.map(fact => {
+        return new Promise(resolve => {
+          R.execute(fact, r => resolve(r));
+        });
+      });
+  Promise.all(results_promise).then(function(results) {
+    results = results.map(result => {
+        var result = {'language': 'node-rules/javascript', 'blob': result};
+        return result;
+      });
+    return parser({'success': true, 'status': 200, 'data_retrieved': results}, response);
+  })
+}
+
+module.exports = {
+  getRules : getRules,
+  getRule : getRule,
+  postRule : postRule,
+  putRule : putRule,
+  deleteRule : deleteRule,
+  getRuleCommits : getRuleCommits,
+  getRuleCommit : getRuleCommit,
+  runRules : runRules,
+  runRule : runRule,
+  getEstimateForTrip : getEstimateForTrip
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllerAuthorization.html">controllerAuthorization</a></li><li><a href="module-controllerBusinessUsers.html">controllerBusinessUsers</a></li><li><a href="module-controllerDataBase.html">controllerDataBase</a></li><li><a href="module-controllerParser.html">controllerParser</a></li><li><a href="module-controllerParserBusinessUsers.html">controllerParserBusinessUsers</a></li><li><a href="module-controllerParserRules.html">controllerParserRules</a></li><li><a href="module-controllerParserServers.html">controllerParserServers</a></li><li><a href="module-controllerParserTransactions.html">controllerParserTransactions</a></li><li><a href="module-controllerParserTrips.html">controllerParserTrips</a></li><li><a href="module-controllerParserUsers.html">controllerParserUsers</a></li><li><a href="module-controllerParserUsersCards.html">controllerParserUsersCards</a></li><li><a href="module-controllerParserUsersCars.html">controllerParserUsersCars</a></li><li><a href="module-controllerRef.html">controllerRef</a></li><li><a href="module-controllerRules.html">controllerRules</a></li><li><a href="module-controllerServers.html">controllerServers</a></li><li><a href="module-controllerToken.html">controllerToken</a></li><li><a href="module-controllerTransactions.html">controllerTransactions</a></li><li><a href="module-controllerTrips.html">controllerTrips</a></li><li><a href="module-controllerUsers.html">controllerUsers</a></li><li><a href="module-controllerUsersCards.html">controllerUsersCards</a></li><li><a href="module-controllerUsersCars.html">controllerUsersCars</a></li><li><a href="module-log.html">log</a></li><li><a href="module-routerBusinessUsers.html">routerBusinessUsers</a></li><li><a href="module-routerRules.html">routerRules</a></li><li><a href="module-routerServers.html">routerServers</a></li><li><a href="module-routerTransactions.html">routerTransactions</a></li><li><a href="module-routerTrips.html">routerTrips</a></li><li><a href="module-routerUsers.html">routerUsers</a></li><li><a href="module-routerUsersCards.html">routerUsersCards</a></li></ul><h3>Classes</h3><ul><li><a href="module-controllerAuthorization-Auth.html">Auth</a></li><li><a href="module-controllerAuthorization-AuthAdmin.html">AuthAdmin</a></li><li><a href="module-controllerAuthorization-AuthAdminServer.html">AuthAdminServer</a></li><li><a href="module-controllerAuthorization-AuthManager.html">AuthManager</a></li><li><a href="module-controllerAuthorization-AuthManagerServer.html">AuthManagerServer</a></li><li><a href="module-controllerAuthorization-AuthServer.html">AuthServer</a></li><li><a href="module-controllerAuthorization-AuthUser.html">AuthUser</a></li><li><a href="module-controllerAuthorization-AuthUserServer.html">AuthUserServer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#router">router</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Dec 21 2017 13:57:41 GMT-0300 (-03)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

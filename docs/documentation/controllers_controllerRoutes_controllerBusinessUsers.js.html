@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/controllerRoutes/controllerBusinessUsers.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/controllerRoutes/controllerBusinessUsers.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module controllerBusinessUsers */
+
+/**
+* Controller for the endpoints of {@link routerBusinessUsers}
+*/
+
+var dataBase = require('../controllerData/controllerDataBase.js');
+var parser = require('../controllerData/controllerParserBusinessUsers.js');
+
+var controllerToken = require('../controllerLogic/controllerToken.js');
+var controllerRef = require('../controllerLogic/controllerRef.js');
+
+var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
+
+var format = require('string-format');
+format.extend(String.prototype);
+
+var moment = require('moment');
+var format = require('string-format');
+format.extend(String.prototype);
+
+function getBusinessUsers(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthAdmin(tk);
+  var q = 'SELECT * FROM srvusers WHERE rol=\'user\';';
+  dataBase.query(q, response, parser.parserGetBusinessUsers, auth);
+}
+
+function postBusinessUsers(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthAdmin(tk);
+
+  var now = moment();
+  var exp_date = moment(now).add(1, 'day'); //token duration is one day.
+  var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+  var exp_date_fr = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
+
+  var token = controllerToken.createToken();
+  var tokenexp = exp_date_fr;
+
+  var json = {'username' : request.body.username,
+              'password' : request.body.password,
+              'name' : request.body.name,
+              'surname' : request.body.surname,
+              'roles' : request.body.roles};
+
+  if (!json.username || !json.password || !json.name || !json.surname || !json.roles){
+    return parser.parserPostBusinessUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var _ref = controllerRef.createRef(request.body.username);
+
+  var q = 'INSERT INTO srvUsers(_ref, token, tokenexp, rol, data) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *'.format(_ref, token, tokenexp, "user", JSON.stringify(json));
+  dataBase.query(q, response, parser.parserPostBusinessUser, auth);
+}
+
+function deleteBusinessUser(userId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthAdmin(tk);
+  var q = 'DELETE FROM srvUsers WHERE id=\'{}\' AND rol=\'user\' RETURNING *;'.format(userId);
+  dataBase.query(q, response, parser.parserDeleteBusinessUser, auth);
+}
+
+function putBusinessUser(userId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthAdmin(tk);
+
+  if (userId == "me"){
+    userId = request.headers.id;
+  }
+
+  var _ref = controllerRef.createRef(userId);
+
+  var json = {'username' : request.body.username,
+              'password' : request.body.password,
+              'name' : request.body.name,
+              'surname' : request.body.surname,
+              'roles' : request.body.roles};
+
+  if (!json.password || !json.name || !json.surname || !json.roles){
+    return parser.parserPutBusinessUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var q = 'UPDATE srvUsers SET _ref=\'{}\', data = \'{}\' WHERE id=\'{}\' AND rol=\'user\' RETURNING *'.format(_ref, JSON.stringify(json), userId);
+  dataBase.query(q, response, parser.parserPutBusinessUser, auth);
+}
+
+function getBusinessUsersMe(request, response) {
+  var id = request.headers.id;
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUser(tk);
+  var q = 'SELECT * FROM srvUsers WHERE id=\'{}\' AND rol=\'user\''.format(id);
+  dataBase.query(q, response, parser.parserGetBusinessUser, auth);
+}
+
+function postToken(request, response) {
+  var username = request.body.username;
+  var password = request.body.password;
+
+  if (!username || !password){
+    return parser.parserPostToken({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var now = moment();
+  var exp_date = moment(now).add(1, 'day'); //token duration is one day.
+
+  var token = controllerToken.createToken();
+  var exp = exp_date.format('YYYY-MM-DD HH:mm:ss Z');
+
+  var q = 'UPDATE srvusers SET token=\'{}\', tokenexp=\'{}\' WHERE data->>\'username\'=\'{}\' AND data->>\'password\'=\'{}\' AND rol=\'user\' RETURNING *;'.format(token, exp, username, password);
+  dataBase.query(q, response, parser.parserPostToken);
+}
+
+
+module.exports = {
+  getBusinessUsers : getBusinessUsers,
+  postBusinessUsers : postBusinessUsers,
+  deleteBusinessUser : deleteBusinessUser,
+  putBusinessUser : putBusinessUser,
+  getBusinessUsersMe : getBusinessUsersMe,
+  postToken : postToken
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllerAuthorization.html">controllerAuthorization</a></li><li><a href="module-controllerBusinessUsers.html">controllerBusinessUsers</a></li><li><a href="module-controllerDataBase.html">controllerDataBase</a></li><li><a href="module-controllerParser.html">controllerParser</a></li><li><a href="module-controllerParserBusinessUsers.html">controllerParserBusinessUsers</a></li><li><a href="module-controllerParserRules.html">controllerParserRules</a></li><li><a href="module-controllerParserServers.html">controllerParserServers</a></li><li><a href="module-controllerParserTransactions.html">controllerParserTransactions</a></li><li><a href="module-controllerParserTrips.html">controllerParserTrips</a></li><li><a href="module-controllerParserUsers.html">controllerParserUsers</a></li><li><a href="module-controllerParserUsersCards.html">controllerParserUsersCards</a></li><li><a href="module-controllerParserUsersCars.html">controllerParserUsersCars</a></li><li><a href="module-controllerRef.html">controllerRef</a></li><li><a href="module-controllerRules.html">controllerRules</a></li><li><a href="module-controllerServers.html">controllerServers</a></li><li><a href="module-controllerToken.html">controllerToken</a></li><li><a href="module-controllerTransactions.html">controllerTransactions</a></li><li><a href="module-controllerTrips.html">controllerTrips</a></li><li><a href="module-controllerUsers.html">controllerUsers</a></li><li><a href="module-controllerUsersCards.html">controllerUsersCards</a></li><li><a href="module-controllerUsersCars.html">controllerUsersCars</a></li><li><a href="module-log.html">log</a></li><li><a href="module-routerBusinessUsers.html">routerBusinessUsers</a></li><li><a href="module-routerRules.html">routerRules</a></li><li><a href="module-routerServers.html">routerServers</a></li><li><a href="module-routerTransactions.html">routerTransactions</a></li><li><a href="module-routerTrips.html">routerTrips</a></li><li><a href="module-routerUsers.html">routerUsers</a></li><li><a href="module-routerUsersCards.html">routerUsersCards</a></li></ul><h3>Classes</h3><ul><li><a href="module-controllerAuthorization-Auth.html">Auth</a></li><li><a href="module-controllerAuthorization-AuthAdmin.html">AuthAdmin</a></li><li><a href="module-controllerAuthorization-AuthAdminServer.html">AuthAdminServer</a></li><li><a href="module-controllerAuthorization-AuthManager.html">AuthManager</a></li><li><a href="module-controllerAuthorization-AuthManagerServer.html">AuthManagerServer</a></li><li><a href="module-controllerAuthorization-AuthServer.html">AuthServer</a></li><li><a href="module-controllerAuthorization-AuthUser.html">AuthUser</a></li><li><a href="module-controllerAuthorization-AuthUserServer.html">AuthUserServer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#router">router</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Dec 21 2017 13:57:41 GMT-0300 (-03)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
