@@ -7,11 +7,14 @@
     "test": "env URI='postgres://postgres:password@localhost:6000/postgres' ./node_modules/mocha/bin/mocha ./test/*",
     "test-travis": "env URI='postgres://postgres:password@localhost:6000/postgres' ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
     "start": "node ./src/index.js",
-    "start-local" : "env URI='postgres://postgres:password@localhost:6000/postgres' node ./src/index.js"
+    "start-local": "env URI='postgres://postgres:password@localhost:6000/postgres' node ./src/index.js",
+    "debug": "DEBUG=ServerApi env URI='postgres://postgres:password@localhost:6000/postgres' node ./src/index.js",
+    "create-doc": "./node_modules/.bin/jsdoc -r -d ./docs/documentation ./src"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "jsdoc": "^3.5.5",
     "mocha": "^3.5.0"
   },
   "dependencies": {

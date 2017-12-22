@@ -1,3 +1,9 @@
+/** @module controllerUsers */
+
+/**
+* Controller for the endpoints of {@link routerUsers}
+*/
+
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserUsers.js');
 var controllerToken = require('../controllerLogic/controllerToken.js');

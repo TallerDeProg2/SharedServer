@@ -1,18 +1,20 @@
 const helloWorld = require('../controllers/controllerHelloWorld.js');
 const hello = helloWorld.salutation();
 
+/**
+ * Express router, test endpoints
+ * type {Object}
+ */
 var router = require('./router.js');
 
-/**#@+
-  * @lends router
-  * @borrows router as router
-  * @property example route.
-  */
-
+/**
+ * @name GET/hello
+ * @function
+ * @memberof module:routerHello
+ * @inner
+ */
 router.get('/hello', function(request, response) {
   response.send(hello);
 });
 
 module.exports = router;
-
-/**#@-*/

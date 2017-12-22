@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/controllerRoutes/controllerTrips.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/controllerRoutes/controllerTrips.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module controllerTrips */
+
+/**
+* Controller for the endpoints of {@link routerTrips}
+*/
+
+var dataBase = require('../controllerData/controllerDataBase.js');
+var parser = require('../controllerData/controllerParserTrips.js');
+var token = require('../controllerLogic/controllerToken.js');
+var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
+
+var controllerTransactions = require('./controllerTransactions.js');
+var controllerRules = require('./controllerRules.js');
+
+var rp = require('request-promise');
+var baseUri = "http://shielded-escarpment-27661.herokuapp.com/api/v1";
+var paymentUri = "/payments";
+
+function getUserTrips(userId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var q = 'SELECT * FROM trips WHERE (driver=\'{}\') OR (passenger=\'{}\');'.format(userId, userId);
+  dataBase.query(q, response, parser.parserGetUserTrips, auth);
+}
+
+function postTrips(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var _refNew = controllerRef.createRef(userId);
+  var now = moment();
+  var now_fr = now.format('YYYY-MM-DD HH:mm:ss Z');
+
+  var new_transaction = {"id" : _refNew,
+                    "trip" : request.body.tripid,
+                    "timestamp" : now_fr,
+                    "value" : request.body.value,
+                    "paymethod" : request.body.paymethod,
+                    "currency" : request.body.payment.currency,
+                    "description" : request.body.description};
+
+  if (!request.body.tripid || !request.body.value || !request.body.paymethod || !request.body.payment.currency){
+    return parser.parserPostTrip({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var q = 'UPDATE users SET _ref=\'{}\', transactions=jsonb_insert(transactions, \'{}\', \'{}\') WHERE id=\'{}\' RETURNING *;'.format(_refNew, '{transactions, 0}', JSON.stringify(new_transaction), userId);
+  dataBase.query(q, response, parser.parserPostTrip, auth);
+}
+
+function postTripEstimate(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthServer(tk);
+  var trip = {"distance" : request.body.distance,
+              "time" : request.body.traveltime,
+              "paymethod" : request.body.paymethod,
+              "day" : request.body.day,
+              "travelhour" : request.body.travelhour};
+  return controllerRules.getEstimateForTrip([trip], response, parser.parserPostTripEstimate, auth);
+}
+
+function getTrip(tripId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var q = 'SELECT * FROM trips WHERE id=\'{}\';'.format(tripId);
+  dataBase.query(q, response, parser.parserGetTrip, auth);
+}
+
+
+module.exports = {
+    getUserTrips : getUserTrips,
+    postTrips : postTrips,
+    postTripEstimate : postTripEstimate,
+    getTrip : getTrip
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllerAuthorization.html">controllerAuthorization</a></li><li><a href="module-controllerBusinessUsers.html">controllerBusinessUsers</a></li><li><a href="module-controllerDataBase.html">controllerDataBase</a></li><li><a href="module-controllerParser.html">controllerParser</a></li><li><a href="module-controllerParserBusinessUsers.html">controllerParserBusinessUsers</a></li><li><a href="module-controllerParserRules.html">controllerParserRules</a></li><li><a href="module-controllerParserServers.html">controllerParserServers</a></li><li><a href="module-controllerParserTransactions.html">controllerParserTransactions</a></li><li><a href="module-controllerParserTrips.html">controllerParserTrips</a></li><li><a href="module-controllerParserUsers.html">controllerParserUsers</a></li><li><a href="module-controllerParserUsersCards.html">controllerParserUsersCards</a></li><li><a href="module-controllerParserUsersCars.html">controllerParserUsersCars</a></li><li><a href="module-controllerRef.html">controllerRef</a></li><li><a href="module-controllerRules.html">controllerRules</a></li><li><a href="module-controllerServers.html">controllerServers</a></li><li><a href="module-controllerToken.html">controllerToken</a></li><li><a href="module-controllerTransactions.html">controllerTransactions</a></li><li><a href="module-controllerTrips.html">controllerTrips</a></li><li><a href="module-controllerUsers.html">controllerUsers</a></li><li><a href="module-controllerUsersCards.html">controllerUsersCards</a></li><li><a href="module-controllerUsersCars.html">controllerUsersCars</a></li><li><a href="module-log.html">log</a></li><li><a href="module-routerBusinessUsers.html">routerBusinessUsers</a></li><li><a href="module-routerRules.html">routerRules</a></li><li><a href="module-routerServers.html">routerServers</a></li><li><a href="module-routerTransactions.html">routerTransactions</a></li><li><a href="module-routerTrips.html">routerTrips</a></li><li><a href="module-routerUsers.html">routerUsers</a></li><li><a href="module-routerUsersCards.html">routerUsersCards</a></li></ul><h3>Classes</h3><ul><li><a href="module-controllerAuthorization-Auth.html">Auth</a></li><li><a href="module-controllerAuthorization-AuthAdmin.html">AuthAdmin</a></li><li><a href="module-controllerAuthorization-AuthAdminServer.html">AuthAdminServer</a></li><li><a href="module-controllerAuthorization-AuthManager.html">AuthManager</a></li><li><a href="module-controllerAuthorization-AuthManagerServer.html">AuthManagerServer</a></li><li><a href="module-controllerAuthorization-AuthServer.html">AuthServer</a></li><li><a href="module-controllerAuthorization-AuthUser.html">AuthUser</a></li><li><a href="module-controllerAuthorization-AuthUserServer.html">AuthUserServer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#router">router</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Dec 21 2017 13:57:41 GMT-0300 (-03)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 /**
-     * @fileOverview Main of APIRest server.
-     */
+* @fileOverview Main of APIRest server.
+*/
 
 //----------------->Initial settings<----------------------//
 var express = require('express');
@@ -44,6 +44,9 @@ var routerUsersCards = require('../routes/routerUsersCards.js');
 
 
 //---------------->Listen<----------------//
+/**
+ * Express app
+ */
 app.set('port', (process.env.PORT || 5000));
 
 app.use('/', router);

@@ -1,19 +1,31 @@
-//var logger = require();
+/** @module controllerAuthorization */
 
 var moment = require('moment');
 var format = require('string-format');
 format.extend(String.prototype);
 
+/**
+ * @class
+ * Generic Auth object
+ */
 class Auth{
   constructor(token, tags){
     this.token = token;
     this.tags = tags;
   }
 
+  /**
+   * @returns the query that the Auth object must do.
+   */
   query(){
     return 'SELECT * FROM srvusers WHERE token=\'{}\';'.format(this.token);
   }
 
+  /**
+   * @param {json} data the data_retrieved from the query().
+   * @returns the maximum level of checkAuthorization that the user that bears the token has.
+   * @inner
+   */
   obtainAuthLvl(data){
     if (data.rol == "server"){
       return data.rol;
@@ -27,6 +39,11 @@ class Auth{
     return "user";
   }
 
+  /**
+   * @param {json} r the data_retrieved from the query().
+   * @param {string} type the type of the token bearer.
+   * @returns a json object that contains the status of the authentication (success, status, data_retrieved)
+   */
   checkAuthorization(r, type){
     if (!r.data_retrieved.length){
       return {'success': false, 'status': 403, 'data_retrieved': type+" does not exist. Authentication failed."};
@@ -42,6 +59,10 @@ class Auth{
   }
 }
 
+/**
+ * @class
+ * @extends Auth
+ */
 class AuthServer extends Auth{
 
   constructor(token){
@@ -62,6 +83,10 @@ class AuthServer extends Auth{
 
 }
 
+/**
+ * @class
+ * @extends Auth
+ */
 class AuthAdmin extends Auth{
 
   constructor(token){
@@ -81,6 +106,10 @@ class AuthAdmin extends Auth{
   }
 }
 
+/**
+ * @class
+ * @extends Auth
+ */
 class AuthManager extends Auth{
 
   constructor(token){
@@ -100,6 +129,10 @@ class AuthManager extends Auth{
   }
 }
 
+/**
+ * @class
+ * @extends Auth
+ */
 class AuthUser extends Auth{
 
   constructor(token){
@@ -119,6 +152,10 @@ class AuthUser extends Auth{
   }
 }
 
+/**
+ * @class
+ * @extends Auth
+ */
 class AuthUserServer extends Auth{
 
   constructor(token){
@@ -138,6 +175,10 @@ class AuthUserServer extends Auth{
   }
 }
 
+/**
+ * @class
+ * @extends Auth
+ */
 class AuthManagerServer extends Auth{
 
   constructor(token){
@@ -157,6 +198,10 @@ class AuthManagerServer extends Auth{
   }
 }
 
+/**
+ * @class
+ * @extends Auth
+ */
 class AuthAdminServer extends Auth{
 
   constructor(token){

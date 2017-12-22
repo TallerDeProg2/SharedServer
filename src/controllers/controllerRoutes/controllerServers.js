@@ -1,3 +1,9 @@
+/** @module controllerServers */
+
+/**
+* Controller for the endpoints of {@link routerServers}
+*/
+
 var dataBase = require('../controllerData/controllerDataBase.js');
 var parser = require('../controllerData/controllerParserServers.js');
 

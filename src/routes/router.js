@@ -1,10 +1,13 @@
+/**
+* @fileOverview router
+*/
+
 var express = require('express');
 
 /**
-  *  Definess a Router for the APIRest.
-  * @class
-  * @constructor
-  */
+ * Express router
+ * type {Object}
+ */
 var router = express.Router();
 
 module.exports = router;

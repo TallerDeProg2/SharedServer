@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/controllerRoutes/controllerUsers.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/controllerRoutes/controllerUsers.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module controllerUsers */
+
+/**
+* Controller for the endpoints of {@link routerUsers}
+*/
+
+var dataBase = require('../controllerData/controllerDataBase.js');
+var parser = require('../controllerData/controllerParserUsers.js');
+var controllerToken = require('../controllerLogic/controllerToken.js');
+var controllerRef = require('../controllerLogic/controllerRef.js');
+var controllerAuth = require('../controllerLogic/controllerAuthorization.js');
+
+var format = require('string-format');
+format.extend(String.prototype);
+
+//users (id text, username text, password text, facebookId text, facebookToken text, firstname text, lastname text, country text, email text, birthdate timestamp, car jsonb, card jsonb)
+
+function getUsers(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var q = 'SELECT * FROM users;';
+  dataBase.query(q, response, parser.parserGetUsers, auth);
+}
+
+function getUser(userId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthUserServer(tk);
+  var q = 'SELECT * FROM users WHERE id=\'{}\''.format(userId);
+  dataBase.query(q, response, parser.parserGetUser, auth);
+}
+
+function postUser(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthServer(tk);
+
+  var driver = request.body.type;
+
+  var username = request.body.username;
+  var password = request.body.password;
+  var firstname = request.body.firstname;
+  var lastname = request.body.lastname;
+  var country = request.body.country;
+  var email = request.body.email;
+  var birthdate = request.body.birthdate;
+
+  var facebookId = '';
+  var facebookToken = '';
+
+  if (request.body.fb){
+    facebookId = request.body.fb.userId;
+    facebookToken = request.body.fb.authToken;
+  }
+
+  var car = JSON.stringify({});
+  var card = JSON.stringify({"ccvv": "",
+              "expiration_month": "",
+              "expiration_year": "",
+              "method": "",
+              "number": "",
+              "type": ""
+            });
+  var transactions = JSON.stringify({"transactions" : []});
+  var balance = 0;
+
+  if (!username || !driver || !password || !firstname || !lastname || !country || !email || !birthdate){
+    return parser.parserPostUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var _ref = controllerRef.createRef(username);
+
+  var q = 'SELECT * FROM users WHERE (username=\'{}\') OR (email=\'{}\');'.format(username, email);
+  var get_user = dataBase.promise_query_get(q);
+  get_user.then(function (results) {
+
+      if (results.length){
+        return parser.parserPostUser({'success': false, 'status': 409, 'data_retrieved': "Username or email already taken"}, response);
+      }
+
+      var q = 'INSERT INTO users(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance) values(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\') RETURNING *;'.format(_ref, driver, username, password, facebookId, facebookToken, firstname, lastname, country, email, birthdate, car, card, transactions, balance);
+      dataBase.query(q, response, parser.parserPostUser, auth);
+
+    }).catch(function(err, done) {
+      return parser.parserPostUser({'success': false, 'status': 500, 'data_retrieved': "Unexpected error "+err}, response);
+    });
+
+
+}
+
+function postUsersValidate(request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthServer(tk);
+
+  var username = request.body.username;
+  var password = request.body.password;
+  var facebookToken = request.body.facebookauthtoken;
+
+  if (!facebookToken &amp;&amp; !password){
+    return parser.parserPostValidateUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var q = "";
+
+  if (!facebookToken){
+    q = 'SELECT * FROM users WHERE username=\'{}\' AND password=\'{}\''.format(username, password);
+  }else{
+    q = 'SELECT * FROM users WHERE facebookId=\'{}\' AND facebookToken=\'{}\''.format(username, facebookToken);
+  }
+
+  dataBase.query(q, response, parser.parserPostValidateUser);
+}
+
+function deleteUser(userId, request, response) {
+  var tk = request.headers.token;
+  var auth = new controllerAuth.AuthManagerServer(tk);
+  var q = 'DELETE FROM users WHERE id=\'{}\' RETURNING *'.format(userId);
+  dataBase.query(q, response, parser.parserDeleteUser, auth);
+}
+
+function putUser(userId, request, response) {
+  var _ref = request.body._ref;
+  var _refNew = controllerRef.createRef(userId);
+  var password = request.body.password;
+  var firstname = request.body.firstname;
+  var lastname = request.body.lastname;
+  var country = request.body.country;
+  var tk = request.headers.token;
+
+  var facebookId = '';
+  var facebookToken = '';
+
+  if (request.body.fb){
+    facebookId = request.body.fb.userId;
+    facebookToken = request.body.fb.authToken;
+  }
+
+  if (!_ref || !password || !firstname || !lastname || !country){
+    return parser.parserPutUser({'success': false, 'status': 400, 'data_retrieved': "Atribute missing"}, response);
+  }
+
+  var auth = new controllerAuth.AuthServer(tk);
+  var q = 'UPDATE users SET _ref=\'{}\', password=\'{}\', facebookId=\'{}\', facebookToken=\'{}\', firstname=\'{}\', lastname=\'{}\', country=\'{}\' WHERE id=\'{}\' AND _ref=\'{}\' RETURNING *;'.format(_refNew, password, facebookId, facebookToken, firstname, lastname, country, userId, _ref);
+  dataBase.query(q, response, parser.parserPutUser, auth);
+}
+
+module.exports = {
+    postUser : postUser,
+    getUsers : getUsers,
+    getUser : getUser,
+    putUser : putUser,
+    postUsersValidate : postUsersValidate,
+    deleteUser : deleteUser
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllerAuthorization.html">controllerAuthorization</a></li><li><a href="module-controllerBusinessUsers.html">controllerBusinessUsers</a></li><li><a href="module-controllerDataBase.html">controllerDataBase</a></li><li><a href="module-controllerParser.html">controllerParser</a></li><li><a href="module-controllerParserBusinessUsers.html">controllerParserBusinessUsers</a></li><li><a href="module-controllerParserRules.html">controllerParserRules</a></li><li><a href="module-controllerParserServers.html">controllerParserServers</a></li><li><a href="module-controllerParserTransactions.html">controllerParserTransactions</a></li><li><a href="module-controllerParserTrips.html">controllerParserTrips</a></li><li><a href="module-controllerParserUsers.html">controllerParserUsers</a></li><li><a href="module-controllerParserUsersCards.html">controllerParserUsersCards</a></li><li><a href="module-controllerParserUsersCars.html">controllerParserUsersCars</a></li><li><a href="module-controllerRef.html">controllerRef</a></li><li><a href="module-controllerRules.html">controllerRules</a></li><li><a href="module-controllerServers.html">controllerServers</a></li><li><a href="module-controllerToken.html">controllerToken</a></li><li><a href="module-controllerTransactions.html">controllerTransactions</a></li><li><a href="module-controllerTrips.html">controllerTrips</a></li><li><a href="module-controllerUsers.html">controllerUsers</a></li><li><a href="module-controllerUsersCards.html">controllerUsersCards</a></li><li><a href="module-controllerUsersCars.html">controllerUsersCars</a></li><li><a href="module-log.html">log</a></li><li><a href="module-routerBusinessUsers.html">routerBusinessUsers</a></li><li><a href="module-routerRules.html">routerRules</a></li><li><a href="module-routerServers.html">routerServers</a></li><li><a href="module-routerTransactions.html">routerTransactions</a></li><li><a href="module-routerTrips.html">routerTrips</a></li><li><a href="module-routerUsers.html">routerUsers</a></li><li><a href="module-routerUsersCards.html">routerUsersCards</a></li></ul><h3>Classes</h3><ul><li><a href="module-controllerAuthorization-Auth.html">Auth</a></li><li><a href="module-controllerAuthorization-AuthAdmin.html">AuthAdmin</a></li><li><a href="module-controllerAuthorization-AuthAdminServer.html">AuthAdminServer</a></li><li><a href="module-controllerAuthorization-AuthManager.html">AuthManager</a></li><li><a href="module-controllerAuthorization-AuthManagerServer.html">AuthManagerServer</a></li><li><a href="module-controllerAuthorization-AuthServer.html">AuthServer</a></li><li><a href="module-controllerAuthorization-AuthUser.html">AuthUser</a></li><li><a href="module-controllerAuthorization-AuthUserServer.html">AuthUserServer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#router">router</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Dec 21 2017 13:57:41 GMT-0300 (-03)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

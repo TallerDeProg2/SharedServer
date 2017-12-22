@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/controllerLogic/controllerAuthorization.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/controllerLogic/controllerAuthorization.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module controllerAuthorization */
+
+var moment = require('moment');
+var format = require('string-format');
+format.extend(String.prototype);
+
+/**
+ * @class
+ * Generic Auth object
+ */
+class Auth{
+  constructor(token, tags){
+    this.token = token;
+    this.tags = tags;
+  }
+
+  /**
+   * @returns the query that the Auth object must do.
+   */
+  query(){
+    return 'SELECT * FROM srvusers WHERE token=\'{}\';'.format(this.token);
+  }
+
+  /**
+   * @param {json} data the data_retrieved from the query().
+   * @returns the maximum level of checkAuthorization that the user that bears the token has.
+   * @inner
+   */
+  obtainAuthLvl(data){
+    if (data.rol == "server"){
+      return data.rol;
+    }
+    if (data.data.roles.indexOf("admin") != -1){
+      return "admin";
+    }
+    if (data.data.roles.indexOf("manager") != -1){
+      return "manager";
+    }
+    return "user";
+  }
+
+  /**
+   * @param {json} r the data_retrieved from the query().
+   * @param {string} type the type of the token bearer.
+   * @returns a json object that contains the status of the authentication (success, status, data_retrieved)
+   */
+  checkAuthorization(r, type){
+    if (!r.data_retrieved.length){
+      return {'success': false, 'status': 403, 'data_retrieved': type+" does not exist. Authentication failed."};
+    }
+    var exp = moment(r.data_retrieved[0].tokenexp, 'YYYY-MM-DD HH:mm:ss Z');
+    var now = moment();
+    if (exp.isBefore(now) ){
+      return {'success': false, 'status': 401, 'data_retrieved': "Token expired. Authentication failed."};
+    }if (this.tags.indexOf(this.obtainAuthLvl(r.data_retrieved[0])) == -1){
+      return {'success': false, 'status': 401, 'data_retrieved': "Unauthorized. Authentication failed."};
+    }
+    return {'success': true, 'status': 200, 'data_retrieved': "Ok"};
+  }
+}
+
+/**
+ * @class
+ * @extends Auth
+ */
+class AuthServer extends Auth{
+
+  constructor(token){
+    super(token, ["server"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
+  query(){
+    return super.query();
+  }
+
+  checkAuthorization(result){
+    return super.checkAuthorization(result, "server");
+  }
+
+}
+
+/**
+ * @class
+ * @extends Auth
+ */
+class AuthAdmin extends Auth{
+
+  constructor(token){
+    super(token, ["admin"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
+  query(){
+    return super.query();
+  }
+
+  checkAuthorization(result){
+    return super.checkAuthorization(result, "user");
+  }
+}
+
+/**
+ * @class
+ * @extends Auth
+ */
+class AuthManager extends Auth{
+
+  constructor(token){
+    super(token, ["admin", "manager"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
+  query(){
+    return super.query();
+  }
+
+  checkAuthorization(result){
+    return super.checkAuthorization(result, "user");
+  }
+}
+
+/**
+ * @class
+ * @extends Auth
+ */
+class AuthUser extends Auth{
+
+  constructor(token){
+    super(token, ["manager", "admin", "user"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
+  query(){
+    return super.query();
+  }
+
+  checkAuthorization(result){
+    return super.checkAuthorization(result, "user");
+  }
+}
+
+/**
+ * @class
+ * @extends Auth
+ */
+class AuthUserServer extends Auth{
+
+  constructor(token){
+    super(token, ["manager", "admin", "user", "server"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
+  query(){
+    return super.query();
+  }
+
+  checkAuthorization(result){
+    return super.checkAuthorization(result, "user");
+  }
+}
+
+/**
+ * @class
+ * @extends Auth
+ */
+class AuthManagerServer extends Auth{
+
+  constructor(token){
+    super(token, ["manager", "admin", "server"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
+  query(){
+    return super.query();
+  }
+
+  checkAuthorization(result){
+    return super.checkAuthorization(result, "user");
+  }
+}
+
+/**
+ * @class
+ * @extends Auth
+ */
+class AuthAdminServer extends Auth{
+
+  constructor(token){
+    super(token, ["admin", "server"]);
+  }
+
+  obtainAuthLvl(data){
+    return super.obtainAuthLvl(data);
+  }
+
+  query(){
+    return super.query();
+  }
+
+  checkAuthorization(result){
+    return super.checkAuthorization(result, "user");
+  }
+}
+
+module.exports = {
+    AuthUser : AuthUser,
+    AuthAdmin : AuthAdmin,
+    AuthManager : AuthManager,
+    AuthServer : AuthServer,
+    AuthUserServer : AuthUserServer,
+    AuthManagerServer : AuthManagerServer,
+    AuthAdminServer : AuthAdminServer
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllerAuthorization.html">controllerAuthorization</a></li><li><a href="module-controllerBusinessUsers.html">controllerBusinessUsers</a></li><li><a href="module-controllerDataBase.html">controllerDataBase</a></li><li><a href="module-controllerParser.html">controllerParser</a></li><li><a href="module-controllerParserBusinessUsers.html">controllerParserBusinessUsers</a></li><li><a href="module-controllerParserRules.html">controllerParserRules</a></li><li><a href="module-controllerParserServers.html">controllerParserServers</a></li><li><a href="module-controllerParserTransactions.html">controllerParserTransactions</a></li><li><a href="module-controllerParserTrips.html">controllerParserTrips</a></li><li><a href="module-controllerParserUsers.html">controllerParserUsers</a></li><li><a href="module-controllerParserUsersCards.html">controllerParserUsersCards</a></li><li><a href="module-controllerParserUsersCars.html">controllerParserUsersCars</a></li><li><a href="module-controllerRef.html">controllerRef</a></li><li><a href="module-controllerRules.html">controllerRules</a></li><li><a href="module-controllerServers.html">controllerServers</a></li><li><a href="module-controllerToken.html">controllerToken</a></li><li><a href="module-controllerTransactions.html">controllerTransactions</a></li><li><a href="module-controllerTrips.html">controllerTrips</a></li><li><a href="module-controllerUsers.html">controllerUsers</a></li><li><a href="module-controllerUsersCards.html">controllerUsersCards</a></li><li><a href="module-controllerUsersCars.html">controllerUsersCars</a></li><li><a href="module-log.html">log</a></li><li><a href="module-routerBusinessUsers.html">routerBusinessUsers</a></li><li><a href="module-routerRules.html">routerRules</a></li><li><a href="module-routerServers.html">routerServers</a></li><li><a href="module-routerTransactions.html">routerTransactions</a></li><li><a href="module-routerTrips.html">routerTrips</a></li><li><a href="module-routerUsers.html">routerUsers</a></li><li><a href="module-routerUsersCards.html">routerUsersCards</a></li></ul><h3>Classes</h3><ul><li><a href="module-controllerAuthorization-Auth.html">Auth</a></li><li><a href="module-controllerAuthorization-AuthAdmin.html">AuthAdmin</a></li><li><a href="module-controllerAuthorization-AuthAdminServer.html">AuthAdminServer</a></li><li><a href="module-controllerAuthorization-AuthManager.html">AuthManager</a></li><li><a href="module-controllerAuthorization-AuthManagerServer.html">AuthManagerServer</a></li><li><a href="module-controllerAuthorization-AuthServer.html">AuthServer</a></li><li><a href="module-controllerAuthorization-AuthUser.html">AuthUser</a></li><li><a href="module-controllerAuthorization-AuthUserServer.html">AuthUserServer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#router">router</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Dec 21 2017 13:57:41 GMT-0300 (-03)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

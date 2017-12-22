@@ -1,11 +1,12 @@
+/** @module log */
+
 var winston = require('winston');
 
 /**
-  * Log for the app with three differents streams (info, warn
-      and error).
-  * @class
-  * @constructor Initializes a log.
-  */
+* Log for the app with three differents streams (info, warn
+    and error).
+* type {Object}
+*/
 var logger = new (winston.Logger)({
   transports: [
     new (winston.transports.File)({
@@ -37,11 +38,11 @@ var logger = new (winston.Logger)({
 
 module.exports = logger;
 
-/**
-  * @lends logger
-  * @function
-  * @property Stream for morgan to use for logging http requests.
- */
+ /**
+  * @function Stream for morgan to use for logging http requests.
+  * @memberof module:Log
+  * @inner
+  */
 module.exports.stream = {
     write: function(message, encoding){
         logger.info(message);
